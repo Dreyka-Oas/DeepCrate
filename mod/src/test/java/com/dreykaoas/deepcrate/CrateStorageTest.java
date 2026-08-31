@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.dreykaoas.deepcrate.inventory.CrateStorage;
 import java.util.List;
 import net.minecraft.SharedConstants;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -22,11 +21,10 @@ class CrateStorageTest {
     }
 
     @Test
-    void oneSlotSwallowsTwiceAVanillaStack() {
-        CrateStorage crateStorage = new CrateStorage();
+    void oneSlotSwallowsWhatTheModuleAllows() {
+        CrateStorage crateStorage = new CrateStorage(27, 128);
 
-        ItemStack itemStack = new ItemStack(Items.COBBLESTONE, 200);
-        ItemStack leftover = crateStorage.insert(itemStack);
+        ItemStack leftover = crateStorage.insert(new ItemStack(Items.COBBLESTONE, 200));
 
         assertEquals(128, crateStorage.get(0).getCount());
         assertEquals(72, crateStorage.get(1).getCount());
@@ -34,8 +32,18 @@ class CrateStorageTest {
     }
 
     @Test
+    void withNoModuleACrateBehavesLikeAChest() {
+        CrateStorage crateStorage = new CrateStorage(27, 64);
+
+        crateStorage.insert(new ItemStack(Items.COBBLESTONE, 100));
+
+        assertEquals(64, crateStorage.get(0).getCount());
+        assertEquals(36, crateStorage.get(1).getCount());
+    }
+
+    @Test
     void insertToppingUpAPartialSlotComesBackEmpty() {
-        CrateStorage crateStorage = new CrateStorage();
+        CrateStorage crateStorage = new CrateStorage(27, 128);
         crateStorage.set(0, new ItemStack(Items.COBBLESTONE, 100));
 
         ItemStack leftover = crateStorage.insert(new ItemStack(Items.COBBLESTONE, 28));
@@ -45,20 +53,8 @@ class CrateStorageTest {
     }
 
     @Test
-    void insertOverflowsToTheNextEmptySlotOnly() {
-        CrateStorage crateStorage = new CrateStorage();
-        crateStorage.set(0, new ItemStack(Items.DIRT, 128));
-
-        ItemStack leftover = crateStorage.insert(new ItemStack(Items.DIRT, 10));
-
-        assertEquals(128, crateStorage.get(0).getCount());
-        assertEquals(10, crateStorage.get(1).getCount());
-        assertTrue(leftover.isEmpty());
-    }
-
-    @Test
     void aDifferentItemNeverMergesIntoAnOccupiedSlot() {
-        CrateStorage crateStorage = new CrateStorage();
+        CrateStorage crateStorage = new CrateStorage(27, 128);
         crateStorage.set(0, new ItemStack(Items.DIRT, 10));
 
         crateStorage.insert(new ItemStack(Items.STONE, 10));
@@ -69,10 +65,9 @@ class CrateStorageTest {
 
     @Test
     void aFullCrateHandsBackWhatDoesNotFit() {
-        CrateStorage crateStorage = new CrateStorage();
-        for (int i = 0; i < CrateStorage.SLOT_COUNT; i++) {
-            crateStorage.set(i, new ItemStack(Items.DIRT, 128));
-        }
+        CrateStorage crateStorage = new CrateStorage(2, 128);
+        crateStorage.set(0, new ItemStack(Items.DIRT, 128));
+        crateStorage.set(1, new ItemStack(Items.DIRT, 128));
 
         ItemStack leftover = crateStorage.insert(new ItemStack(Items.DIRT, 40));
 
@@ -81,25 +76,49 @@ class CrateStorageTest {
 
     @Test
     void extractNeverHandsOutMoreThanAHandHolds() {
-        CrateStorage crateStorage = new CrateStorage();
-        crateStorage.set(0, new ItemStack(Items.DIRT, 128));
+        CrateStorage crateStorage = new CrateStorage(27, 1024);
+        crateStorage.set(0, new ItemStack(Items.DIRT, 1024));
 
-        ItemStack itemStack = crateStorage.extract(0, 128);
+        ItemStack itemStack = crateStorage.extract(0, 1024);
 
         assertEquals(64, itemStack.getCount());
-        assertEquals(64, crateStorage.get(0).getCount());
+        assertEquals(960, crateStorage.get(0).getCount());
     }
 
     @Test
     void extractOfNothingIsRefusedRatherThanSilentlyClamped() {
-        CrateStorage crateStorage = new CrateStorage();
+        CrateStorage crateStorage = new CrateStorage(27, 64);
 
         assertThrows(IllegalArgumentException.class, () -> crateStorage.extract(0, 0));
     }
 
     @Test
+    void pullingTheModuleOutSpillsExactlyWhatNoLongerFits() {
+        CrateStorage crateStorage = new CrateStorage(27, 1024);
+        crateStorage.set(0, new ItemStack(Items.DIRT, 1000));
+        crateStorage.set(1, new ItemStack(Items.STONE, 50));
+
+        crateStorage.setCapacity(64);
+        List<ItemStack> spilled = crateStorage.overflow();
+
+        assertEquals(64, crateStorage.get(0).getCount());
+        assertEquals(50, crateStorage.get(1).getCount());
+        assertEquals(936, spilled.stream().mapToInt(ItemStack::getCount).sum());
+        assertTrue(spilled.stream().allMatch(itemStack -> itemStack.getCount() <= 64));
+    }
+
+    @Test
+    void nothingSpillsWhileTheCapacityHolds() {
+        CrateStorage crateStorage = new CrateStorage(27, 128);
+        crateStorage.set(0, new ItemStack(Items.DIRT, 128));
+
+        assertTrue(crateStorage.overflow().isEmpty());
+        assertEquals(128, crateStorage.get(0).getCount());
+    }
+
+    @Test
     void breakingACrateCutsEverySlotIntoDroppableStacks() {
-        CrateStorage crateStorage = new CrateStorage();
+        CrateStorage crateStorage = new CrateStorage(27, 1024);
         crateStorage.set(0, new ItemStack(Items.DIRT, 128));
         crateStorage.set(1, new ItemStack(Items.STONE, 65));
 
@@ -109,8 +128,27 @@ class CrateStorageTest {
     }
 
     @Test
-    void aSlotSetAboveTheLimitIsCutBackToIt() {
-        CrateStorage crateStorage = new CrateStorage();
+    void aTierGainingRowsKeepsWhatWasStored() {
+        CrateStorage crateStorage = new CrateStorage(27, 64);
+        crateStorage.set(26, new ItemStack(Items.DIRT, 5));
+
+        crateStorage.grow(72);
+
+        assertEquals(72, crateStorage.size());
+        assertEquals(5, crateStorage.get(26).getCount());
+        assertTrue(crateStorage.get(71).isEmpty());
+    }
+
+    @Test
+    void aTierLosingRowsIsRefusedRatherThanSwallowingSlots() {
+        CrateStorage crateStorage = new CrateStorage(72, 64);
+
+        assertThrows(IllegalArgumentException.class, () -> crateStorage.grow(27));
+    }
+
+    @Test
+    void aSlotSetAboveTheCapacityIsCutBackToIt() {
+        CrateStorage crateStorage = new CrateStorage(27, 128);
 
         crateStorage.set(0, new ItemStack(Items.DIRT, 300));
 
