@@ -251,6 +251,40 @@ public class CrateMenuGameTest {
         gameTestHelper.succeed();
     }
 
+    @GameTest
+    public void aSecondModuleIsStoredRatherThanRefused(GameTestHelper gameTestHelper) {
+        ServerPlayer serverPlayer = gameTestHelper.makeMockServerPlayerInLevel();
+        DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState(), serverPlayer);
+
+        int firstPlayerSlot = 1 + deepCrateMenu.getContainer().getContainerSize();
+        deepCrateMenu.getSlot(firstPlayerSlot).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(0)));
+        deepCrateMenu.quickMoveStack(serverPlayer, firstPlayerSlot);
+        assertEquals(gameTestHelper, 1, deepCrateMenu.getSlot(0).getItem().getCount(), "the first module went to its slot");
+
+        deepCrateMenu.getSlot(firstPlayerSlot).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(1)));
+        deepCrateMenu.quickMoveStack(serverPlayer, firstPlayerSlot);
+
+        assertEquals(gameTestHelper, 1, deepCrateMenu.getSlot(1).getItem().getCount(), "the second module went into storage");
+        gameTestHelper.succeed();
+    }
+
+    @GameTest
+    public void droppingAStackOntoAFullSlotKeepsEveryItem(GameTestHelper gameTestHelper) {
+        ServerPlayer serverPlayer = gameTestHelper.makeMockServerPlayerInLevel();
+        DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState(), serverPlayer);
+
+        deepCrateMenu.getSlot(0).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(3)));
+        deepCrateMenu.getSlot(0).setChanged();
+        deepCrateMenu.getSlot(1).set(new ItemStack(Items.DIRT, 500));
+        deepCrateMenu.setCarried(new ItemStack(Items.DIRT, 64));
+
+        deepCrateMenu.clicked(1, 0, ClickType.PICKUP, serverPlayer);
+
+        assertEquals(gameTestHelper, 564, deepCrateMenu.getSlot(1).getItem().getCount(), "the slot after dropping a stack on it");
+        assertEquals(gameTestHelper, 0, deepCrateMenu.getCarried().getCount(), "what stays in hand");
+        gameTestHelper.succeed();
+    }
+
     private static DeepCrateMenu openCrate(GameTestHelper gameTestHelper, net.minecraft.world.level.block.state.BlockState blockState) {
         return openCrate(gameTestHelper, blockState, gameTestHelper.makeMockServerPlayerInLevel());
     }
