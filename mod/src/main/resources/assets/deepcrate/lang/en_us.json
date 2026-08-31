@@ -1,6 +1,8 @@
 {
   "container.deepcrate.crate": "Crate",
+  "container.deepcrate.double": "Large %s",
   "screen.deepcrate.page": "Page %s/%s",
+  "screen.deepcrate.count": "%s in this slot",
   "block.deepcrate.copper_crate": "Copper Crate",
   "block.deepcrate.iron_crate": "Iron Crate",
   "block.deepcrate.amethyst_crate": "Amethyst Crate",

@@ -1,14 +1,16 @@
 {
   "container.deepcrate.crate": "Caisse",
+  "container.deepcrate.double": "Grande %s",
   "screen.deepcrate.page": "Page %s/%s",
+  "screen.deepcrate.count": "%s dans cette case",
   "block.deepcrate.copper_crate": "Caisse en cuivre",
   "block.deepcrate.iron_crate": "Caisse en fer",
-  "block.deepcrate.amethyst_crate": "Caisse en amethyste",
+  "block.deepcrate.amethyst_crate": "Caisse en améthyste",
   "block.deepcrate.prismarine_crate": "Caisse en prismarine",
   "block.deepcrate.breeze_crate": "Caisse de souffle",
-  "block.deepcrate.echo_crate": "Caisse d'echo",
+  "block.deepcrate.echo_crate": "Caisse d'écho",
   "item.deepcrate.module_128": "Module de doublement",
   "item.deepcrate.module_256": "Module de quadruplement",
   "item.deepcrate.module_512": "Module octuple",
-  "item.deepcrate.module_1024": "Module seiziemal"
+  "item.deepcrate.module_1024": "Module seizième"
 }
