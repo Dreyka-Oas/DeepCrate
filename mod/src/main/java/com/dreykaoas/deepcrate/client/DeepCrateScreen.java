@@ -3,6 +3,8 @@ package com.dreykaoas.deepcrate.client;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -36,6 +38,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private static final int ABBREVIATE_ABOVE = 999;
 
     private final int rows;
+    private final List<Button> pageButtons = new ArrayList<>();
 
     public DeepCrateScreen(DeepCrateMenu deepCrateMenu, Inventory inventory, Component component) {
         super(deepCrateMenu, inventory, component);
@@ -54,19 +57,41 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         }
 
         // Stacked down the right edge, outside the panel: the crate grid already fills the width.
+        this.pageButtons.clear();
         for (int page = 0; page < this.menu.layout().pageCount(); page++) {
             int target = page;
-            this.addRenderableWidget(
-                Button.builder(Component.literal(String.valueOf(page + 1)), button -> this.menu.setPage(target))
-                    .bounds(
-                        this.leftPos + this.imageWidth + 3,
-                        this.topPos + HEADER_HEIGHT + page * (PAGE_BUTTON_SIZE + 2),
-                        PAGE_BUTTON_SIZE,
-                        PAGE_BUTTON_SIZE
-                    )
-                    .build()
+            this.pageButtons.add(
+                this.addRenderableWidget(
+                    Button.builder(Component.literal(String.valueOf(page + 1)), button -> this.menu.setPage(target))
+                        .bounds(
+                            this.leftPos + this.imageWidth + 3,
+                            this.topPos + HEADER_HEIGHT + page * (PAGE_BUTTON_SIZE + 2),
+                            PAGE_BUTTON_SIZE,
+                            PAGE_BUTTON_SIZE
+                        )
+                        .build()
+                )
             );
         }
+    }
+
+    /**
+     * The page buttons sit past the right edge of the panel, which the game otherwise counts as
+     * outside the screen: releasing a click there drops whatever the player is carrying on the ground.
+     */
+    @Override
+    protected boolean hasClickedOutside(double d, double e, int i, int j) {
+        return super.hasClickedOutside(d, e, i, j) && !this.isOverPageButtons(d, e);
+    }
+
+    private boolean isOverPageButtons(double d, double e) {
+        for (Button button : this.pageButtons) {
+            if (button.isMouseOver(d, e)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

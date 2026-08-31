@@ -7,9 +7,10 @@ import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
-import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -17,6 +18,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 /**
  * The crate screen: every slot of the crate exists from the start, but only the ones on the page
@@ -179,10 +181,10 @@ public class DeepCrateMenu extends AbstractContainerMenu {
             if (!moved) {
                 return ItemStack.EMPTY;
             }
-        } else if (this.getSlot(0).mayPlace(itemStack2)) {
-            if (!this.moveItemStackTo(itemStack2, 0, 1, false)) {
-                return ItemStack.EMPTY;
-            }
+        } else if (this.getSlot(0).mayPlace(itemStack2) && !this.getSlot(0).hasItem() && this.moveItemStackTo(itemStack2, 0, 1, false)) {
+            // A module goes to its slot, but only while that slot is free; a second one is stored like
+            // anything else rather than refused.
+            this.getSlot(0).setChanged();
         } else if (!this.moveItemStackTo(itemStack2, 1, crateEnd, false)) {
             // Deliberately every crate slot, not only the visible page: a player shift-clicking a
             // stack expects it stored, not refused because the right page is not open.
@@ -216,17 +218,22 @@ public class DeepCrateMenu extends AbstractContainerMenu {
             }
 
             for (ItemStack itemStack : spilled) {
-                Containers.dropItemStack(
-                    player.level(),
-                    deepCrateBlockEntity.getBlockPos().getX(),
-                    deepCrateBlockEntity.getBlockPos().getY() + 1,
-                    deepCrateBlockEntity.getBlockPos().getZ(),
-                    itemStack
-                );
+                dropWholeStack(player.level(), deepCrateBlockEntity.getBlockPos(), itemStack);
             }
 
             deepCrateBlockEntity.setChanged();
         }
+    }
+
+    /**
+     * One entity per stack of 64, rather than the ten-to-thirty pieces Containers.dropItemStack makes.
+     * A full double echo crate losing its module spills two thousand stacks; through the vanilla
+     * helper that would be nearer seven thousand entities in a single tick.
+     */
+    private static void dropWholeStack(Level level, BlockPos blockPos, ItemStack itemStack) {
+        ItemEntity itemEntity = new ItemEntity(level, blockPos.getX() + 0.5, blockPos.getY() + 1.0, blockPos.getZ() + 0.5, itemStack);
+        itemEntity.setDefaultPickUpDelay();
+        level.addFreshEntity(itemEntity);
     }
 
     private void onModuleChanged() {

@@ -29,4 +29,15 @@ public class CrateContainer extends SimpleContainer {
     public int getMaxStackSize(ItemStack itemStack) {
         return this.capacity;
     }
+
+    /**
+     * The server is the only authority on what a crate slot holds. Between a module being pulled out
+     * and the screen closing, a slot legitimately holds more than the current capacity, and
+     * SimpleContainer would cut the incoming value down to it.
+     */
+    @Override
+    public void setItem(int i, ItemStack itemStack) {
+        this.getItems().set(i, itemStack);
+        this.setChanged();
+    }
 }

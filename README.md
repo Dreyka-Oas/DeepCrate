@@ -27,6 +27,12 @@ A slot holds 64. A module in the top-left slot of the screen raises the whole cr
 or 1024. One module at a time, inserting another hands the previous one back. Pull the module out
 and close the screen, and everything above the new capacity drops on the ground.
 
+That last rule is expensive at the top of the ladder, and it is a deliberate choice rather than an
+oversight. A full double echo crate losing its 1024 module spills 138 000 items, which is two
+thousand stacks on one block: the game drops them as whole stacks rather than in the ten-to-thirty
+pieces it normally uses, but the tick is still heavy and no player picks all of that back up before
+the five-minute despawn. Emptying a crate before pulling its module out is the only safe order.
+
 The count of a slot travels over the network as a variable-length integer, so a large number costs
 nothing there. It is the save file that sets the ceiling: the item stack codec of the base game
 refuses any count above 99, which is why a crate writes its slots in its own format, the item on one

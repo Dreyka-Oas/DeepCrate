@@ -142,16 +142,21 @@ public class DeepCrateBlock extends BaseEntityBlock {
         Direction clicked = blockPlaceContext.getClickedFace();
         ChestType chestType = ChestType.SINGLE;
 
+        // Same split as the chest: crouching against a crate's side pairs with THAT crate and nothing
+        // else. Chaining the two cases with else-if let a crouched placement fall through and pair
+        // with a neighbour the player never pointed at.
         if (clicked.getAxis().isHorizontal() && blockPlaceContext.isSecondaryUseActive()) {
             Direction partner = this.partnerFacing(blockPlaceContext.getLevel(), blockPlaceContext.getClickedPos(), clicked.getOpposite());
             if (partner != null && partner.getAxis() != clicked.getAxis()) {
                 facing = partner;
                 chestType = partner.getCounterClockWise() == clicked.getOpposite() ? ChestType.RIGHT : ChestType.LEFT;
             }
-        } else if (facing == this.partnerFacing(blockPlaceContext.getLevel(), blockPlaceContext.getClickedPos(), facing.getClockWise())) {
-            chestType = ChestType.LEFT;
-        } else if (facing == this.partnerFacing(blockPlaceContext.getLevel(), blockPlaceContext.getClickedPos(), facing.getCounterClockWise())) {
-            chestType = ChestType.RIGHT;
+        } else {
+            if (facing == this.partnerFacing(blockPlaceContext.getLevel(), blockPlaceContext.getClickedPos(), facing.getClockWise())) {
+                chestType = ChestType.LEFT;
+            } else if (facing == this.partnerFacing(blockPlaceContext.getLevel(), blockPlaceContext.getClickedPos(), facing.getCounterClockWise())) {
+                chestType = ChestType.RIGHT;
+            }
         }
 
         FluidState fluidState = blockPlaceContext.getLevel().getFluidState(blockPlaceContext.getClickedPos());
@@ -186,14 +191,7 @@ public class DeepCrateBlock extends BaseEntityBlock {
                 && chestType != ChestType.SINGLE
                 && blockState.getValue(FACING) == blockState2.getValue(FACING)
                 && connectedDirection(blockState2) == direction.getOpposite()) {
-                ChestType own = chestType.getOpposite();
-                // The pair keeps its module on the half the game calls first. A crate that arrives
-                // holding one, on the half that becomes second, hands it over rather than losing it.
-                if (own == ChestType.LEFT && levelReader.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity mine) {
-                    mine.handModuleTo(levelReader.getBlockEntity(blockPos2));
-                }
-
-                return blockState.setValue(TYPE, own);
+                return blockState.setValue(TYPE, chestType.getOpposite());
             }
         } else if (blockState.getValue(TYPE) != ChestType.SINGLE && connectedDirection(blockState) == direction) {
             return blockState.setValue(TYPE, ChestType.SINGLE);

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
@@ -22,8 +23,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
-import net.minecraft.world.Containers;
 import net.minecraft.world.entity.ContainerUser;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -31,7 +32,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
@@ -112,18 +112,31 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     }
 
     /**
-     * Where the module of a pair lives: on the half the game calls first, so a pair holds exactly one
-     * module and separating the two can neither duplicate nor lose it.
+     * Where the module of a pair lives.
+     *
+     * A crate that already holds one keeps it, whichever side of the pair it ended up on; otherwise
+     * it is the half the game calls first. Deciding rather than moving anything means both halves
+     * always name the same holder, and a crate that marries another does not have to be rewritten.
      */
     public DeepCrateBlockEntity moduleHolder() {
-        if (this.level != null && this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.LEFT) {
-            BlockPos blockPos = DeepCrateBlock.connectedPos(this.getBlockState(), this.getBlockPos());
-            if (this.level.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity other) {
-                return other;
-            }
+        if (this.level == null || this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.SINGLE) {
+            return this;
         }
 
-        return this;
+        BlockPos blockPos = DeepCrateBlock.connectedPos(this.getBlockState(), this.getBlockPos());
+        if (!(this.level.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity other)) {
+            return this;
+        }
+
+        if (!this.module.isEmpty()) {
+            return other.module.isEmpty() || this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.RIGHT ? this : other;
+        }
+
+        if (!other.module.isEmpty()) {
+            return other;
+        }
+
+        return this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.RIGHT ? this : other;
     }
 
     @Override
@@ -289,8 +302,12 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
             this.module = ItemStack.EMPTY;
         }
 
+        // One entity per stack of 64: the vanilla helper cuts each stack into ten-to-thirty pieces, and
+        // a full echo crate would put several thousand entities on one block in a single tick.
         for (ItemStack itemStack : list) {
-            Containers.dropItemStack(this.level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), itemStack);
+            ItemEntity itemEntity = new ItemEntity(this.level, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5, itemStack);
+            itemEntity.setDefaultPickUpDelay();
+            this.level.addFreshEntity(itemEntity);
         }
     }
 
@@ -356,18 +373,18 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     }
 
     /**
-     * Moves this crate's module onto the crate that is becoming the pair's module holder. Called when
-     * two crates marry; the receiving side keeps its own module if it already has one, and this one
-     * stays put rather than being destroyed.
+     * A pair opens under one title: the name given to either half, or the shared default when neither
+     * was named on an anvil.
      */
-    public void handModuleTo(@Nullable BlockEntity blockEntity) {
-        if (this.module.isEmpty() || !(blockEntity instanceof DeepCrateBlockEntity holder) || !holder.module().isEmpty()) {
-            return;
+    @Override
+    public Component getDisplayName() {
+        for (DeepCrateBlockEntity deepCrateBlockEntity : DeepCrateBlock.cratesFor(this)) {
+            if (deepCrateBlockEntity.getCustomName() != null) {
+                return deepCrateBlockEntity.getCustomName();
+            }
         }
 
-        holder.setModule(this.module);
-        this.module = ItemStack.EMPTY;
-        this.setChanged();
+        return this.getDefaultName();
     }
 
     /**
@@ -382,20 +399,21 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     }
 
     private static void playSound(Level level, BlockPos blockPos, BlockState blockState, SoundEvent soundEvent) {
-        // Only one half speaks, otherwise a pair opens twice as loud as a single crate.
-        if (blockState.getValue(DeepCrateBlock.TYPE) == ChestType.LEFT) {
+        ChestType chestType = blockState.getValue(DeepCrateBlock.TYPE);
+        // Only one half speaks, otherwise a pair opens twice as loud as a single crate, and it speaks
+        // from the middle of the pair rather than from its own block.
+        if (chestType == ChestType.LEFT) {
             return;
         }
 
-        level.playSound(
-            null,
-            blockPos.getX() + 0.5,
-            blockPos.getY() + 0.5,
-            blockPos.getZ() + 0.5,
-            soundEvent,
-            SoundSource.BLOCKS,
-            0.5F,
-            level.random.nextFloat() * 0.1F + 0.9F
-        );
+        double x = blockPos.getX() + 0.5;
+        double z = blockPos.getZ() + 0.5;
+        if (chestType == ChestType.RIGHT) {
+            Direction direction = DeepCrateBlock.connectedDirection(blockState);
+            x += direction.getStepX() * 0.5;
+            z += direction.getStepZ() * 0.5;
+        }
+
+        level.playSound(null, x, blockPos.getY() + 0.5, z, soundEvent, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
     }
 }

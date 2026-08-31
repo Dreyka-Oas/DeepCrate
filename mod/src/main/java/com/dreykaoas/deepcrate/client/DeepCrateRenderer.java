@@ -6,8 +6,11 @@ import com.dreykaoas.deepcrate.block.DeepCrateBlock;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.object.chest.ChestModel;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -56,12 +59,39 @@ public class DeepCrateRenderer implements BlockEntityRenderer<DeepCrateBlockEnti
         BlockEntityRenderer.super.extractRenderState(deepCrateBlockEntity, deepCrateRenderState, f, vec3, crumblingOverlay);
         deepCrateRenderState.angle = deepCrateBlockEntity.getBlockState().getValue(DeepCrateBlock.FACING).toYRot();
         deepCrateRenderState.type = deepCrateBlockEntity.getBlockState().getValue(DeepCrateBlock.TYPE);
-        deepCrateRenderState.open = deepCrateBlockEntity.getOpenNess(f);
+        deepCrateRenderState.open = openness(deepCrateBlockEntity, f);
 
         CrateTier crateTier = DeepCrateApi.tierOf(deepCrateBlockEntity.getBlockState().getBlock());
         deepCrateRenderState.material = crateTier == null
             ? CrateMaterials.MISSING
             : CrateMaterials.of(crateTier, deepCrateRenderState.type);
+
+        // Both halves take the brighter of the two lights, as a double chest does; lit separately the
+        // model shows a seam down the middle.
+        if (deepCrateRenderState.type != ChestType.SINGLE && deepCrateBlockEntity.getLevel() != null) {
+            BlockPos blockPos = DeepCrateBlock.connectedPos(deepCrateBlockEntity.getBlockState(), deepCrateBlockEntity.getBlockPos());
+            int other = LevelRenderer.getLightColor(deepCrateBlockEntity.getLevel(), blockPos);
+            deepCrateRenderState.lightCoords = LightTexture.pack(
+                Math.max(LightTexture.block(deepCrateRenderState.lightCoords), LightTexture.block(other)),
+                Math.max(LightTexture.sky(deepCrateRenderState.lightCoords), LightTexture.sky(other))
+            );
+        }
+    }
+
+    /**
+     * The wider of the two lids, as the chest does. A re-sent chunk rebuilds one half with a lid
+     * controller at zero, and that half would animate on its own.
+     */
+    private static float openness(DeepCrateBlockEntity deepCrateBlockEntity, float f) {
+        float own = deepCrateBlockEntity.getOpenNess(f);
+        if (deepCrateBlockEntity.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.SINGLE || deepCrateBlockEntity.getLevel() == null) {
+            return own;
+        }
+
+        BlockPos blockPos = DeepCrateBlock.connectedPos(deepCrateBlockEntity.getBlockState(), deepCrateBlockEntity.getBlockPos());
+        return deepCrateBlockEntity.getLevel().getBlockEntity(blockPos) instanceof DeepCrateBlockEntity other
+            ? Math.max(own, other.getOpenNess(f))
+            : own;
     }
 
     @Override
