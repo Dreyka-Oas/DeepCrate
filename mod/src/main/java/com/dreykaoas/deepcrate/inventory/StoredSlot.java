@@ -1,5 +1,6 @@
 package com.dreykaoas.deepcrate.inventory;
 
+import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -9,15 +10,17 @@ import net.minecraft.world.item.ItemStack;
  * One saved crate slot: what item, and how many.
  *
  * Vanilla's ItemStackWithSlot cannot be reused here. Its codec routes the count through
- * ItemStack.MAP_CODEC, which refuses anything above 99, so a slot holding 128 would come back
+ * ItemStack.MAP_CODEC, which refuses anything above 99, so a slot holding 1024 would come back
  * clamped or rejected. Splitting the item from its count sidesteps that range entirely.
  */
 public record StoredSlot(int slot, ItemStack item, int count) {
     public static final Codec<StoredSlot> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
-                ExtraCodecs.UNSIGNED_BYTE.fieldOf("Slot").forGetter(StoredSlot::slot),
+                // Was an unsigned byte while a crate had 27 slots; a double echo crate has 144, and
+                // NbtOps reads any numeric tag, so worlds written by the first version still load.
+                Codec.INT.fieldOf("Slot").forGetter(StoredSlot::slot),
                 ItemStack.SINGLE_ITEM_CODEC.fieldOf("Item").forGetter(StoredSlot::item),
-                ExtraCodecs.intRange(1, CrateStorage.SLOT_LIMIT).fieldOf("Count").forGetter(StoredSlot::count)
+                ExtraCodecs.intRange(1, DeepCrateApi.MAX_CAPACITY).fieldOf("Count").forGetter(StoredSlot::count)
             )
             .apply(instance, StoredSlot::new)
     );

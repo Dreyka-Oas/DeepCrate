@@ -2,16 +2,16 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "III",
-    "ICI",
-    "III"
+    "RRR",
+    "RCR",
+    "RRR"
   ],
   "key": {
-    "I": "minecraft:iron_ingot",
-    "C": "minecraft:chest"
+    "R": "minecraft:iron_ingot",
+    "C": "deepcrate:copper_crate"
   },
   "result": {
-    "id": "deepcrate:deep_crate",
+    "id": "deepcrate:iron_crate",
     "count": 1
   }
 }

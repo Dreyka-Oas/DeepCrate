@@ -1,5 +1,6 @@
 package com.dreykaoas.deepcrate;
 
+import com.dreykaoas.deepcrate.init.AddonInit;
 import com.dreykaoas.deepcrate.init.CreativeTabInit;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import net.fabricmc.api.ModInitializer;
@@ -12,6 +13,7 @@ public final class DeepCrateMod implements ModInitializer {
     @Override
     public void onInitialize() {
         RegistryInit.register();
+        AddonInit.register();
         CreativeTabInit.register();
     }
 }

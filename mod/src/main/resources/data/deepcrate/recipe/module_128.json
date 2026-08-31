@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "RCR",
+    "RRR"
+  ],
+  "key": {
+    "R": "minecraft:copper_ingot",
+    "C": "minecraft:amethyst_shard"
+  },
+  "result": {
+    "id": "deepcrate:module_128",
+    "count": 1
+  }
+}

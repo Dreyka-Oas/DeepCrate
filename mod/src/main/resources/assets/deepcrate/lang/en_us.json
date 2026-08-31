@@ -1,4 +1,14 @@
 {
-  "block.deepcrate.deep_crate": "Deep Crate",
-  "container.deepcrate.deep_crate": "Deep Crate"
+  "container.deepcrate.crate": "Crate",
+  "screen.deepcrate.page": "Page %s/%s",
+  "block.deepcrate.copper_crate": "Copper Crate",
+  "block.deepcrate.iron_crate": "Iron Crate",
+  "block.deepcrate.amethyst_crate": "Amethyst Crate",
+  "block.deepcrate.prismarine_crate": "Prismarine Crate",
+  "block.deepcrate.breeze_crate": "Breeze Crate",
+  "block.deepcrate.echo_crate": "Echo Crate",
+  "item.deepcrate.module_128": "Doubling Module",
+  "item.deepcrate.module_256": "Quadrupling Module",
+  "item.deepcrate.module_512": "Eightfold Module",
+  "item.deepcrate.module_1024": "Sixteenfold Module"
 }

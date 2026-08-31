@@ -9,17 +9,24 @@ import net.minecraft.world.item.ItemStack;
  * arrival.
  */
 public class CrateContainer extends SimpleContainer {
-    public CrateContainer() {
-        super(CrateStorage.SLOT_COUNT);
+    private int capacity;
+
+    public CrateContainer(int slotCount, int capacity) {
+        super(slotCount);
+        this.capacity = capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
     @Override
     public int getMaxStackSize() {
-        return CrateStorage.SLOT_LIMIT;
+        return this.capacity;
     }
 
     @Override
     public int getMaxStackSize(ItemStack itemStack) {
-        return CrateStorage.SLOT_LIMIT;
+        return this.capacity;
     }
 }

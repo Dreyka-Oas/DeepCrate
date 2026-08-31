@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "RCR",
+    "RRR"
+  ],
+  "key": {
+    "R": "minecraft:prismarine_crystals",
+    "C": "deepcrate:amethyst_crate"
+  },
+  "result": {
+    "id": "deepcrate:prismarine_crate",
+    "count": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "RCR",
+    "RRR"
+  ],
+  "key": {
+    "R": "minecraft:copper_ingot",
+    "C": "minecraft:chest"
+  },
+  "result": {
+    "id": "deepcrate:copper_crate",
+    "count": 1
+  }
+}

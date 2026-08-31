@@ -1,17 +1,22 @@
 package com.dreykaoas.deepcrate.init;
 
 import com.dreykaoas.deepcrate.DeepCrate;
+import com.dreykaoas.deepcrate.api.CrateModule;
+import com.dreykaoas.deepcrate.api.CrateTier;
+import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.block.DeepCrateBlock;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
+import com.dreykaoas.deepcrate.inventory.CrateOpenData;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
+import java.util.List;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.inventory.MenuType;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -21,33 +26,76 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
-/** Everything the mod puts into a registry: the crate, its item, its block entity and its menu. */
+/** Everything the mod puts into a registry: six crates, four modules, one block entity, one menu. */
 public final class RegistryInit {
-    private RegistryInit() {}
-
-    public static final Identifier CRATE_ID = Identifier.fromNamespaceAndPath(DeepCrate.MOD_ID, "deep_crate");
-
-    public static final Block BLOCK = Blocks.register(
-        ResourceKey.create(Registries.BLOCK, CRATE_ID),
-        DeepCrateBlock::new,
-        BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(3.0F, 6.0F).sound(SoundType.WOOD)
+    /**
+     * The six tiers, ordered by how dangerous the material is to fetch rather than by the usual
+     * iron-gold-diamond ladder. Each one adds a row of nine.
+     */
+    private static final List<TierSpec> TIER_SPECS = List.of(
+        new TierSpec("copper_crate", 3, MapColor.COLOR_ORANGE),
+        new TierSpec("iron_crate", 4, MapColor.METAL),
+        new TierSpec("amethyst_crate", 5, MapColor.COLOR_PURPLE),
+        new TierSpec("prismarine_crate", 6, MapColor.COLOR_CYAN),
+        new TierSpec("breeze_crate", 7, MapColor.COLOR_LIGHT_BLUE),
+        new TierSpec("echo_crate", 8, MapColor.COLOR_BLACK)
     );
 
-    public static final Item ITEM = Items.registerBlock(BLOCK);
+    private static final List<ModuleSpec> MODULE_SPECS = List.of(
+        new ModuleSpec("module_128", 128),
+        new ModuleSpec("module_256", 256),
+        new ModuleSpec("module_512", 512),
+        new ModuleSpec("module_1024", 1024)
+    );
+
+    public static final List<CrateTier> TIERS = TIER_SPECS.stream().map(RegistryInit::registerTier).toList();
+    public static final List<Item> MODULE_ITEMS = MODULE_SPECS.stream().map(RegistryInit::registerModule).toList();
 
     public static final BlockEntityType<DeepCrateBlockEntity> BLOCK_ENTITY = Registry.register(
-        BuiltInRegistries.BLOCK_ENTITY_TYPE, CRATE_ID, FabricBlockEntityTypeBuilder.create(DeepCrateBlockEntity::new, BLOCK).build()
+        BuiltInRegistries.BLOCK_ENTITY_TYPE,
+        id("crate"),
+        FabricBlockEntityTypeBuilder.create(DeepCrateBlockEntity::new, TIERS.stream().map(CrateTier::block).toArray(Block[]::new)).build()
     );
 
-    public static final MenuType<DeepCrateMenu> MENU = Registry.register(
-        BuiltInRegistries.MENU, CRATE_ID, new MenuType<>(DeepCrateMenu::new, FeatureFlags.VANILLA_SET)
+    public static final ExtendedScreenHandlerType<DeepCrateMenu, CrateOpenData> MENU = Registry.register(
+        BuiltInRegistries.MENU, id("crate"), new ExtendedScreenHandlerType<>(DeepCrateMenu::new, CrateOpenData.STREAM_CODEC)
     );
+
+    private RegistryInit() {}
+
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(DeepCrate.MOD_ID, path);
+    }
 
     /**
      * Touching the class runs its static fields, which is where the registration happens. Java would
      * otherwise defer them until the first read, long after the registries are frozen.
      */
     public static void register() {
-        DeepCrate.LOGGER.info("[DeepCrate] {} registered, {} items per slot", CRATE_ID, com.dreykaoas.deepcrate.inventory.CrateStorage.SLOT_LIMIT);
+        DeepCrate.LOGGER.info("[DeepCrate] {} tiers, {} modules", TIERS.size(), MODULE_ITEMS.size());
     }
+
+    private static CrateTier registerTier(TierSpec tierSpec) {
+        Block block = Blocks.register(
+            ResourceKey.create(Registries.BLOCK, id(tierSpec.name())),
+            DeepCrateBlock::new,
+            BlockBehaviour.Properties.of().mapColor(tierSpec.mapColor()).strength(3.0F, 6.0F).sound(SoundType.WOOD).ignitedByLava()
+        );
+        Items.registerBlock(block);
+        return DeepCrateApi.registerTier(new CrateTier(id(tierSpec.name()), tierSpec.rows(), block));
+    }
+
+    private static Item registerModule(ModuleSpec moduleSpec) {
+        Identifier identifier = id(moduleSpec.name());
+        Item item = Items.registerItem(ResourceKey.create(Registries.ITEM, identifier), Item::new, new Item.Properties().stacksTo(16));
+        // The module points at a tag of the same name, holding just this item, so another mod can add
+        // its own item to it without writing a line of Java.
+        DeepCrateApi.registerModule(new CrateModule(identifier, moduleSpec.capacity(), TagKey.create(Registries.ITEM, identifier)));
+        return item;
+    }
+
+    /** @param rows rows of nine slots, before any page split */
+    private record TierSpec(String name, int rows, MapColor mapColor) {}
+
+    private record ModuleSpec(String name, int capacity) {}
 }

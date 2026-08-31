@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "RCR",
+    "RRR"
+  ],
+  "key": {
+    "R": "minecraft:echo_shard",
+    "C": "deepcrate:breeze_crate"
+  },
+  "result": {
+    "id": "deepcrate:echo_crate",
+    "count": 1
+  }
+}

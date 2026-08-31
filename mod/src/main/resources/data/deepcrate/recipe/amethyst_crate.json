@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "RCR",
+    "RRR"
+  ],
+  "key": {
+    "R": "minecraft:amethyst_shard",
+    "C": "deepcrate:iron_crate"
+  },
+  "result": {
+    "id": "deepcrate:amethyst_crate",
+    "count": 1
+  }
+}

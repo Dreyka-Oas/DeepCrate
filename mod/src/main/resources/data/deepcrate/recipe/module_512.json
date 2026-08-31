@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "RCR",
+    "RRR"
+  ],
+  "key": {
+    "R": "minecraft:redstone",
+    "C": "deepcrate:module_256"
+  },
+  "result": {
+    "id": "deepcrate:module_512",
+    "count": 1
+  }
+}

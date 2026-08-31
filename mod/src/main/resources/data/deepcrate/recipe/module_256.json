@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "RCR",
+    "RRR"
+  ],
+  "key": {
+    "R": "minecraft:lapis_lazuli",
+    "C": "deepcrate:module_128"
+  },
+  "result": {
+    "id": "deepcrate:module_256",
+    "count": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "RCR",
+    "RRR"
+  ],
+  "key": {
+    "R": "minecraft:breeze_rod",
+    "C": "deepcrate:prismarine_crate"
+  },
+  "result": {
+    "id": "deepcrate:breeze_crate",
+    "count": 1
+  }
+}

@@ -1,13 +1,13 @@
 package com.dreykaoas.deepcrate.client;
 
-import com.dreykaoas.deepcrate.DeepCrate;
+import com.dreykaoas.deepcrate.api.CrateTier;
+import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.block.DeepCrateBlock;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.object.chest.ChestModel;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -15,29 +15,29 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.MaterialSet;
-import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Draws the crate with the chest model of the base game, lid animation included, over an iron
- * coloured sheet.
+ * Draws a crate with the chest model of the base game, lid animation included.
  *
- * Vanilla's own ChestRenderer cannot be subclassed into this: it picks its texture from a closed
- * enum of chest kinds, which no mod can extend. The model, the atlas and the opening curve are all
- * reused as is, only the material differs.
+ * Vanilla's own ChestRenderer cannot be subclassed into this: it picks its texture from a closed enum
+ * of chest kinds, which no mod can extend. The models, the atlas and the opening curve are reused as
+ * they are; only the material changes.
  */
 public class DeepCrateRenderer implements BlockEntityRenderer<DeepCrateBlockEntity, DeepCrateRenderState> {
-    private static final Material MATERIAL = Sheets.CHEST_MAPPER.apply(Identifier.fromNamespaceAndPath(DeepCrate.MOD_ID, "deep_crate"));
-
     private final MaterialSet materials;
-    private final ChestModel model;
+    private final ChestModel singleModel;
+    private final ChestModel leftModel;
+    private final ChestModel rightModel;
 
     public DeepCrateRenderer(BlockEntityRendererProvider.Context context) {
         this.materials = context.materials();
-        this.model = new ChestModel(context.bakeLayer(ModelLayers.CHEST));
+        this.singleModel = new ChestModel(context.bakeLayer(ModelLayers.CHEST));
+        this.leftModel = new ChestModel(context.bakeLayer(ModelLayers.DOUBLE_CHEST_LEFT));
+        this.rightModel = new ChestModel(context.bakeLayer(ModelLayers.DOUBLE_CHEST_RIGHT));
     }
 
     @Override
@@ -55,7 +55,13 @@ public class DeepCrateRenderer implements BlockEntityRenderer<DeepCrateBlockEnti
     ) {
         BlockEntityRenderer.super.extractRenderState(deepCrateBlockEntity, deepCrateRenderState, f, vec3, crumblingOverlay);
         deepCrateRenderState.angle = deepCrateBlockEntity.getBlockState().getValue(DeepCrateBlock.FACING).toYRot();
+        deepCrateRenderState.type = deepCrateBlockEntity.getBlockState().getValue(DeepCrateBlock.TYPE);
         deepCrateRenderState.open = deepCrateBlockEntity.getOpenNess(f);
+
+        CrateTier crateTier = DeepCrateApi.tierOf(deepCrateBlockEntity.getBlockState().getBlock());
+        deepCrateRenderState.material = crateTier == null
+            ? CrateMaterials.MISSING
+            : CrateMaterials.of(crateTier, deepCrateRenderState.type);
     }
 
     @Override
@@ -71,15 +77,21 @@ public class DeepCrateRenderer implements BlockEntityRenderer<DeepCrateBlockEnti
         float f = 1.0F - deepCrateRenderState.open;
         f = 1.0F - f * f * f;
 
+        ChestModel chestModel = switch (deepCrateRenderState.type) {
+            case SINGLE -> this.singleModel;
+            case LEFT -> this.leftModel;
+            case RIGHT -> this.rightModel;
+        };
+
         submitNodeCollector.submitModel(
-            this.model,
+            chestModel,
             f,
             poseStack,
-            MATERIAL.renderType(RenderTypes::entityCutout),
+            deepCrateRenderState.material.renderType(RenderTypes::entityCutout),
             deepCrateRenderState.lightCoords,
             OverlayTexture.NO_OVERLAY,
             -1,
-            this.materials.get(MATERIAL),
+            this.materials.get(deepCrateRenderState.material),
             0,
             deepCrateRenderState.breakProgress
         );
