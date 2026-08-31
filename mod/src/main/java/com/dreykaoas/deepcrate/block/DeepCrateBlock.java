@@ -30,7 +30,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
@@ -51,13 +55,16 @@ public class DeepCrateBlock extends BaseEntityBlock {
     public static final MapCodec<DeepCrateBlock> CODEC = simpleCodec(DeepCrateBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<ChestType> TYPE = BlockStateProperties.CHEST_TYPE;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     private static final VoxelShape SHAPE = Block.column(14.0, 0.0, 14.0);
     private static final Map<Direction, VoxelShape> HALF_SHAPES = Shapes.rotateHorizontal(Block.boxZ(14.0, 0.0, 14.0, 0.0, 15.0));
 
     public DeepCrateBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(TYPE, ChestType.SINGLE));
+        this.registerDefaultState(
+            this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(TYPE, ChestType.SINGLE).setValue(WATERLOGGED, false)
+        );
     }
 
     @Override
@@ -147,7 +154,11 @@ public class DeepCrateBlock extends BaseEntityBlock {
             chestType = ChestType.RIGHT;
         }
 
-        return this.defaultBlockState().setValue(FACING, facing).setValue(TYPE, chestType);
+        FluidState fluidState = blockPlaceContext.getLevel().getFluidState(blockPlaceContext.getClickedPos());
+        return this.defaultBlockState()
+            .setValue(FACING, facing)
+            .setValue(TYPE, chestType)
+            .setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
     }
 
     /**
@@ -165,19 +176,41 @@ public class DeepCrateBlock extends BaseEntityBlock {
         BlockState blockState2,
         RandomSource randomSource
     ) {
+        if (blockState.getValue(WATERLOGGED)) {
+            scheduledTickAccess.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
+        }
+
         if (blockState2.is(this) && direction.getAxis().isHorizontal()) {
             ChestType chestType = blockState2.getValue(TYPE);
             if (blockState.getValue(TYPE) == ChestType.SINGLE
                 && chestType != ChestType.SINGLE
                 && blockState.getValue(FACING) == blockState2.getValue(FACING)
                 && connectedDirection(blockState2) == direction.getOpposite()) {
-                return blockState.setValue(TYPE, chestType.getOpposite());
+                ChestType own = chestType.getOpposite();
+                // The pair keeps its module on the half the game calls first. A crate that arrives
+                // holding one, on the half that becomes second, hands it over rather than losing it.
+                if (own == ChestType.LEFT && levelReader.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity mine) {
+                    mine.handModuleTo(levelReader.getBlockEntity(blockPos2));
+                }
+
+                return blockState.setValue(TYPE, own);
             }
         } else if (blockState.getValue(TYPE) != ChestType.SINGLE && connectedDirection(blockState) == direction) {
             return blockState.setValue(TYPE, ChestType.SINGLE);
         }
 
         return super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, blockPos2, blockState2, randomSource);
+    }
+
+    @Override
+    protected FluidState getFluidState(BlockState blockState) {
+        return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
+    }
+
+    /** A crate blocks a path, as a chest does; without this mobs walk straight through it. */
+    @Override
+    protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
+        return false;
     }
 
     @Override
@@ -199,7 +232,14 @@ public class DeepCrateBlock extends BaseEntityBlock {
 
     @Override
     protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
-        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(blockPos));
+        // Both halves, as a double chest does: a comparator on one half of a pair reads the pair.
+        if (level.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity deepCrateBlockEntity) {
+            // Bounded on purpose: a slot left above the capacity, right after a module is pulled out,
+            // makes the vanilla ratio climb past one and the signal past fifteen.
+            return Math.min(15, AbstractContainerMenu.getRedstoneSignalFromContainer(containerFor(cratesFor(deepCrateBlockEntity))));
+        }
+
+        return 0;
     }
 
     @Override
@@ -214,7 +254,7 @@ public class DeepCrateBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, TYPE);
+        builder.add(FACING, TYPE, WATERLOGGED);
     }
 
     /** The facing of a neighbouring crate of the same tier that is still on its own. */

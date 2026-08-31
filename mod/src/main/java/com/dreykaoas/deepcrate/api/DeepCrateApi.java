@@ -17,11 +17,24 @@ public final class DeepCrateApi {
     public static final int BASE_CAPACITY = 64;
 
     /**
-     * Ceiling on what a module may raise a slot to. Counts travel as variable-length integers, so
-     * the real constraint is legibility on a 16 by 16 cell, not the protocol.
+     * Ceiling on what a module may raise a slot to.
+     *
+     * Counts themselves travel as variable-length integers, but the menu tells the client its current
+     * capacity through a data slot, and that packet writes a short.
      */
-    public static final int MAX_CAPACITY = 1_000_000;
+    public static final int MAX_CAPACITY = Short.MAX_VALUE;
 
+    /**
+     * Whether automation may go past a vanilla stack.
+     *
+     * Lithium replaces the hopper wholesale and keeps its own copy of the target inventory. Against a
+     * container that answers more than 64 it takes items out of the hopper and never writes them in:
+     * measured, eight blocks of dirt destroyed per run. Telling automation 64 in that case costs the
+     * feature and keeps the items; the player's own hands are unaffected, they go through the menu.
+     */
+    public static final boolean AUTOMATION_LIMITED = net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("lithium");
+
+    private static final List<Runnable> TIER_LISTENERS = new ArrayList<>();
     private static final Map<Identifier, CrateTier> TIERS = new HashMap<>();
     private static final Map<Block, CrateTier> TIERS_BY_BLOCK = new HashMap<>();
     private static final List<CrateModule> MODULES = new ArrayList<>();
@@ -35,6 +48,12 @@ public final class DeepCrateApi {
         }
 
         TIERS_BY_BLOCK.put(crateTier.block(), crateTier);
+        // An addon's block joins the shared block entity type here rather than at build time; without
+        // it the game refuses to attach a block entity to that block and the crate breaks on placement.
+        for (Runnable listener : TIER_LISTENERS) {
+            listener.run();
+        }
+
         DeepCrate.LOGGER.info("[DeepCrate] tier {}: {} rows", crateTier.id(), crateTier.rows());
         return crateTier;
     }
@@ -57,6 +76,11 @@ public final class DeepCrateApi {
         MODULES.sort((a, b) -> Integer.compare(b.capacity(), a.capacity()));
         DeepCrate.LOGGER.info("[DeepCrate] module {}: {} per slot", crateModule.id(), crateModule.capacity());
         return crateModule;
+    }
+
+    /** Called after every tier registration, including an addon's. */
+    public static void onTierRegistered(Runnable runnable) {
+        TIER_LISTENERS.add(runnable);
     }
 
     public static @Nullable CrateTier tier(Identifier identifier) {
