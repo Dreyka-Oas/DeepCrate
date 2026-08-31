@@ -45,10 +45,19 @@ can be steered from outside, which is what would open the door to duplicated ite
 
 ## Hoppers
 
-Hoppers and pipes fill a crate to its full capacity, not to 64, and a hopper touching either half of
-a double crate reaches both. Both need a patch to the hopper of the base game, which the optimisation
-mods people run also patch, so this is the one part of the mod that can break when one of them
-updates. The patch bails out immediately for anything that is not a crate.
+Hoppers and pipes fill a crate to its full capacity rather than stopping at 64. That takes a patch to
+the hopper of the base game, and it is the one part of the mod that depends on what else is
+installed.
+
+With lithium, it is off. Lithium replaces the hopper wholesale and keeps its own copy of the target
+inventory; against a container that answers more than 64 it takes items out of the hopper and never
+writes them in. Measured, not assumed: eight blocks of dirt destroyed per run, with or without the
+patch. So when lithium is present a crate tells automation 64 a slot, which costs the feature and
+keeps the items. Hands are unaffected either way, they go through the screen.
+
+A hopper against a double crate reaches the half it touches, as it does with a barrel. Joining the
+two halves there is what vanilla does for chests, but lithium casts that result back to a block
+entity and crashes the server on the first tick.
 
 ## For other mods
 
