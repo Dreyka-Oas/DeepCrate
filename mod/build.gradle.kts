@@ -80,6 +80,22 @@ loom {
     }
 }
 
+// Server game tests: the screen is the one thing JUnit cannot reach, because a menu needs a real
+// player and a real level. createSourceSet gives src/gametest its own mod metadata, so the shipped
+// jar never declares an entry point it does not contain.
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "deepcrate-gametest"
+        enableGameTests = true
+        eula = true
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.named("compileGametestJava"))
+}
+
 tasks.jar {
     from("../LICENSE")
 }

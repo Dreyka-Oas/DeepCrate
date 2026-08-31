@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "deepcrate-gametest",
+  "version": "1.0.0",
+  "name": "DeepCrate game tests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "com.dreykaoas.deepcrate.gametest.CrateMenuGameTest",
+      "com.dreykaoas.deepcrate.gametest.CrateRecipeGameTest",
+      "com.dreykaoas.deepcrate.gametest.CrateHopperGameTest"
+    ]
+  },
+  "depends": {
+    "deepcrate": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}
