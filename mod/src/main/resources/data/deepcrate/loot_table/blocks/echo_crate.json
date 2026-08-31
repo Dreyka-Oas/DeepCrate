@@ -1,12 +1,22 @@
 {
   "type": "minecraft:block",
+  "random_sequence": "deepcrate:blocks/echo_crate",
   "pools": [
     {
       "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "deepcrate:echo_crate"
+          "name": "deepcrate:echo_crate",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "minecraft:custom_name"
+              ]
+            }
+          ]
         }
       ],
       "conditions": [

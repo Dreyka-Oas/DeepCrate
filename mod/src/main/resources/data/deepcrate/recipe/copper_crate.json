@@ -8,7 +8,7 @@
   ],
   "key": {
     "R": "minecraft:copper_ingot",
-    "C": "minecraft:chest"
+    "C": "minecraft:copper_chest"
   },
   "result": {
     "id": "deepcrate:copper_crate",
