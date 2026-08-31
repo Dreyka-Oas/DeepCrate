@@ -3,7 +3,7 @@
   "id": "deepcrate",
   "version": "1.0.0",
   "name": "DeepCrate",
-  "description": "A reinforced crate whose 27 slots each hold 128 items instead of 64.",
+  "description": "Six tiers of chest, capacity modules from 64 to 1024 per slot, paged screens, and an API for other mods.",
   "authors": [
     "Dreyka Oas"
   ],
@@ -33,5 +33,8 @@
     "vmp": "*",
     "immersive_optimization": "*",
     "spark": "*"
-  }
+  },
+  "mixins": [
+    "deepcrate.mixins.json"
+  ]
 }
