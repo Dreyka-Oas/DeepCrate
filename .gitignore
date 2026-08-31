@@ -1,0 +1,68 @@
+# ---- Gradle / Loom ----
+.gradle/
+build/
+# Loom run directory: maps, mods, packs, logs, never versioned
+run/
+# Kotlin DSL session: Gradle creates it next to build.gradle.kts on every configuration
+.kotlin/
+gradle-app.setting
+.gradletasknamecache
+# NB: gradle/wrapper/gradle-wrapper.jar is TRACKED on purpose (it is what runs ./gradlew)
+
+# ---- Compiler output outside build/ ----
+*.class
+bin/
+out/
+
+# ---- IDE ----
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# ---- Logs and JVM crash dumps ----
+# *.log already covers hs_err_pid*.log and replay_pid*.log; heap dumps, by contrast, weigh
+# several GB and carry no .log extension
+*.log
+*.hprof
+core.[0-9]*
+.attach_pid*
+# Server logs, regenerated on every launch (Gradle/Minecraft)
+/mod/logs/
+# Optimisation mods copied into the dev client, and the dev world next to them
+/mod/run/
+# Captured output from dev launches
+rc.txt
+rs.txt
+
+# ---- Secrets ----
+# The site deploys to Cloudflare: no token must ever be able to leave by accident
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---- Editor, merge and patch leftovers ----
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+
+# ---- Local tooling, never pushed ----
+.skills/
+.claude/
+.codex/
+opencode.json
+# Local Cloudflare Wrangler cache
+.wrangler/
+# Local git worktrees (multi-agent runs)
+/.worktrees/
+
+# ---- OS junk ----
+.DS_Store
+Thumbs.db
+

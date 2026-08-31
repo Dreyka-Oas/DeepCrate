@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "deepcrate",
+  "version": "1.0.0",
+  "name": "DeepCrate",
+  "description": "A reinforced crate whose 27 slots each hold 128 items instead of 64.",
+  "authors": [
+    "Dreyka Oas"
+  ],
+  "license": "All rights reserved. See LICENSE",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.dreykaoas.deepcrate.DeepCrateMod"
+    ],
+    "client": [
+      "com.dreykaoas.deepcrate.client.DeepCrateClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "fabric-api": "*",
+    "minecraft": "~1.21.11",
+    "java": ">=21"
+  },
+  "suggests": {
+    "krypton": "*",
+    "lithium": "*",
+    "ferritecore": "*",
+    "c2me": "*",
+    "scalablelux": "*",
+    "servercore": "*",
+    "vmp": "*",
+    "immersive_optimization": "*",
+    "spark": "*"
+  }
+}

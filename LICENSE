@@ -1,0 +1,70 @@
+DeepCrate
+Copyright (c) 2026 Dreyka Oas. All rights reserved.
+
+This is not an open-source licence. It grants a few specific permissions and
+reserves everything else. Where it is silent, the answer is no. Ask.
+
+
+1. PLAY IT
+
+Download DeepCrate and use it: on your own machine, on a server you run, with
+whoever you like, for as long as you like. Nothing in this licence restricts
+playing the mod, and nothing in it ever will.
+
+
+2. SHARE IT: UNMODIFIED AND FREE
+
+You may pass the mod on as you received it, provided all of the following hold:
+
+  a. you distribute it unmodified, with this licence file alongside it;
+  b. you credit Dreyka Oas as the author and link to
+     https://lethalbreed.pages.dev;
+  c. you charge nothing and earn nothing from it (see section 3).
+
+
+3. DO NOT SELL IT
+
+You may not sell the mod, nor profit from access to it. That covers selling it
+outright, bundling it into anything sold, and placing it behind a paywall,
+subscription, early access, mandatory donation, advertising, link shortener or
+any comparable scheme.
+
+Being paid for a service that happens to run the mod, a game server for
+instance, is fine. What is paid for must be the service, not the mod.
+
+
+4. ASK FIRST FOR ANYTHING ELSE
+
+Written permission from Dreyka Oas is required, in advance, before you:
+
+  - modify the mod, or publish a modified build or a fork;
+  - reuse its source code, in whole or in part, in another project;
+  - publish it as part of a modpack;
+  - use its name, branding or assets for anything beyond crediting it.
+
+Ask through the report channel linked from https://lethalbreed.pages.dev, or
+through this repository's issue tracker. Permission is granted case by case, in
+writing, and covers only what it names.
+
+
+5. PERMISSION CAN BE WITHDRAWN
+
+Any permission granted under section 2 or section 4 may be withdrawn by Dreyka
+Oas at any time. That applies in particular where the use misrepresents the
+mod, breaches the terms above, or ties the mod to content its author does not
+wish it tied to.
+
+On written notice, stop distributing within 30 days. Copies already installed
+by players are unaffected: nobody ever loses the right to keep playing.
+
+
+6. THIRD-PARTY COMPONENTS
+
+The distributed jar bundles no third-party library. Fabric Loader and Fabric API
+are required at runtime and are never bundled.
+
+7. NO WARRANTY
+
+The mod is provided "as is", without warranty of any kind, express or implied.
+Dreyka Oas is not liable for any claim, damage or other liability arising from
+the mod or from its use.
