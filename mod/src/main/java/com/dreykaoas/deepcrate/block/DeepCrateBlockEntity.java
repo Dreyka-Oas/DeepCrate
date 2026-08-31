@@ -9,6 +9,7 @@ import com.dreykaoas.deepcrate.inventory.CratePairContainer;
 import com.dreykaoas.deepcrate.inventory.CrateStorage;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.StoredSlot;
+import java.util.ArrayList;
 import java.util.List;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
@@ -30,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
@@ -37,6 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
 
 public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements LidBlockEntity, ExtendedScreenHandlerFactory<CrateOpenData> {
     private static final Component DEFAULT_NAME = Component.translatable("container.deepcrate.crate");
@@ -94,6 +97,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     public CrateStorage storage() {
         this.alignStorageWithTier();
+        this.alignCapacityWithHolder();
         return this.storage;
     }
 
@@ -132,15 +136,56 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         return this.moduleHolder().storage().capacity();
     }
 
+    /**
+     * The per-item limit, as seen from outside: hoppers and pipes read this one, the menu reads the
+     * argument-free version above.
+     */
     @Override
     public int getMaxStackSize(ItemStack itemStack) {
-        // Container's default caps at the item's own limit, which is the ceiling this crate lifts.
-        return this.getMaxStackSize();
+        return this.storage().automationCapacityFor(itemStack);
     }
 
     @Override
     protected Component getDefaultName() {
-        return DEFAULT_NAME;
+        CrateTier crateTier = DeepCrateApi.tierOf(this.getBlockState().getBlock());
+        if (crateTier == null) {
+            return DEFAULT_NAME;
+        }
+
+        Component name = Component.translatable(crateTier.block().getDescriptionId());
+        return this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.SINGLE
+            ? name
+            : Component.translatable("container.deepcrate.double", name);
+    }
+
+    /**
+     * A lock on either half locks the pair. Checking only the half that was clicked would let a player
+     * walk around the crate and open it from the other side.
+     */
+    @Override
+    public boolean canOpen(Player player) {
+        for (DeepCrateBlockEntity deepCrateBlockEntity : DeepCrateBlock.cratesFor(this)) {
+            if (!deepCrateBlockEntity.canOpenOwnLock(player)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean canOpenOwnLock(Player player) {
+        return super.canOpen(player);
+    }
+
+    /**
+     * Writes a slot at the crate's own limit, not at the one automation is told about. The inherited
+     * version runs the stack through getMaxStackSize(ItemStack), which is held back to 64 while
+     * lithium is installed and would cut a player's own stack in half.
+     */
+    @Override
+    public void setItem(int i, ItemStack itemStack) {
+        this.storage().set(i, itemStack);
+        this.setChanged();
     }
 
     @Override
@@ -194,16 +239,24 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         super.loadAdditional(valueInput);
         this.module = valueInput.read("Module", ItemStack.CODEC).orElse(ItemStack.EMPTY);
 
-        // The saved size wins over the tier: a tier that lost rows in an update must not leave the
-        // slots beyond its new end unreachable.
-        int size = Math.max(CrateTier.COLUMNS, valueInput.getIntOr("Size", CrateTier.COLUMNS));
+        // Read the slots first: the crate has to be at least large enough to hold every one of them,
+        // whatever Size says and whatever the tier says. A missing or shrunken Size must never be a
+        // reason to drop stored items on the floor of the save file.
+        List<StoredSlot> storedSlots = new ArrayList<>();
+        int highest = 0;
+        for (StoredSlot storedSlot : valueInput.listOrEmpty("Slots", StoredSlot.CODEC)) {
+            if (storedSlot.slot() >= 0) {
+                storedSlots.add(storedSlot);
+                highest = Math.max(highest, storedSlot.slot() + 1);
+            }
+        }
+
+        int size = Math.max(Math.max(CrateTier.COLUMNS, highest), valueInput.getIntOr("Size", CrateTier.COLUMNS));
         this.storage = new CrateStorage(size, DeepCrateApi.capacityOf(this.module));
         this.storageMatchesTier = false;
 
-        for (StoredSlot storedSlot : valueInput.listOrEmpty("Slots", StoredSlot.CODEC)) {
-            if (storedSlot.slot() >= 0 && storedSlot.slot() < size) {
-                this.storage.set(storedSlot.slot(), storedSlot.toStack());
-            }
+        for (StoredSlot storedSlot : storedSlots) {
+            this.storage.restore(storedSlot.slot(), storedSlot.toStack());
         }
     }
 
@@ -299,6 +352,32 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         CrateTier crateTier = DeepCrateApi.tierOf(this.getBlockState().getBlock());
         if (crateTier != null && crateTier.slotCount() > this.storage.size()) {
             this.storage.grow(crateTier.slotCount());
+        }
+    }
+
+    /**
+     * Moves this crate's module onto the crate that is becoming the pair's module holder. Called when
+     * two crates marry; the receiving side keeps its own module if it already has one, and this one
+     * stays put rather than being destroyed.
+     */
+    public void handModuleTo(@Nullable BlockEntity blockEntity) {
+        if (this.module.isEmpty() || !(blockEntity instanceof DeepCrateBlockEntity holder) || !holder.module().isEmpty()) {
+            return;
+        }
+
+        holder.setModule(this.module);
+        this.module = ItemStack.EMPTY;
+        this.setChanged();
+    }
+
+    /**
+     * A crate paired with another follows its partner's module. Without this the half that does not
+     * hold the module keeps the 64 it was loaded with, and every insertion into it is clamped.
+     */
+    private void alignCapacityWithHolder() {
+        DeepCrateBlockEntity holder = this.moduleHolder();
+        if (holder != this) {
+            this.storage.setCapacity(DeepCrateApi.capacityOf(holder.module()));
         }
     }
 

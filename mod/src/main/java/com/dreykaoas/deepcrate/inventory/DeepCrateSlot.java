@@ -43,12 +43,13 @@ public class DeepCrateSlot extends Slot {
     @Override
     public int getMaxStackSize(ItemStack itemStack) {
         // Slot's own version takes the smaller of the container limit and the item limit, which would
-        // pull every insertion back down to 64.
-        return this.getMaxStackSize();
+        // pull every insertion back down to 64. An item that does not stack at all keeps its one.
+        return itemStack.getMaxStackSize() > 1 ? this.getMaxStackSize() : itemStack.getMaxStackSize();
     }
 
     @Override
     public Optional<ItemStack> tryRemove(int i, int j, Player player) {
-        return super.tryRemove(Math.min(i, CrateStorage.VANILLA_LIMIT), Math.min(j, CrateStorage.VANILLA_LIMIT), player);
+        int hand = Math.min(CrateStorage.VANILLA_LIMIT, Math.max(1, this.getItem().getMaxStackSize()));
+        return super.tryRemove(Math.min(i, hand), Math.min(j, hand), player);
     }
 }

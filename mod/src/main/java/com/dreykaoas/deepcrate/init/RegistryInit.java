@@ -72,14 +72,24 @@ public final class RegistryInit {
      * otherwise defer them until the first read, long after the registries are frozen.
      */
     public static void register() {
+        // A tier registered later by an addon has to join the shared block entity type, or the game
+        // refuses to attach a block entity to its block.
+        DeepCrateApi.onTierRegistered(RegistryInit::adoptNewTiers);
+        adoptNewTiers();
         DeepCrate.LOGGER.info("[DeepCrate] {} tiers, {} modules", TIERS.size(), MODULE_ITEMS.size());
+    }
+
+    private static void adoptNewTiers() {
+        for (CrateTier crateTier : DeepCrateApi.tiers()) {
+            BLOCK_ENTITY.addSupportedBlock(crateTier.block());
+        }
     }
 
     private static CrateTier registerTier(TierSpec tierSpec) {
         Block block = Blocks.register(
             ResourceKey.create(Registries.BLOCK, id(tierSpec.name())),
             DeepCrateBlock::new,
-            BlockBehaviour.Properties.of().mapColor(tierSpec.mapColor()).strength(3.0F, 6.0F).sound(SoundType.WOOD).ignitedByLava()
+            BlockBehaviour.Properties.of().mapColor(tierSpec.mapColor()).strength(3.0F, 6.0F).sound(SoundType.WOOD)
         );
         Items.registerBlock(block);
         return DeepCrateApi.registerTier(new CrateTier(id(tierSpec.name()), tierSpec.rows(), block));

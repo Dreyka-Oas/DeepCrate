@@ -1,5 +1,6 @@
 package com.dreykaoas.deepcrate.inventory;
 
+import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.NonNullList;
@@ -34,6 +35,25 @@ public final class CrateStorage {
 
     public int capacity() {
         return this.capacity;
+    }
+
+    /**
+     * What one slot holds for a given item. A tool, a bucket or anything else the game refuses to
+     * stack stays at its own limit: a module lifts stacks, it does not turn a sword into a stack of
+     * swords.
+     */
+    public int capacityFor(ItemStack itemStack) {
+        if (!itemStack.isEmpty() && itemStack.getMaxStackSize() <= 1) {
+            return itemStack.getMaxStackSize();
+        }
+
+        return this.capacity;
+    }
+
+    /** What a hopper or a pipe may push into one slot, which is not always what a player may. */
+    public int automationCapacityFor(ItemStack itemStack) {
+        int limit = this.capacityFor(itemStack);
+        return DeepCrateApi.AUTOMATION_LIMITED ? Math.min(limit, VANILLA_LIMIT) : limit;
     }
 
     /**
@@ -84,10 +104,21 @@ public final class CrateStorage {
     }
 
     public void set(int i, ItemStack itemStack) {
-        if (itemStack.getCount() > this.capacity) {
-            itemStack.setCount(this.capacity);
+        int limit = this.capacityFor(itemStack);
+        if (itemStack.getCount() > limit) {
+            itemStack.setCount(limit);
         }
 
+        this.slots.set(i, itemStack);
+    }
+
+    /**
+     * Puts a stack back exactly as it was saved, capacity or no capacity.
+     *
+     * Loading must never clamp: a crate reloaded before its module is known would silently destroy
+     * everything above 64, and the half of a pair that does not hold the module never knows it.
+     */
+    public void restore(int i, ItemStack itemStack) {
         this.slots.set(i, itemStack);
     }
 
@@ -114,10 +145,12 @@ public final class CrateStorage {
             return itemStack;
         }
 
+        int limit = this.capacityFor(itemStack);
+
         for (int i = 0; i < this.slots.size() && !itemStack.isEmpty(); i++) {
             ItemStack itemStack2 = this.slots.get(i);
             if (!itemStack2.isEmpty() && ItemStack.isSameItemSameComponents(itemStack2, itemStack)) {
-                int j = Math.min(this.capacity - itemStack2.getCount(), itemStack.getCount());
+                int j = Math.min(limit - itemStack2.getCount(), itemStack.getCount());
                 if (j > 0) {
                     itemStack2.grow(j);
                     itemStack.shrink(j);
@@ -127,7 +160,7 @@ public final class CrateStorage {
 
         for (int i = 0; i < this.slots.size() && !itemStack.isEmpty(); i++) {
             if (this.slots.get(i).isEmpty()) {
-                this.slots.set(i, itemStack.split(Math.min(this.capacity, itemStack.getCount())));
+                this.slots.set(i, itemStack.split(Math.min(limit, itemStack.getCount())));
             }
         }
 
@@ -145,7 +178,8 @@ public final class CrateStorage {
             return ItemStack.EMPTY;
         }
 
-        return itemStack.split(Math.min(wanted, VANILLA_LIMIT));
+        // Never more than the game can put in a hand, and never more than the item itself stacks to.
+        return itemStack.split(Math.min(wanted, Math.min(VANILLA_LIMIT, itemStack.getMaxStackSize())));
     }
 
     /**
@@ -156,9 +190,10 @@ public final class CrateStorage {
         List<ItemStack> spilled = new ArrayList<>();
 
         for (ItemStack itemStack : this.slots) {
-            int excess = itemStack.getCount() - this.capacity;
+            int limit = this.capacityFor(itemStack);
+            int excess = itemStack.getCount() - limit;
             if (excess > 0) {
-                itemStack.setCount(this.capacity);
+                itemStack.setCount(limit);
                 spilled.addAll(split(itemStack, excess));
             }
         }
@@ -174,14 +209,16 @@ public final class CrateStorage {
             list.addAll(split(itemStack, itemStack.getCount()));
         }
 
+
         return list;
     }
 
     private static List<ItemStack> split(ItemStack itemStack, int count) {
         List<ItemStack> list = new ArrayList<>();
+        int piece = Math.min(VANILLA_LIMIT, Math.max(1, itemStack.getMaxStackSize()));
         int left = count;
         while (left > 0) {
-            int take = Math.min(left, VANILLA_LIMIT);
+            int take = Math.min(left, piece);
             list.add(itemStack.copyWithCount(take));
             left -= take;
         }

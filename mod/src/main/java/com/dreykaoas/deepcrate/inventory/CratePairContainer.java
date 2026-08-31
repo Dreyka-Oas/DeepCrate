@@ -12,12 +12,15 @@ import net.minecraft.world.item.ItemStack;
  * and that default folds back to the item's own limit of 64.
  */
 public class CratePairContainer extends CompoundContainer {
+    private final Container holder;
+
     public CratePairContainer(Container container, Container container2) {
         super(container, container2);
+        this.holder = container;
     }
 
     @Override
     public int getMaxStackSize(ItemStack itemStack) {
-        return this.getMaxStackSize();
+        return this.holder.getMaxStackSize(itemStack);
     }
 }

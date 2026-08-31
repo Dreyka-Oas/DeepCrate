@@ -13,6 +13,8 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -55,17 +57,17 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         this.crates = crates;
         this.layout = crateLayout;
         this.capacity = container.getMaxStackSize();
-        this.moduleContainer = new SimpleContainer(1) {
-            @Override
-            public void setChanged() {
-                super.setChanged();
-                DeepCrateMenu.this.onModuleChanged();
+        // Server side the slot reads the crate directly; client side there is no crate, so a plain
+        // one-slot container stands in and only drives the predicted capacity.
+        this.moduleContainer = crates.isEmpty()
+            ? new SimpleContainer(1) {
+                @Override
+                public void setChanged() {
+                    super.setChanged();
+                    DeepCrateMenu.this.onModuleChanged();
+                }
             }
-        };
-
-        if (!crates.isEmpty()) {
-            this.moduleContainer.setItem(0, crates.get(0).module());
-        }
+            : new ModuleContainer(crates, this::onModuleChanged);
 
         container.startOpen(inventory.player);
         this.addSlot(new ModuleSlot(this.moduleContainer, 0, MODULE_X, MODULE_Y));
@@ -85,6 +87,24 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         }
 
         this.addStandardInventorySlots(inventory, GRID_LEFT, GRID_TOP + crateLayout.rowsPerPage() * 18 + 13);
+
+        // Another player inserting a module has to reach this screen too, and the opening payload is
+        // only sent once. A data slot is the vanilla way of keeping one number in step.
+        this.addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return DeepCrateMenu.this.capacity;
+            }
+
+            @Override
+            public void set(int value) {
+                DeepCrateMenu.this.capacity = value;
+                if (DeepCrateMenu.this.crate instanceof CrateContainer crateContainer) {
+                    crateContainer.setCapacity(value);
+                }
+            }
+        });
+
         this.setPage(0);
     }
 
@@ -116,6 +136,22 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     public boolean isSlotOnCurrentPage(int i) {
         Slot slot = this.slots.get(i);
         return !(slot instanceof DeepCrateSlot deepCrateSlot) || deepCrateSlot.page() == this.page;
+    }
+
+    /**
+     * A number key or F would move a whole crate slot into one hotbar slot, where a count above the
+     * item's own limit cannot legally live. Refused rather than silently truncated.
+     */
+    @Override
+    public void clicked(int i, int j, ClickType clickType, Player player) {
+        if (clickType == ClickType.SWAP && i >= 1 && i < 1 + this.crate.getContainerSize()) {
+            ItemStack itemStack = this.slots.get(i).getItem();
+            if (itemStack.getCount() > itemStack.getMaxStackSize()) {
+                return;
+            }
+        }
+
+        super.clicked(i, j, clickType, player);
     }
 
     @Override
@@ -194,8 +230,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     }
 
     private void onModuleChanged() {
-        ItemStack itemStack = this.moduleContainer.getItem(0);
-        this.capacity = DeepCrateApi.capacityOf(itemStack);
+        this.capacity = DeepCrateApi.capacityOf(this.moduleContainer.getItem(0));
 
         if (this.crates.isEmpty()) {
             if (this.crate instanceof CrateContainer crateContainer) {
@@ -209,7 +244,5 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         for (DeepCrateBlockEntity deepCrateBlockEntity : this.crates) {
             deepCrateBlockEntity.storage().setCapacity(this.capacity);
         }
-
-        this.crates.get(0).setModule(itemStack);
     }
 }
