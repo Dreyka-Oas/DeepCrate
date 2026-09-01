@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "PPP",
+    "PCP",
+    "PPP"
+  ],
+  "key": {
+    "P": "#minecraft:planks",
+    "C": "minecraft:chest"
+  },
+  "result": {
+    "id": "deepcrate:module_row",
+    "count": 1
+  }
+}

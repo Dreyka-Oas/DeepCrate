@@ -42,7 +42,7 @@ public class CrateMenuGameTest {
 
         assertEquals(gameTestHelper, 512, deepCrateMenu.capacity(), "capacity with the 512 module");
         assertEquals(gameTestHelper, 512, deepCrateMenu.getContainer().getMaxStackSize(), "container limit");
-        assertEquals(gameTestHelper, 512, deepCrateMenu.getSlot(1).getMaxStackSize(), "crate slot limit");
+        assertEquals(gameTestHelper, 512, deepCrateMenu.getSlot(2).getMaxStackSize(), "crate slot limit");
         gameTestHelper.succeed();
     }
 
@@ -55,7 +55,7 @@ public class CrateMenuGameTest {
         }
 
         // The crate grid starts where a chest's does, so nothing was pushed down to make room.
-        assertEquals(gameTestHelper, 18, deepCrateMenu.getSlot(1).y, "the first crate row");
+        assertEquals(gameTestHelper, 18, deepCrateMenu.getSlot(2).y, "the first crate row");
         gameTestHelper.succeed();
     }
 
@@ -75,13 +75,13 @@ public class CrateMenuGameTest {
         ServerPlayer serverPlayer = gameTestHelper.makeMockServerPlayerInLevel();
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState(), serverPlayer);
 
-        int firstPlayerSlot = 1 + deepCrateMenu.getContainer().getContainerSize();
+        int firstPlayerSlot = DeepCrateMenu.CRATE_SLOT_START + deepCrateMenu.getContainer().getContainerSize();
         deepCrateMenu.getSlot(firstPlayerSlot).set(new ItemStack(Items.DIRT, 64));
 
         deepCrateMenu.quickMoveStack(serverPlayer, firstPlayerSlot);
 
         assertEquals(gameTestHelper, 64, totalOf(deepCrateMenu, Items.DIRT), "dirt after shift-click in");
-        assertEquals(gameTestHelper, 64, deepCrateMenu.getSlot(1).getItem().getCount(), "the crate slot");
+        assertEquals(gameTestHelper, 64, deepCrateMenu.getSlot(2).getItem().getCount(), "the crate slot");
         gameTestHelper.succeed();
     }
 
@@ -92,9 +92,9 @@ public class CrateMenuGameTest {
 
         deepCrateMenu.getSlot(0).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(2)));
         deepCrateMenu.getSlot(0).setChanged();
-        deepCrateMenu.getSlot(1).set(new ItemStack(Items.DIRT, 200));
+        deepCrateMenu.getSlot(2).set(new ItemStack(Items.DIRT, 200));
 
-        deepCrateMenu.quickMoveStack(serverPlayer, 1);
+        deepCrateMenu.quickMoveStack(serverPlayer, 2);
 
         assertEquals(gameTestHelper, 200, totalOf(deepCrateMenu, Items.DIRT), "dirt after one shift-click out");
         gameTestHelper.succeed();
@@ -107,12 +107,12 @@ public class CrateMenuGameTest {
 
         deepCrateMenu.getSlot(0).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(2)));
         deepCrateMenu.getSlot(0).setChanged();
-        deepCrateMenu.getSlot(1).set(new ItemStack(Items.DIRT, 512));
+        deepCrateMenu.getSlot(2).set(new ItemStack(Items.DIRT, 512));
 
-        deepCrateMenu.clicked(1, 0, ClickType.PICKUP, serverPlayer);
+        deepCrateMenu.clicked(2, 0, ClickType.PICKUP, serverPlayer);
 
         assertEquals(gameTestHelper, 64, deepCrateMenu.getCarried().getCount(), "what the hand holds");
-        assertEquals(gameTestHelper, 448, deepCrateMenu.getSlot(1).getItem().getCount(), "what stays in the slot");
+        assertEquals(gameTestHelper, 448, deepCrateMenu.getSlot(2).getItem().getCount(), "what stays in the slot");
         gameTestHelper.succeed();
     }
 
@@ -123,13 +123,13 @@ public class CrateMenuGameTest {
 
         deepCrateMenu.getSlot(0).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(2)));
         deepCrateMenu.getSlot(0).setChanged();
-        deepCrateMenu.getSlot(1).set(new ItemStack(Items.DIRT, 500));
+        deepCrateMenu.getSlot(2).set(new ItemStack(Items.DIRT, 500));
 
         deepCrateMenu.getSlot(0).set(ItemStack.EMPTY);
         deepCrateMenu.getSlot(0).setChanged();
         deepCrateMenu.removed(serverPlayer);
 
-        assertEquals(gameTestHelper, 64, deepCrateMenu.getSlot(1).getItem().getCount(), "what the slot keeps");
+        assertEquals(gameTestHelper, 64, deepCrateMenu.getSlot(2).getItem().getCount(), "what the slot keeps");
         assertEquals(gameTestHelper, 436, droppedCount(gameTestHelper, Items.DIRT), "what fell on the ground");
         gameTestHelper.succeed();
     }
@@ -137,21 +137,21 @@ public class CrateMenuGameTest {
     @GameTest
     public void changingPageTouchesNothingButVisibility(GameTestHelper gameTestHelper) {
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(5).block().defaultBlockState());
-        deepCrateMenu.getSlot(1).set(new ItemStack(Items.DIRT, 40));
+        deepCrateMenu.getSlot(2).set(new ItemStack(Items.DIRT, 40));
 
         if (deepCrateMenu.layout().pageCount() < 2) {
             gameTestHelper.fail("an echo crate should need more than one page");
         }
 
         deepCrateMenu.setPage(1);
-        boolean firstHidden = !deepCrateMenu.getSlot(1).isActive();
+        boolean firstHidden = !deepCrateMenu.getSlot(2).isActive();
         deepCrateMenu.setPage(0);
 
         if (!firstHidden) {
             gameTestHelper.fail("slot 1 stayed visible on page two");
         }
 
-        assertEquals(gameTestHelper, 40, deepCrateMenu.getSlot(1).getItem().getCount(), "content after paging");
+        assertEquals(gameTestHelper, 40, deepCrateMenu.getSlot(2).getItem().getCount(), "content after paging");
         assertEquals(gameTestHelper, 72, deepCrateMenu.getContainer().getContainerSize(), "echo crate size");
         gameTestHelper.succeed();
     }
@@ -170,7 +170,7 @@ public class CrateMenuGameTest {
         deepCrateMenu.getSlot(0).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(0)));
         deepCrateMenu.getSlot(0).setChanged();
 
-        assertEquals(gameTestHelper, 128, deepCrateMenu.getSlot(1).getMaxStackSize(), "first half limit");
+        assertEquals(gameTestHelper, 128, deepCrateMenu.getSlot(2).getMaxStackSize(), "first half limit");
         assertEquals(gameTestHelper, 128, deepCrateMenu.getSlot(28).getMaxStackSize(), "far half limit");
         gameTestHelper.succeed();
     }
@@ -216,8 +216,8 @@ public class CrateMenuGameTest {
         deepCrateMenu.getSlot(0).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(2)));
         deepCrateMenu.getSlot(0).setChanged();
 
-        assertEquals(gameTestHelper, 1, deepCrateMenu.getSlot(1).getMaxStackSize(new ItemStack(Items.DIAMOND_SWORD)), "sword limit");
-        assertEquals(gameTestHelper, 512, deepCrateMenu.getSlot(1).getMaxStackSize(new ItemStack(Items.DIRT)), "dirt limit");
+        assertEquals(gameTestHelper, 1, deepCrateMenu.getSlot(2).getMaxStackSize(new ItemStack(Items.DIAMOND_SWORD)), "sword limit");
+        assertEquals(gameTestHelper, 512, deepCrateMenu.getSlot(2).getMaxStackSize(new ItemStack(Items.DIRT)), "dirt limit");
 
         DeepCrateBlockEntity deepCrateBlockEntity = gameTestHelper.getBlockEntity(CRATE, DeepCrateBlockEntity.class);
         ItemStack leftover = deepCrateBlockEntity.storage().insert(new ItemStack(Items.DIAMOND_SWORD, 4));
@@ -255,11 +255,11 @@ public class CrateMenuGameTest {
 
         deepCrateMenu.getSlot(0).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(2)));
         deepCrateMenu.getSlot(0).setChanged();
-        deepCrateMenu.getSlot(1).set(new ItemStack(Items.DIRT, 500));
+        deepCrateMenu.getSlot(2).set(new ItemStack(Items.DIRT, 500));
 
-        deepCrateMenu.clicked(1, 0, ClickType.SWAP, serverPlayer);
+        deepCrateMenu.clicked(2, 0, ClickType.SWAP, serverPlayer);
 
-        assertEquals(gameTestHelper, 500, deepCrateMenu.getSlot(1).getItem().getCount(), "what stays in the crate");
+        assertEquals(gameTestHelper, 500, deepCrateMenu.getSlot(2).getItem().getCount(), "what stays in the crate");
         assertEquals(gameTestHelper, 0, serverPlayer.getInventory().getItem(0).getCount(), "what reached the hotbar");
         gameTestHelper.succeed();
     }
@@ -269,7 +269,7 @@ public class CrateMenuGameTest {
         ServerPlayer serverPlayer = gameTestHelper.makeMockServerPlayerInLevel();
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState(), serverPlayer);
 
-        int firstPlayerSlot = 1 + deepCrateMenu.getContainer().getContainerSize();
+        int firstPlayerSlot = DeepCrateMenu.CRATE_SLOT_START + deepCrateMenu.getContainer().getContainerSize();
         deepCrateMenu.getSlot(firstPlayerSlot).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(0)));
         deepCrateMenu.quickMoveStack(serverPlayer, firstPlayerSlot);
         assertEquals(gameTestHelper, 1, deepCrateMenu.getSlot(0).getItem().getCount(), "the first module went to its slot");
@@ -277,7 +277,7 @@ public class CrateMenuGameTest {
         deepCrateMenu.getSlot(firstPlayerSlot).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(1)));
         deepCrateMenu.quickMoveStack(serverPlayer, firstPlayerSlot);
 
-        assertEquals(gameTestHelper, 1, deepCrateMenu.getSlot(1).getItem().getCount(), "the second module went into storage");
+        assertEquals(gameTestHelper, 1, deepCrateMenu.getSlot(2).getItem().getCount(), "the second module went into storage");
         gameTestHelper.succeed();
     }
 
@@ -288,12 +288,12 @@ public class CrateMenuGameTest {
 
         deepCrateMenu.getSlot(0).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(2)));
         deepCrateMenu.getSlot(0).setChanged();
-        deepCrateMenu.getSlot(1).set(new ItemStack(Items.DIRT, 400));
+        deepCrateMenu.getSlot(2).set(new ItemStack(Items.DIRT, 400));
         deepCrateMenu.setCarried(new ItemStack(Items.DIRT, 64));
 
-        deepCrateMenu.clicked(1, 0, ClickType.PICKUP, serverPlayer);
+        deepCrateMenu.clicked(2, 0, ClickType.PICKUP, serverPlayer);
 
-        assertEquals(gameTestHelper, 464, deepCrateMenu.getSlot(1).getItem().getCount(), "the slot after dropping a stack on it");
+        assertEquals(gameTestHelper, 464, deepCrateMenu.getSlot(2).getItem().getCount(), "the slot after dropping a stack on it");
         assertEquals(gameTestHelper, 0, deepCrateMenu.getCarried().getCount(), "what stays in hand");
         gameTestHelper.succeed();
     }
@@ -323,7 +323,7 @@ public class CrateMenuGameTest {
         return total;
     }
 
-    private static int droppedCount(GameTestHelper gameTestHelper, net.minecraft.world.item.Item item) {
+    static int droppedCount(GameTestHelper gameTestHelper, net.minecraft.world.item.Item item) {
         AABB aABB = gameTestHelper.getBounds().inflate(4.0);
         int total = 0;
         for (ItemEntity itemEntity : gameTestHelper.getLevel().getEntitiesOfClass(ItemEntity.class, aABB)) {

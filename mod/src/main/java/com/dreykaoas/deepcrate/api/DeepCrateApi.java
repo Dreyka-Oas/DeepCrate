@@ -38,6 +38,7 @@ public final class DeepCrateApi {
     private static final Map<Identifier, CrateTier> TIERS = new HashMap<>();
     private static final Map<Block, CrateTier> TIERS_BY_BLOCK = new HashMap<>();
     private static final List<CrateModule> MODULES = new ArrayList<>();
+    private static final List<RowModule> ROW_MODULES = new ArrayList<>();
 
     private DeepCrateApi() {}
 
@@ -76,6 +77,38 @@ public final class DeepCrateApi {
         MODULES.sort((a, b) -> Integer.compare(b.capacity(), a.capacity()));
         DeepCrate.LOGGER.info("[DeepCrate] module {}: {} per slot", crateModule.id(), crateModule.capacity());
         return crateModule;
+    }
+
+    public static RowModule registerRowModule(RowModule rowModule) {
+        for (RowModule existing : ROW_MODULES) {
+            if (existing.id().equals(rowModule.id())) {
+                throw new IllegalStateException("Row module " + rowModule.id() + " registered twice");
+            }
+        }
+
+        ROW_MODULES.add(rowModule);
+        DeepCrate.LOGGER.info("[DeepCrate] row module {}: {} rows each", rowModule.id(), rowModule.rows());
+        return rowModule;
+    }
+
+    public static List<RowModule> rowModules() {
+        return Collections.unmodifiableList(ROW_MODULES);
+    }
+
+    public static @Nullable RowModule rowModuleFor(ItemStack itemStack) {
+        for (RowModule rowModule : ROW_MODULES) {
+            if (rowModule.matches(itemStack)) {
+                return rowModule;
+            }
+        }
+
+        return null;
+    }
+
+    /** How many rows a stack sitting in the row slot adds, which is why the stack counts. */
+    public static int rowsOf(ItemStack rowModuleStack) {
+        RowModule rowModule = rowModuleFor(rowModuleStack);
+        return rowModule == null ? 0 : rowModule.rows() * rowModuleStack.getCount();
     }
 
     /** Called after every tier registration, including an addon's. */

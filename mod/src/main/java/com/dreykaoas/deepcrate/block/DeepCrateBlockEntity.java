@@ -47,7 +47,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     private CrateStorage storage = new CrateStorage(CrateTier.COLUMNS, DeepCrateApi.BASE_CAPACITY);
     private ItemStack module = ItemStack.EMPTY;
-    private boolean storageMatchesTier;
+    private ItemStack rowModules = ItemStack.EMPTY;
 
     private final ChestLidController lidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
@@ -111,6 +111,42 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         this.setChanged();
     }
 
+    public ItemStack rowModules() {
+        return this.rowModules;
+    }
+
+    /**
+     * Row modules live with the capacity module, on the holder of the pair, and both halves grow by
+     * the same number of rows: a double crate is two containers shown as one, so one module adds one
+     * row to each of them.
+     */
+    public void setRowModules(ItemStack itemStack) {
+        this.rowModules = itemStack;
+        for (DeepCrateBlockEntity deepCrateBlockEntity : DeepCrateBlock.cratesFor(this)) {
+            deepCrateBlockEntity.storage();
+            deepCrateBlockEntity.setChanged();
+        }
+    }
+
+    /** Rows this crate has beyond its tier's own, read from wherever the pair keeps its modules. */
+    public int extraRows() {
+        return DeepCrateApi.rowsOf(this.moduleHolder().rowModules);
+    }
+
+    /**
+     * Cuts the crate back to the size its modules now call for and hands back what was above it.
+     * Called when the screen closes, the same rule the capacity module follows: pulling modules out
+     * spills rather than silently swallowing.
+     */
+    public List<ItemStack> trimToRows() {
+        CrateTier crateTier = DeepCrateApi.tierOf(this.getBlockState().getBlock());
+        if (crateTier == null) {
+            return List.of();
+        }
+
+        return this.storage().trimTo(crateTier.slotCount() + this.extraRows() * CrateTier.COLUMNS);
+    }
+
     /**
      * Where the module of a pair lives.
      *
@@ -128,15 +164,19 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
             return this;
         }
 
-        if (!this.module.isEmpty()) {
-            return other.module.isEmpty() || this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.RIGHT ? this : other;
+        if (this.hasAnyModule()) {
+            return !other.hasAnyModule() || this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.RIGHT ? this : other;
         }
 
-        if (!other.module.isEmpty()) {
+        if (other.hasAnyModule()) {
             return other;
         }
 
         return this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.RIGHT ? this : other;
+    }
+
+    private boolean hasAnyModule() {
+        return !this.module.isEmpty() || !this.rowModules.isEmpty();
     }
 
     @Override
@@ -245,12 +285,17 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         if (!this.module.isEmpty()) {
             valueOutput.store("Module", ItemStack.CODEC, this.module);
         }
+
+        if (!this.rowModules.isEmpty()) {
+            valueOutput.store("RowModules", ItemStack.CODEC, this.rowModules);
+        }
     }
 
     @Override
     protected void loadAdditional(ValueInput valueInput) {
         super.loadAdditional(valueInput);
         this.module = valueInput.read("Module", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        this.rowModules = valueInput.read("RowModules", ItemStack.CODEC).orElse(ItemStack.EMPTY);
 
         // Read the slots first: the crate has to be at least large enough to hold every one of them,
         // whatever Size says and whatever the tier says. A missing or shrunken Size must never be a
@@ -266,7 +311,6 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
         int size = Math.max(Math.max(CrateTier.COLUMNS, highest), valueInput.getIntOr("Size", CrateTier.COLUMNS));
         this.storage = new CrateStorage(size, DeepCrateApi.capacityOf(this.module));
-        this.storageMatchesTier = false;
 
         for (StoredSlot storedSlot : storedSlots) {
             this.storage.restore(storedSlot.slot(), storedSlot.toStack());
@@ -286,6 +330,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         super.removeComponentsFromTag(valueOutput);
         valueOutput.discard("Slots");
         valueOutput.discard("Module");
+        valueOutput.discard("RowModules");
         valueOutput.discard("Size");
     }
 
@@ -300,6 +345,11 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         if (!this.module.isEmpty()) {
             list.add(this.module);
             this.module = ItemStack.EMPTY;
+        }
+
+        if (!this.rowModules.isEmpty()) {
+            list.add(this.rowModules);
+            this.rowModules = ItemStack.EMPTY;
         }
 
         // One entity per stack of 64: the vanilla helper cuts each stack into ten-to-thirty pieces, and
@@ -357,18 +407,19 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     }
 
     /**
-     * Grows a freshly loaded crate to the size its tier calls for. Deferred until the block state is
-     * known, because loadAdditional runs before the block entity is bound to a level.
+     * Grows a crate to the size its tier and its row modules call for. Not done once and cached: the
+     * row count changes while the game runs, and at load time the block state is not known yet
+     * because loadAdditional runs before the block entity is bound to a level.
      */
     private void alignStorageWithTier() {
-        if (this.storageMatchesTier) {
+        CrateTier crateTier = DeepCrateApi.tierOf(this.getBlockState().getBlock());
+        if (crateTier == null) {
             return;
         }
 
-        this.storageMatchesTier = true;
-        CrateTier crateTier = DeepCrateApi.tierOf(this.getBlockState().getBlock());
-        if (crateTier != null && crateTier.slotCount() > this.storage.size()) {
-            this.storage.grow(crateTier.slotCount());
+        int target = crateTier.slotCount() + DeepCrateApi.rowsOf(this.moduleHolder().rowModules) * CrateTier.COLUMNS;
+        if (target > this.storage.size()) {
+            this.storage.grow(target);
         }
     }
 

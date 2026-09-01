@@ -11,5 +11,6 @@
   "block.deepcrate.echo_crate": "Caisse d'écho",
   "item.deepcrate.module_128": "Module de contenance 128",
   "item.deepcrate.module_256": "Module de contenance 256",
-  "item.deepcrate.module_512": "Module de contenance 512"
+  "item.deepcrate.module_512": "Module de contenance 512",
+  "item.deepcrate.module_row": "Module de ligne"
 }

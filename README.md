@@ -44,6 +44,20 @@ side and its count on the other. What a hand, a hopper stack or a dropped item c
 64, so taking from a crate hands out one vanilla stack at a time and breaking one drops its content
 cut into stacks of 64.
 
+## Rows
+
+Under the capacity module sits a second slot, and it takes a stack of up to sixteen row modules. Each
+one adds a row of nine, so a copper crate can end up with as many slots as an echo one, and an echo
+crate with twenty-four rows. A row module is a chest surrounded by planks.
+
+Adding or taking one back reopens the screen, because a menu's slot list is fixed once it is built.
+That happens at the start of the next tick rather than inside the click, so nothing carried in hand
+ends up on the ground. Taking modules back follows the same rule as the capacity module: whatever sat
+in the rows that are gone drops at the crate's feet.
+
+On a double crate both halves grow by the same number of rows, one module giving one row on each
+side, since the two are shown as a single screen.
+
 ## Pages
 
 Past six rows the screen splits, and the pages share the rows evenly: eight rows give two pages of

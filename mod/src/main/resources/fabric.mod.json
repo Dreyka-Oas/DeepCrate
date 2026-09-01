@@ -3,7 +3,7 @@
   "id": "deepcrate",
   "version": "1.0.0",
   "name": "DeepCrate",
-  "description": "Six tiers of chest, capacity modules from 64 to 512 per slot, paged screens, and an API for other mods.",
+  "description": "Six tiers of chest, capacity and row modules, paged screens, and an API for other mods.",
   "authors": [
     "Dreyka Oas"
   ],

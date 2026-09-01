@@ -4,6 +4,7 @@ import com.dreykaoas.deepcrate.DeepCrate;
 import com.dreykaoas.deepcrate.api.CrateModule;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import com.dreykaoas.deepcrate.api.RowModule;
 import com.dreykaoas.deepcrate.block.DeepCrateBlock;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.dreykaoas.deepcrate.inventory.CrateOpenData;
@@ -26,7 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
-/** Everything the mod puts into a registry: six crates, four modules, one block entity, one menu. */
+/** Everything the mod puts into a registry: six crates, three capacity modules, one row module, one block entity, one menu. */
 public final class RegistryInit {
     /**
      * The six tiers, ordered by how dangerous the material is to fetch rather than by the usual
@@ -47,8 +48,13 @@ public final class RegistryInit {
         new ModuleSpec("module_512", 512)
     );
 
+    /** One row of nine slots each, sixteen to a crate. */
+    private static final String ROW_MODULE_NAME = "module_row";
+
     public static final List<CrateTier> TIERS = TIER_SPECS.stream().map(RegistryInit::registerTier).toList();
     public static final List<Item> MODULE_ITEMS = MODULE_SPECS.stream().map(RegistryInit::registerModule).toList();
+
+    public static final Item ROW_MODULE_ITEM = registerRowModule();
 
     public static final BlockEntityType<DeepCrateBlockEntity> BLOCK_ENTITY = Registry.register(
         BuiltInRegistries.BLOCK_ENTITY_TYPE,
@@ -100,6 +106,15 @@ public final class RegistryInit {
         // The module points at a tag of the same name, holding just this item, so another mod can add
         // its own item to it without writing a line of Java.
         DeepCrateApi.registerModule(new CrateModule(identifier, moduleSpec.capacity(), TagKey.create(Registries.ITEM, identifier)));
+        return item;
+    }
+
+    private static Item registerRowModule() {
+        Identifier identifier = id(ROW_MODULE_NAME);
+        Item item = Items.registerItem(
+            ResourceKey.create(Registries.ITEM, identifier), Item::new, new Item.Properties().stacksTo(RowModule.STACK_LIMIT)
+        );
+        DeepCrateApi.registerRowModule(new RowModule(identifier, 1, TagKey.create(Registries.ITEM, identifier)));
         return item;
     }
 

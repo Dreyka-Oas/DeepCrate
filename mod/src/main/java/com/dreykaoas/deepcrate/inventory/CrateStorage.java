@@ -99,6 +99,34 @@ public final class CrateStorage {
         this.slots = grown;
     }
 
+    /**
+     * Cuts the crate back to {@code slotCount} and hands back everything that was past the new end,
+     * in stacks a hand or an item entity can hold. A crate already at or below that size is left
+     * alone.
+     */
+    public List<ItemStack> trimTo(int slotCount) {
+        if (slotCount < 1) {
+            throw new IllegalArgumentException("A crate needs at least one slot, got " + slotCount);
+        }
+
+        if (slotCount >= this.slots.size()) {
+            return List.of();
+        }
+
+        List<ItemStack> removed = new ArrayList<>();
+        NonNullList<ItemStack> kept = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+        for (int i = 0; i < this.slots.size(); i++) {
+            if (i < slotCount) {
+                kept.set(i, this.slots.get(i));
+            } else {
+                removed.addAll(split(this.slots.get(i), this.slots.get(i).getCount()));
+            }
+        }
+
+        this.slots = kept;
+        return removed;
+    }
+
     public ItemStack get(int i) {
         return this.slots.get(i);
     }

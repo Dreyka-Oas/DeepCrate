@@ -38,10 +38,11 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** The tab the module slot sits on, left of the panel: its own small panel with the same border. */
     private static final Identifier MODULE_TAB = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/module_tab.png");
     private static final int MODULE_TAB_WIDTH = 28;
-    private static final int MODULE_TAB_HEIGHT = 28;
+    /** Two cells: the capacity module, then the row modules under it. */
+    private static final int MODULE_TAB_HEIGHT = 46;
     /** The tab is drawn this far up and left of the slot, so its frame lands exactly around it. */
     private static final int MODULE_TAB_MARGIN = 6;
-    private static final int MODULE_TAB_TEXTURE = 32;
+    private static final int MODULE_TAB_TEXTURE = 64;
     /** Past four digits a count runs out of its cell, so it is shortened and the tooltip carries the truth. */
     private static final int ABBREVIATE_ABOVE = 999;
 
