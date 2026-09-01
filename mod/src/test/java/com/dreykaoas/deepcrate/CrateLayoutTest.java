@@ -10,14 +10,14 @@ class CrateLayoutTest {
     @Test
     void aSmallCrateFitsOnOnePage() {
         assertEquals(new CrateLayout(3, 1), CrateLayout.balanced(3));
-        assertEquals(new CrateLayout(6, 1), CrateLayout.balanced(6));
+        assertEquals(new CrateLayout(4, 1), CrateLayout.balanced(4));
     }
 
     @Test
     void pagesShareTheRowsRatherThanFillingTheFirst() {
-        // Eight rows give two pages of four, not one of six and one of two.
+        // Six rows give two pages of three, not one of four and one of two.
+        assertEquals(new CrateLayout(3, 2), CrateLayout.balanced(6));
         assertEquals(new CrateLayout(4, 2), CrateLayout.balanced(8));
-        assertEquals(new CrateLayout(4, 2), CrateLayout.balanced(7));
     }
 
     @Test

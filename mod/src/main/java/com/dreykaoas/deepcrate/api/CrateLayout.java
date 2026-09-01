@@ -7,7 +7,7 @@ package com.dreykaoas.deepcrate.api;
  * pages of four, not one of six and one of two.
  */
 public record CrateLayout(int rowsPerPage, int pageCount) {
-    public static final int MAX_ROWS_PER_PAGE = 6;
+    public static final int MAX_ROWS_PER_PAGE = 4;
 
     public static CrateLayout balanced(int rows) {
         int pageCount = Math.max(1, (rows + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE);

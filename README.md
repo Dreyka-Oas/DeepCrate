@@ -60,8 +60,8 @@ side, since the two are shown as a single screen.
 
 ## Pages
 
-Past six rows the screen splits, and the pages share the rows evenly: eight rows give two pages of
-four, not one full page and one nearly empty. The page numbers stack down the right edge; there is
+A page holds four rows at most. Past that the screen splits, and the pages share the rows evenly:
+six rows give two pages of three, not one full page and one nearly empty. The page numbers stack down the right edge; there is
 no scrollbar. Shift-clicking reaches every slot, including the pages that are not open.
 
 Paging is a client-side view. The page number never reaches the server, so no server-side slot index
