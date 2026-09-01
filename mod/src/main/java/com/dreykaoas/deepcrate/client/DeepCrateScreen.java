@@ -34,9 +34,10 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private static final int PLAYER_PANEL_V = 126;
     private static final int PLAYER_PANEL_HEIGHT = 96;
     private static final int PAGE_BUTTON_SIZE = 16;
-    /** The tab the module slot sits on, left of the panel: a slot frame with a border around it. */
-    private static final int MODULE_TAB_WIDTH = 25;
-    private static final int MODULE_TAB_HEIGHT = 24;
+    /** The tab the module slot sits on, left of the panel: its own small panel with the same border. */
+    private static final Identifier MODULE_TAB = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/module_tab.png");
+    private static final int MODULE_TAB_SIZE = 28;
+    private static final int MODULE_TAB_TEXTURE = 32;
     /** Past four digits a count runs out of its cell, so it is shortened and the tooltip carries the truth. */
     private static final int ABBREVIATE_ABOVE = 999;
 
@@ -89,9 +90,9 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     }
 
     private boolean isOverModuleTab(double d, double e, int i, int j) {
-        int tabX = i + DeepCrateMenu.MODULE_X - 4;
-        int tabY = j + DeepCrateMenu.MODULE_Y - 4;
-        return d >= tabX && d < tabX + MODULE_TAB_WIDTH && e >= tabY && e < tabY + MODULE_TAB_HEIGHT;
+        int tabX = i + DeepCrateMenu.MODULE_X - 5;
+        int tabY = j + DeepCrateMenu.MODULE_Y - 5;
+        return d >= tabX && d < tabX + MODULE_TAB_SIZE && e >= tabY && e < tabY + MODULE_TAB_SIZE;
     }
 
     private boolean isOverPageButtons(double d, double e) {
@@ -133,15 +134,20 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         this.renderModuleTab(guiGraphics, x, y);
     }
 
-    /** The little panel the module slot sits on, drawn from the same texture as the rest. */
+    /** The little panel the module slot sits on, drawn from its own texture. */
     private void renderModuleTab(GuiGraphics guiGraphics, int x, int y) {
-        int tabX = x + DeepCrateMenu.MODULE_X - 4;
-        int tabY = y + DeepCrateMenu.MODULE_Y - 4;
-
-        // Left edge of the panel for the tab's own left edge, so the two borders match.
-        blit(guiGraphics, tabX, tabY, 0, BARE_PANEL_V, MODULE_TAB_WIDTH, BARE_PANEL_HEIGHT);
-        blit(guiGraphics, tabX, tabY + BARE_PANEL_HEIGHT, 0, BARE_PANEL_V, MODULE_TAB_WIDTH, MODULE_TAB_HEIGHT - BARE_PANEL_HEIGHT);
-        blit(guiGraphics, x + DeepCrateMenu.MODULE_X - 1, y + DeepCrateMenu.MODULE_Y - 1, SLOT_FRAME_U, SLOT_FRAME_V, 18, 18);
+        guiGraphics.blit(
+            RenderPipelines.GUI_TEXTURED,
+            MODULE_TAB,
+            x + DeepCrateMenu.MODULE_X - 5,
+            y + DeepCrateMenu.MODULE_Y - 5,
+            0.0F,
+            0.0F,
+            MODULE_TAB_SIZE,
+            MODULE_TAB_SIZE,
+            MODULE_TAB_TEXTURE,
+            MODULE_TAB_TEXTURE
+        );
     }
 
     @Override
