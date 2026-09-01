@@ -67,13 +67,13 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     protected void init() {
         super.init();
 
-        // The search box takes the place of the "Inventory" label, which says nothing a player does
-        // not already know; renderLabels leaves that line to it.
+        // On the inventory line, to the right of its label and running to the edge of the panel.
+        int labelEnd = DeepCrateMenu.GRID_LEFT + this.font.width(this.playerInventoryTitle) + 6;
         this.searchBox = new EditBox(
             this.font,
-            this.leftPos + DeepCrateMenu.GRID_LEFT,
+            this.leftPos + labelEnd,
             this.topPos + this.inventoryLabelY - 3,
-            this.imageWidth - DeepCrateMenu.GRID_LEFT * 2,
+            this.imageWidth - labelEnd - DeepCrateMenu.GRID_LEFT,
             12,
             Component.translatable("screen.deepcrate.search")
         );
@@ -215,17 +215,13 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         }
     }
 
-    /**
-     * The crate's own title and the page number. The inventory label of the base game is left out on
-     * purpose: the search box sits on that line.
-     */
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int i, int j) {
-        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF404040, false);
+        super.renderLabels(guiGraphics, i, j);
 
-        // Always, even on a crate that holds one page: knowing there is only one is knowing something.
-        Component component = Component.translatable("screen.deepcrate.page", this.menu.page() + 1, this.menu.layout().pageCount());
-        guiGraphics.drawString(this.font, component, this.imageWidth - 7 - this.font.width(component), this.titleLabelY, 0xFF404040, false);
+        // The page being read, as a bare number against the right edge of the title line.
+        String page = String.valueOf(this.menu.page() + 1);
+        guiGraphics.drawString(this.font, page, this.imageWidth - 7 - this.font.width(page), this.titleLabelY, 0xFF404040, false);
     }
 
     /**

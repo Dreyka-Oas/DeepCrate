@@ -1,7 +1,6 @@
 {
   "container.deepcrate.crate": "Coffre",
   "container.deepcrate.double": "Grand %s",
-  "screen.deepcrate.page": "Page %s/%s",
   "screen.deepcrate.count": "%s dans cette case",
   "block.deepcrate.copper_crate": "Coffre en cuivre",
   "block.deepcrate.iron_crate": "Coffre en fer",
