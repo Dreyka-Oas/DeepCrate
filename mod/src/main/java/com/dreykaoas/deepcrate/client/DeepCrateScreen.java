@@ -34,6 +34,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private static final int PLAYER_PANEL_V = 126;
     private static final int PLAYER_PANEL_HEIGHT = 96;
     private static final int PAGE_BUTTON_SIZE = 16;
+    private static final int PAGE_BUTTONS_PER_COLUMN = 4;
     /** The tab the module slot sits on, left of the panel: its own small panel with the same border. */
     private static final Identifier MODULE_TAB = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/module_tab.png");
     private static final int MODULE_TAB_WIDTH = 28;
@@ -65,6 +66,8 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         }
 
         // Stacked down the right edge, outside the panel: the crate grid already fills the width.
+        // Four to a column, then a second column further right, so a crate with many pages does not
+        // grow a strip taller than the screen.
         this.pageButtons.clear();
         for (int page = 0; page < this.menu.layout().pageCount(); page++) {
             int target = page;
@@ -72,8 +75,8 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
                 this.addRenderableWidget(
                     Button.builder(Component.literal(String.valueOf(page + 1)), button -> this.menu.setPage(target))
                         .bounds(
-                            this.leftPos + this.imageWidth + 3,
-                            this.topPos + HEADER_HEIGHT + page * (PAGE_BUTTON_SIZE + 2),
+                            this.leftPos + this.imageWidth + 3 + page / PAGE_BUTTONS_PER_COLUMN * (PAGE_BUTTON_SIZE + 2),
+                            this.topPos + HEADER_HEIGHT + page % PAGE_BUTTONS_PER_COLUMN * (PAGE_BUTTON_SIZE + 2),
                             PAGE_BUTTON_SIZE,
                             PAGE_BUTTON_SIZE
                         )
@@ -138,8 +141,8 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     }
 
     /**
-     * The bit of panel the module slot sits on. Drawn after the main panel and overlapping it, with no
-     * border on its right side, so the two read as one shape rather than two windows stuck together.
+     * The bit of panel the module slot sits on: a small window of its own, bordered on all four sides
+     * and standing a few pixels clear of the crate panel.
      * A slot itself has no texture in Minecraft: it is the background that carries the 18 by 18 cell.
      */
     private void renderModuleTab(GuiGraphics guiGraphics, int x, int y) {
