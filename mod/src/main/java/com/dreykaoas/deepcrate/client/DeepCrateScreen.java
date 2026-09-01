@@ -36,9 +36,10 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private static final int PAGE_BUTTON_SIZE = 16;
     /** The tab the module slot sits on, left of the panel: its own small panel with the same border. */
     private static final Identifier MODULE_TAB = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/module_tab.png");
-    private static final int MODULE_TAB_SIZE = 30;
+    private static final int MODULE_TAB_WIDTH = 28;
+    private static final int MODULE_TAB_HEIGHT = 26;
     /** The tab is drawn this far up and left of the slot, so its frame lands exactly around it. */
-    private static final int MODULE_TAB_MARGIN = 6;
+    private static final int MODULE_TAB_MARGIN = 5;
     private static final int MODULE_TAB_TEXTURE = 32;
     /** Past four digits a count runs out of its cell, so it is shortened and the tooltip carries the truth. */
     private static final int ABBREVIATE_ABOVE = 999;
@@ -94,7 +95,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private boolean isOverModuleTab(double d, double e, int i, int j) {
         int tabX = i + DeepCrateMenu.MODULE_X - MODULE_TAB_MARGIN;
         int tabY = j + DeepCrateMenu.MODULE_Y - MODULE_TAB_MARGIN;
-        return d >= tabX && d < tabX + MODULE_TAB_SIZE && e >= tabY && e < tabY + MODULE_TAB_SIZE;
+        return d >= tabX && d < tabX + MODULE_TAB_WIDTH && e >= tabY && e < tabY + MODULE_TAB_HEIGHT;
     }
 
     private boolean isOverPageButtons(double d, double e) {
@@ -136,7 +137,11 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         this.renderModuleTab(guiGraphics, x, y);
     }
 
-    /** The little panel the module slot sits on, drawn from its own texture. */
+    /**
+     * The bit of panel the module slot sits on. Drawn after the main panel and overlapping it, with no
+     * border on its right side, so the two read as one shape rather than two windows stuck together.
+     * A slot itself has no texture in Minecraft: it is the background that carries the 18 by 18 cell.
+     */
     private void renderModuleTab(GuiGraphics guiGraphics, int x, int y) {
         guiGraphics.blit(
             RenderPipelines.GUI_TEXTURED,
@@ -145,8 +150,8 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
             y + DeepCrateMenu.MODULE_Y - MODULE_TAB_MARGIN,
             0.0F,
             0.0F,
-            MODULE_TAB_SIZE,
-            MODULE_TAB_SIZE,
+            MODULE_TAB_WIDTH,
+            MODULE_TAB_HEIGHT,
             MODULE_TAB_TEXTURE,
             MODULE_TAB_TEXTURE
         );
