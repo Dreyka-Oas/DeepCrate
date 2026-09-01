@@ -37,6 +37,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private static final int PLAYER_PANEL_HEIGHT = 96;
     private static final int PAGE_BUTTON_SIZE = 16;
     private static final int PAGE_BUTTONS_PER_COLUMN = 4;
+    private static final int SEARCH_HEIGHT = 13;
     /** The tab the module slot sits on, left of the panel: its own small panel with the same border. */
     private static final Identifier MODULE_TAB = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/module_tab.png");
     private static final int MODULE_TAB_WIDTH = 28;
@@ -72,13 +73,12 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         this.searchBox = new EditBox(
             this.font,
             this.leftPos + labelEnd,
-            this.topPos + this.inventoryLabelY - 3,
+            this.topPos + this.inventoryLabelY - 4,
             this.imageWidth - labelEnd - DeepCrateMenu.GRID_LEFT,
-            12,
+            SEARCH_HEIGHT,
             Component.translatable("screen.deepcrate.search")
         );
         this.searchBox.setHint(Component.translatable("screen.deepcrate.search"));
-        this.searchBox.setBordered(false);
         this.searchBox.setMaxLength(48);
         this.searchBox.setResponder(text -> this.query = text.toLowerCase(Locale.ROOT).trim());
         this.addRenderableWidget(this.searchBox);
