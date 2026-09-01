@@ -6,9 +6,11 @@ import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -180,6 +182,23 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
             MODULE_TAB_TEXTURE,
             MODULE_TAB_TEXTURE
         );
+    }
+
+    /**
+     * While the search field holds the keyboard, no key reaches the rest of the screen. The base
+     * class only asks the focused widget first and then acts on whatever it did not claim, and a
+     * plain letter is claimed by nobody: the "e" of "echo" would close the crate, a digit would swap
+     * a slot into the hotbar, and the drop key would throw the item under the pointer. Escape is the
+     * one key left through, so the screen can still be closed without reaching for the mouse.
+     */
+    @Override
+    public boolean keyPressed(KeyEvent keyEvent) {
+        if (this.searchBox != null && this.searchBox.isFocused() && keyEvent.key() != InputConstants.KEY_ESCAPE) {
+            this.searchBox.keyPressed(keyEvent);
+            return true;
+        }
+
+        return super.keyPressed(keyEvent);
     }
 
     @Override
