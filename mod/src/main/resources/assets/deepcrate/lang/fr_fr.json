@@ -1,16 +1,17 @@
 {
-  "container.deepcrate.crate": "Caisse",
-  "container.deepcrate.double": "Grande %s",
+  "container.deepcrate.crate": "Coffre",
+  "container.deepcrate.double": "Grand %s",
   "screen.deepcrate.page": "Page %s/%s",
   "screen.deepcrate.count": "%s dans cette case",
-  "block.deepcrate.copper_crate": "Caisse en cuivre",
-  "block.deepcrate.iron_crate": "Caisse en fer",
-  "block.deepcrate.amethyst_crate": "Caisse en améthyste",
-  "block.deepcrate.prismarine_crate": "Caisse en prismarine",
-  "block.deepcrate.breeze_crate": "Caisse de souffle",
-  "block.deepcrate.echo_crate": "Caisse d'écho",
+  "block.deepcrate.copper_crate": "Coffre en cuivre",
+  "block.deepcrate.iron_crate": "Coffre en fer",
+  "block.deepcrate.amethyst_crate": "Coffre en améthyste",
+  "block.deepcrate.prismarine_crate": "Coffre en prismarine",
+  "block.deepcrate.breeze_crate": "Coffre de souffle",
+  "block.deepcrate.echo_crate": "Coffre d'écho",
   "item.deepcrate.module_128": "Module de contenance 128",
   "item.deepcrate.module_256": "Module de contenance 256",
   "item.deepcrate.module_512": "Module de contenance 512",
-  "item.deepcrate.module_row": "Module de ligne"
+  "item.deepcrate.module_row": "Module de ligne",
+  "screen.deepcrate.search": "Rechercher"
 }

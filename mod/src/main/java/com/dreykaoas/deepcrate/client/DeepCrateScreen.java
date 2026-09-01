@@ -5,8 +5,10 @@ import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -49,6 +51,9 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private final int rows;
     private final List<Button> pageButtons = new ArrayList<>();
 
+    private EditBox searchBox;
+    private String query = "";
+
     public DeepCrateScreen(DeepCrateMenu deepCrateMenu, Inventory inventory, Component component) {
         super(deepCrateMenu, inventory, component);
         this.rows = deepCrateMenu.layout().rowsPerPage();
@@ -61,6 +66,22 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     @Override
     protected void init() {
         super.init();
+
+        // The search box takes the place of the "Inventory" label, which says nothing a player does
+        // not already know; renderLabels leaves that line to it.
+        this.searchBox = new EditBox(
+            this.font,
+            this.leftPos + DeepCrateMenu.GRID_LEFT,
+            this.topPos + this.inventoryLabelY - 3,
+            this.imageWidth - DeepCrateMenu.GRID_LEFT * 2,
+            12,
+            Component.translatable("screen.deepcrate.search")
+        );
+        this.searchBox.setHint(Component.translatable("screen.deepcrate.search"));
+        this.searchBox.setBordered(false);
+        this.searchBox.setMaxLength(48);
+        this.searchBox.setResponder(text -> this.query = text.toLowerCase(Locale.ROOT).trim());
+        this.addRenderableWidget(this.searchBox);
 
         if (this.menu.layout().pageCount() < 2) {
             return;
@@ -164,6 +185,12 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     @Override
     protected void renderSlot(GuiGraphics guiGraphics, Slot slot, int i, int j) {
         ItemStack itemStack = slot.getItem();
+        if (this.dims(slot)) {
+            super.renderSlot(guiGraphics, slot, i, j);
+            guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xB0101010);
+            return;
+        }
+
         if (slot instanceof DeepCrateSlot && itemStack.getCount() > ABBREVIATE_ABOVE) {
             guiGraphics.renderItem(itemStack, slot.x, slot.y, slot.x + slot.y * this.imageWidth);
             guiGraphics.renderItemDecorations(this.font, itemStack, slot.x, slot.y, abbreviate(itemStack.getCount()));
@@ -188,14 +215,29 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         }
     }
 
+    /**
+     * The crate's own title and the page number. The inventory label of the base game is left out on
+     * purpose: the search box sits on that line.
+     */
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int i, int j) {
-        super.renderLabels(guiGraphics, i, j);
+        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF404040, false);
 
-        if (this.menu.layout().pageCount() > 1) {
-            Component component = Component.translatable("screen.deepcrate.page", this.menu.page() + 1, this.menu.layout().pageCount());
-            guiGraphics.drawString(this.font, component, this.imageWidth - 8 - this.font.width(component), 6, 0x404040, false);
+        // Always, even on a crate that holds one page: knowing there is only one is knowing something.
+        Component component = Component.translatable("screen.deepcrate.page", this.menu.page() + 1, this.menu.layout().pageCount());
+        guiGraphics.drawString(this.font, component, this.imageWidth - 7 - this.font.width(component), this.titleLabelY, 0xFF404040, false);
+    }
+
+    /**
+     * Whether a slot is greyed out by the search. Only the crate's own slots answer: dimming the
+     * player's inventory as well would leave nothing readable on screen.
+     */
+    private boolean dims(Slot slot) {
+        if (this.query.isEmpty() || !(slot instanceof DeepCrateSlot) || slot.getItem().isEmpty()) {
+            return false;
         }
+
+        return !slot.getItem().getHoverName().getString().toLowerCase(Locale.ROOT).contains(this.query);
     }
 
     /** Tiles the one bare band of the texture over a height it does not natively cover. */

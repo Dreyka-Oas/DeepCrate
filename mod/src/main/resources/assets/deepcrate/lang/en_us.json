@@ -12,5 +12,6 @@
   "item.deepcrate.module_128": "Capacity Module 128",
   "item.deepcrate.module_256": "Capacity Module 256",
   "item.deepcrate.module_512": "Capacity Module 512",
-  "item.deepcrate.module_row": "Row Module"
+  "item.deepcrate.module_row": "Row Module",
+  "screen.deepcrate.search": "Search"
 }
