@@ -23,8 +23,8 @@ single module.
 
 ## Capacity
 
-A slot holds 64. A module in the top-left slot of the screen raises the whole crate: 128, 256, 512
-or 1024. One module at a time, inserting another hands the previous one back. Pull the module out
+A slot holds 64. A module in the slot hanging off the left edge of the screen raises the whole crate:
+128, 256, 512 or 1024. The slot shows a greyed plate while it is empty, so it reads as what it is. One module at a time, inserting another hands the previous one back. Pull the module out
 and close the screen, and everything above the new capacity drops on the ground.
 
 That last rule is expensive at the top of the ladder, and it is a deliberate choice rather than an

@@ -47,6 +47,19 @@ public class CrateMenuGameTest {
     }
 
     @GameTest
+    public void theModuleSlotSitsOutsideThePanel(GameTestHelper gameTestHelper) {
+        DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState());
+
+        if (deepCrateMenu.getSlot(0).x >= 0) {
+            gameTestHelper.fail("the module slot is at x=" + deepCrateMenu.getSlot(0).x + ", inside the panel");
+        }
+
+        // The crate grid starts where a chest's does, so nothing was pushed down to make room.
+        assertEquals(gameTestHelper, 18, deepCrateMenu.getSlot(1).y, "the first crate row");
+        gameTestHelper.succeed();
+    }
+
+    @GameTest
     public void aModuleSlotRefusesAnythingElse(GameTestHelper gameTestHelper) {
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState());
 

@@ -34,6 +34,9 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private static final int PLAYER_PANEL_V = 126;
     private static final int PLAYER_PANEL_HEIGHT = 96;
     private static final int PAGE_BUTTON_SIZE = 16;
+    /** The tab the module slot sits on, left of the panel: a slot frame with a border around it. */
+    private static final int MODULE_TAB_WIDTH = 25;
+    private static final int MODULE_TAB_HEIGHT = 24;
     /** Past four digits a count runs out of its cell, so it is shortened and the tooltip carries the truth. */
     private static final int ABBREVIATE_ABOVE = 999;
 
@@ -43,9 +46,10 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     public DeepCrateScreen(DeepCrateMenu deepCrateMenu, Inventory inventory, Component component) {
         super(deepCrateMenu, inventory, component);
         this.rows = deepCrateMenu.layout().rowsPerPage();
-        // The grid frame starts one pixel above the first slot, so everything below it does too.
-        this.imageHeight = DeepCrateMenu.GRID_TOP - 1 + this.rows * 18 + PLAYER_PANEL_HEIGHT;
-        this.inventoryLabelY = this.imageHeight - 93;
+        // Exactly a chest of this many rows: the module hangs off the left edge rather than taking a
+        // band inside the panel.
+        this.imageHeight = 114 + this.rows * 18;
+        this.inventoryLabelY = this.imageHeight - 94;
     }
 
     @Override
@@ -81,7 +85,13 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
      */
     @Override
     protected boolean hasClickedOutside(double d, double e, int i, int j) {
-        return super.hasClickedOutside(d, e, i, j) && !this.isOverPageButtons(d, e);
+        return super.hasClickedOutside(d, e, i, j) && !this.isOverPageButtons(d, e) && !this.isOverModuleTab(d, e, i, j);
+    }
+
+    private boolean isOverModuleTab(double d, double e, int i, int j) {
+        int tabX = i + DeepCrateMenu.MODULE_X - 4;
+        int tabY = j + DeepCrateMenu.MODULE_Y - 4;
+        return d >= tabX && d < tabX + MODULE_TAB_WIDTH && e >= tabY && e < tabY + MODULE_TAB_HEIGHT;
     }
 
     private boolean isOverPageButtons(double d, double e) {
@@ -106,22 +116,32 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     protected void renderBg(GuiGraphics guiGraphics, float f, int i, int j) {
         int x = this.leftPos;
         int y = this.topPos;
-        int stripHeight = DeepCrateMenu.GRID_TOP - 1 - HEADER_HEIGHT;
 
-        blit(guiGraphics, x, y, 0, 0, this.imageWidth, HEADER_HEIGHT);
-        this.fillBarePanel(guiGraphics, x, y + HEADER_HEIGHT, stripHeight);
-        blit(guiGraphics, x + DeepCrateMenu.MODULE_X - 1, y + DeepCrateMenu.MODULE_Y - 1, SLOT_FRAME_U, SLOT_FRAME_V, 18, 18);
+        // Only the rows this page holds get slot cells; the last page of a crate whose rows do not
+        // divide evenly would otherwise show a row of cells no slot lives in.
+        int rowsOnPage = Math.min(
+            this.rows,
+            Math.max(0, this.menu.getContainer().getContainerSize() / CrateTier.COLUMNS - this.menu.page() * this.rows)
+        );
 
-        // Only the rows this page actually holds get slot cells; the last page of a crate whose rows do
-        // not divide evenly would otherwise show a row of cells no slot lives in.
-        int rowsOnPage = Math.min(this.rows, Math.max(0, this.menu.getContainer().getContainerSize() / CrateTier.COLUMNS - this.menu.page() * this.rows));
-        int gridTop = y + DeepCrateMenu.GRID_TOP - 1;
-        blit(guiGraphics, x, gridTop, 0, SLOT_FRAME_V, this.imageWidth, rowsOnPage * 18);
+        blit(guiGraphics, x, y, 0, 0, this.imageWidth, HEADER_HEIGHT + rowsOnPage * 18);
         if (rowsOnPage < this.rows) {
-            this.fillBarePanel(guiGraphics, x, gridTop + rowsOnPage * 18, (this.rows - rowsOnPage) * 18);
+            this.fillBarePanel(guiGraphics, x, y + HEADER_HEIGHT + rowsOnPage * 18, (this.rows - rowsOnPage) * 18);
         }
 
-        blit(guiGraphics, x, gridTop + this.rows * 18, 0, PLAYER_PANEL_V, this.imageWidth, PLAYER_PANEL_HEIGHT);
+        blit(guiGraphics, x, y + HEADER_HEIGHT + this.rows * 18, 0, PLAYER_PANEL_V, this.imageWidth, PLAYER_PANEL_HEIGHT);
+        this.renderModuleTab(guiGraphics, x, y);
+    }
+
+    /** The little panel the module slot sits on, drawn from the same texture as the rest. */
+    private void renderModuleTab(GuiGraphics guiGraphics, int x, int y) {
+        int tabX = x + DeepCrateMenu.MODULE_X - 4;
+        int tabY = y + DeepCrateMenu.MODULE_Y - 4;
+
+        // Left edge of the panel for the tab's own left edge, so the two borders match.
+        blit(guiGraphics, tabX, tabY, 0, BARE_PANEL_V, MODULE_TAB_WIDTH, BARE_PANEL_HEIGHT);
+        blit(guiGraphics, tabX, tabY + BARE_PANEL_HEIGHT, 0, BARE_PANEL_V, MODULE_TAB_WIDTH, MODULE_TAB_HEIGHT - BARE_PANEL_HEIGHT);
+        blit(guiGraphics, x + DeepCrateMenu.MODULE_X - 1, y + DeepCrateMenu.MODULE_Y - 1, SLOT_FRAME_U, SLOT_FRAME_V, 18, 18);
     }
 
     @Override

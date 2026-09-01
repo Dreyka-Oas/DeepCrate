@@ -29,8 +29,10 @@ import net.minecraft.world.level.Level;
  */
 public class DeepCrateMenu extends AbstractContainerMenu {
     public static final int GRID_LEFT = 8;
-    public static final int GRID_TOP = 36;
-    public static final int MODULE_X = 8;
+    /** The chest's own grid position: the module lives outside the panel, so nothing is pushed down. */
+    public static final int GRID_TOP = 18;
+    /** Left of the panel, on its own tab, mirroring the page buttons on the right. */
+    public static final int MODULE_X = -21;
     public static final int MODULE_Y = 18;
 
     private final Container crate;
