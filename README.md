@@ -1,6 +1,6 @@
 # DeepCrate
 
-Six tiers of chest, a capacity module that lifts every slot from 64 to 1024, and paged screens for
+Six tiers of chest, a capacity module that lifts every slot from 64 to 512, and paged screens for
 the tiers that no longer fit one page. Fabric, Minecraft 1.21.11, Java 21. Needed on the server and
 on every client.
 
@@ -24,14 +24,18 @@ single module.
 ## Capacity
 
 A slot holds 64. A module in the slot hanging off the left edge of the screen raises the whole crate:
-128, 256, 512 or 1024. The slot shows a greyed plate while it is empty, so it reads as what it is. One module at a time, inserting another hands the previous one back. Pull the module out
+128, 256 or 512. The slot shows a greyed plate while it is empty, so it reads as what it is. One module at a time, inserting another hands the previous one back. Pull the module out
 and close the screen, and everything above the new capacity drops on the ground.
 
 That last rule is expensive at the top of the ladder, and it is a deliberate choice rather than an
-oversight. A full double echo crate losing its 1024 module spills 138 000 items, which is two
-thousand stacks on one block: the game drops them as whole stacks rather than in the ten-to-thirty
+oversight. A full double echo crate losing its 512 module spills 69 000 items, which is a thousand
+stacks on one block: the game drops them as whole stacks rather than in the ten-to-thirty
 pieces it normally uses, but the tick is still heavy and no player picks all of that back up before
 the five-minute despawn. Emptying a crate before pulling its module out is the only safe order.
+
+The three shipped modules stop at 512 by choice, not by capability. A slot can hold up to 32767,
+which is where the save format's own count field runs out, and an addon module may ask for any
+number up to that.
 
 The count of a slot travels over the network as a variable-length integer, so a large number costs
 nothing there. It is the save file that sets the ceiling: the item stack codec of the base game

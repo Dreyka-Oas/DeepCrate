@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
  * One saved crate slot: what item, and how many.
  *
  * Vanilla's ItemStackWithSlot cannot be reused here. Its codec routes the count through
- * ItemStack.MAP_CODEC, which refuses anything above 99, so a slot holding 1024 would come back
+ * ItemStack.MAP_CODEC, which refuses anything above 99, so a slot holding 512 would come back
  * clamped or rejected. Splitting the item from its count sidesteps that range entirely.
  */
 public record StoredSlot(int slot, ItemStack item, int count) {

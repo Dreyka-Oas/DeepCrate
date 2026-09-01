@@ -45,9 +45,6 @@ public class CrateRecipeGameTest {
         assertCraftsInto(
             gameTestHelper, serverLevel, new ItemStack(Items.REDSTONE), new ItemStack(RegistryInit.MODULE_ITEMS.get(1)), RegistryInit.MODULE_ITEMS.get(2)
         );
-        assertCraftsInto(
-            gameTestHelper, serverLevel, new ItemStack(Items.QUARTZ), new ItemStack(RegistryInit.MODULE_ITEMS.get(2)), RegistryInit.MODULE_ITEMS.get(3)
-        );
 
         gameTestHelper.succeed();
     }

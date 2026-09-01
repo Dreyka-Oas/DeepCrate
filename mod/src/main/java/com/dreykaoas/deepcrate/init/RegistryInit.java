@@ -44,8 +44,7 @@ public final class RegistryInit {
     private static final List<ModuleSpec> MODULE_SPECS = List.of(
         new ModuleSpec("module_128", 128),
         new ModuleSpec("module_256", 256),
-        new ModuleSpec("module_512", 512),
-        new ModuleSpec("module_1024", 1024)
+        new ModuleSpec("module_512", 512)
     );
 
     public static final List<CrateTier> TIERS = TIER_SPECS.stream().map(RegistryInit::registerTier).toList();

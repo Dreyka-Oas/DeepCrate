@@ -11,6 +11,5 @@
   "block.deepcrate.echo_crate": "Echo Crate",
   "item.deepcrate.module_128": "Capacity Module 128",
   "item.deepcrate.module_256": "Capacity Module 256",
-  "item.deepcrate.module_512": "Capacity Module 512",
-  "item.deepcrate.module_1024": "Capacity Module 1024"
+  "item.deepcrate.module_512": "Capacity Module 512"
 }

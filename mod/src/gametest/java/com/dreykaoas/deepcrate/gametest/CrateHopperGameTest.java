@@ -203,9 +203,9 @@ public class CrateHopperGameTest {
     public void aComparatorReadsAFullCrate(GameTestHelper gameTestHelper) {
         gameTestHelper.setBlock(CRATE, RegistryInit.TIERS.get(0).block());
         DeepCrateBlockEntity deepCrateBlockEntity = gameTestHelper.getBlockEntity(CRATE, DeepCrateBlockEntity.class);
-        deepCrateBlockEntity.setModule(new ItemStack(RegistryInit.MODULE_ITEMS.get(3)));
+        deepCrateBlockEntity.setModule(new ItemStack(RegistryInit.MODULE_ITEMS.get(2)));
         for (int i = 0; i < deepCrateBlockEntity.storage().size(); i++) {
-            deepCrateBlockEntity.storage().set(i, new ItemStack(Items.STONE, 1024));
+            deepCrateBlockEntity.storage().set(i, new ItemStack(Items.STONE, 512));
         }
 
         gameTestHelper.succeedWhen(() -> {
