@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -53,7 +52,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private final int rows;
     private final List<Button> pageButtons = new ArrayList<>();
 
-    private EditBox searchBox;
+    private SearchBox searchBox;
     private String query = "";
 
     public DeepCrateScreen(DeepCrateMenu deepCrateMenu, Inventory inventory, Component component) {
@@ -71,7 +70,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
 
         // On the inventory line, to the right of its label and running to the edge of the panel.
         int labelEnd = DeepCrateMenu.GRID_LEFT + this.font.width(this.playerInventoryTitle) + 6;
-        this.searchBox = new EditBox(
+        this.searchBox = new SearchBox(
             this.font,
             this.leftPos + labelEnd,
             this.topPos + this.inventoryLabelY - 2,
