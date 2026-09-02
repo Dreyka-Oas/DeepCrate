@@ -62,6 +62,21 @@ A crate is only cut back once the last screen on it closes. Shrinking it under s
 screen would leave their menu holding slots the crate no longer has, and their next tick would ask
 for an index past the end.
 
+## Sorting
+
+Two buttons sit on a tab above the top left corner of the screen. One orders by name, the other by
+how full each pile is; both gather identical stacks into one, up to whatever the module allows, which
+is where the free slots come from. Pressing the same button again reverses it, and the icon shows
+which way the next press will go.
+
+The order is worked out on the player's machine and sent whole, as a list of items. A server holds
+no language files, so it cannot know that this player reads Pierre where another reads Stone, and
+sorting by a name nobody sees is not sorting. What comes back is a rearrangement of what the crate
+already had, so a made-up list costs its sender a messy crate and nothing more.
+
+A pair is sorted as one run of slots rather than one half at a time, so the letters do not start over
+at the seam. Modules stay in their own tab, untouched.
+
 ## Pages
 
 A page holds four rows at most. Past that the screen splits, and the pages share the rows evenly:

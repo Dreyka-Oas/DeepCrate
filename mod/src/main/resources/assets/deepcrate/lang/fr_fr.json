@@ -12,5 +12,9 @@
   "item.deepcrate.module_256": "Module de contenance 256",
   "item.deepcrate.module_512": "Module de contenance 512",
   "item.deepcrate.module_row": "Module de ligne",
-  "screen.deepcrate.search": "Rechercher"
+  "screen.deepcrate.search": "Rechercher",
+  "screen.deepcrate.sort.name": "Ranger de A à Z",
+  "screen.deepcrate.sort.name_reversed": "Ranger de Z à A",
+  "screen.deepcrate.sort.count": "Ranger du plus rempli au moins rempli",
+  "screen.deepcrate.sort.count_reversed": "Ranger du moins rempli au plus rempli"
 }

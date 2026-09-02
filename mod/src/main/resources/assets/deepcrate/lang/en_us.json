@@ -12,5 +12,9 @@
   "item.deepcrate.module_256": "Capacity Module 256",
   "item.deepcrate.module_512": "Capacity Module 512",
   "item.deepcrate.module_row": "Row Module",
-  "screen.deepcrate.search": "Search"
+  "screen.deepcrate.search": "Search",
+  "screen.deepcrate.sort.name": "Sort A to Z",
+  "screen.deepcrate.sort.name_reversed": "Sort Z to A",
+  "screen.deepcrate.sort.count": "Sort fullest first",
+  "screen.deepcrate.sort.count_reversed": "Sort emptiest first"
 }

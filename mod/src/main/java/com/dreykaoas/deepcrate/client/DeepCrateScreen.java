@@ -3,10 +3,12 @@ package com.dreykaoas.deepcrate.client;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
+import com.dreykaoas.deepcrate.net.CrateSortPayload;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -48,6 +50,15 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** The tab is drawn this far up and left of the slot, so its frame lands exactly around it. */
     private static final int MODULE_TAB_MARGIN = 6;
     private static final int MODULE_TAB_TEXTURE = 64;
+    /** The tab the two sort buttons sit on, above the panel and flush with its left edge. */
+    private static final Identifier SORT_TAB = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/sort_tab.png");
+    private static final int SORT_TAB_WIDTH = 50;
+    private static final int SORT_TAB_HEIGHT = 30;
+    private static final int SORT_TAB_TEXTURE = 64;
+    /** Standing clear of the panel rather than glued to it, as the module tab does. */
+    private static final int SORT_TAB_GAP = 4;
+    private static final int SORT_TAB_MARGIN = 6;
+    private static final int SORT_BUTTON_GAP = 2;
     /** Past four digits a count runs out of its cell, so it is shortened and the tooltip carries the truth. */
     private static final int ABBREVIATE_ABOVE = 999;
 
@@ -55,6 +66,8 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private final List<Button> pageButtons = new ArrayList<>();
 
     private SearchBox searchBox;
+    private SortButton nameSort;
+    private SortButton countSort;
     private String query = "";
 
     public DeepCrateScreen(DeepCrateMenu deepCrateMenu, Inventory inventory, Component component) {
@@ -85,6 +98,20 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         this.searchBox.setResponder(this::onQueryChanged);
         this.searchBox.setValue(this.query);
         this.addRenderableWidget(this.searchBox);
+
+        // Read before the widgets are replaced: a window resized mid-session rebuilds the screen, and
+        // a button that forgot its direction would sort the same way twice in a row.
+        boolean nameReversed = this.nameSort != null && this.nameSort.isReversed();
+        boolean countReversed = this.countSort != null && this.countSort.isReversed();
+        int sortY = this.topPos - SORT_TAB_HEIGHT - SORT_TAB_GAP + SORT_TAB_MARGIN;
+        this.nameSort = this.addRenderableWidget(
+            new SortButton(this.leftPos + SORT_TAB_MARGIN, sortY, CrateSort.NAME, nameReversed, this::sort)
+        );
+        this.countSort = this.addRenderableWidget(
+            new SortButton(
+                this.leftPos + SORT_TAB_MARGIN + SortButton.SIZE + SORT_BUTTON_GAP, sortY, CrateSort.COUNT, countReversed, this::sort
+            )
+        );
 
         this.pageButtons.clear();
         if (this.menu.layout().pageCount() < 2) {
@@ -117,13 +144,21 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
      */
     @Override
     protected boolean hasClickedOutside(double d, double e, int i, int j) {
-        return super.hasClickedOutside(d, e, i, j) && !this.isOverPageButtons(d, e) && !this.isOverModuleTab(d, e, i, j);
+        return super.hasClickedOutside(d, e, i, j)
+            && !this.isOverPageButtons(d, e)
+            && !this.isOverModuleTab(d, e, i, j)
+            && !isOverSortTab(d, e, i, j);
     }
 
     private boolean isOverModuleTab(double d, double e, int i, int j) {
         int tabX = i + DeepCrateMenu.MODULE_X - MODULE_TAB_MARGIN;
         int tabY = j + DeepCrateMenu.MODULE_Y - MODULE_TAB_MARGIN;
         return d >= tabX && d < tabX + MODULE_TAB_WIDTH && e >= tabY && e < tabY + MODULE_TAB_HEIGHT;
+    }
+
+    private static boolean isOverSortTab(double d, double e, int i, int j) {
+        int tabY = j - SORT_TAB_HEIGHT - SORT_TAB_GAP;
+        return d >= i && d < i + SORT_TAB_WIDTH && e >= tabY && e < tabY + SORT_TAB_HEIGHT;
     }
 
     private boolean isOverPageButtons(double d, double e) {
@@ -163,6 +198,18 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
 
         blit(guiGraphics, x, y + HEADER_HEIGHT + this.rows * 18, 0, PLAYER_PANEL_V, this.imageWidth, PLAYER_PANEL_HEIGHT);
         this.renderModuleTab(guiGraphics, x, y);
+        guiGraphics.blit(
+            RenderPipelines.GUI_TEXTURED,
+            SORT_TAB,
+            x,
+            y - SORT_TAB_HEIGHT - SORT_TAB_GAP,
+            0.0F,
+            0.0F,
+            SORT_TAB_WIDTH,
+            SORT_TAB_HEIGHT,
+            SORT_TAB_TEXTURE,
+            SORT_TAB_TEXTURE
+        );
     }
 
     /**
@@ -244,6 +291,16 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
             : Component.literal(this.font.plainSubstrByWidth(this.title.getString(), room - this.font.width("...")) + "...");
         guiGraphics.drawString(this.font, title, this.titleLabelX, this.titleLabelY, 0xFF404040, false);
         guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
+    }
+
+    /**
+     * The order is worked out here and sent whole, because it comes from the item names in the
+     * language this player reads and the crate has no idea what that is.
+     */
+    private void sort(CrateSort crateSort, boolean reversed) {
+        ClientPlayNetworking.send(
+            new CrateSortPayload(this.menu.containerId, crateSort.order(this.menu.getContainer(), reversed))
+        );
     }
 
     /**

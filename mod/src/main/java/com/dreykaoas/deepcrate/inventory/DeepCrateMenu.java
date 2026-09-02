@@ -20,6 +20,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -176,6 +177,23 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         }
 
         return false;
+    }
+
+    /**
+     * Puts the crate back in order, following the list the player's screen worked out. Client side
+     * there is no crate to sort: the copy shown there is rewritten by the slot packets that follow.
+     */
+    public void sort(List<Item> order) {
+        if (this.crates.isEmpty()) {
+            return;
+        }
+
+        CrateSorter.arrange(this.crates.stream().map(DeepCrateBlockEntity::storage).toList(), order);
+        for (DeepCrateBlockEntity deepCrateBlockEntity : this.crates) {
+            deepCrateBlockEntity.setChanged();
+        }
+
+        this.broadcastChanges();
     }
 
     /** Whether a slot index belongs to the page currently shown. Read by inventory addons. */
