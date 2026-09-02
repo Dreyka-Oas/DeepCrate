@@ -12,19 +12,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 /**
- * One of the two buttons on the tab above the crate.
+ * One of the two buttons above the crate. The plate under the drawing is the game's own button
+ * sprite, which is what keeps it from looking home-made and gives the pressed and hovered states.
  *
  * The icon shows what the next press will do, not what the last one did: the other button may have
  * been pressed since, so there is no "current order" to show.
  */
 public class SortButton extends AbstractButton {
-    /** Four icons, letters on the top row and counts under them, each way round. */
+    /** Four icons of sixteen, letters on the top row and counts under them, each way round. */
     private static final Identifier ICONS = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/sort_icons.png");
     private static final int SHEET = 32;
-    /** The cells of the sheet are spaced on sixteen, so a cell of fourteen leaves its neighbour alone. */
-    private static final int STRIDE = 16;
-    /** Smaller than a slot: these sit above the panel, where a full cell reads as a lump. */
-    public static final int SIZE = 14;
+    public static final int SIZE = 16;
 
     private final CrateSort crateSort;
     private final BiConsumer<CrateSort, Boolean> onSort;
@@ -53,22 +51,19 @@ public class SortButton extends AbstractButton {
 
     @Override
     protected void renderContents(GuiGraphics guiGraphics, int i, int j, float f) {
+        this.renderDefaultSprite(guiGraphics);
         guiGraphics.blit(
             RenderPipelines.GUI_TEXTURED,
             ICONS,
             this.getX(),
             this.getY(),
-            this.reversed ? STRIDE : 0,
-            this.crateSort == CrateSort.NAME ? 0 : STRIDE,
+            this.reversed ? SIZE : 0,
+            this.crateSort == CrateSort.NAME ? 0 : SIZE,
             SIZE,
             SIZE,
             SHEET,
             SHEET
         );
-
-        if (this.isHovered()) {
-            guiGraphics.fill(this.getX() + 1, this.getY() + 1, this.getX() + SIZE - 1, this.getY() + SIZE - 1, 0x60FFFFFF);
-        }
     }
 
     @Override

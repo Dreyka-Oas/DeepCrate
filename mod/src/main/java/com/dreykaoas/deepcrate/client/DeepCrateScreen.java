@@ -50,14 +50,8 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** The tab is drawn this far up and left of the slot, so its frame lands exactly around it. */
     private static final int MODULE_TAB_MARGIN = 6;
     private static final int MODULE_TAB_TEXTURE = 64;
-    /** The tab the two sort buttons sit on, above the panel and flush with its left edge. */
-    private static final Identifier SORT_TAB = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/sort_tab.png");
-    private static final int SORT_TAB_WIDTH = 38;
-    private static final int SORT_TAB_HEIGHT = 22;
-    private static final int SORT_TAB_TEXTURE = 64;
-    /** Standing clear of the panel rather than glued to it, as the module tab does. */
-    private static final int SORT_TAB_GAP = 4;
-    private static final int SORT_TAB_MARGIN = 4;
+    /** The two sort buttons stand above the panel, flush with its left edge and clear of it. */
+    private static final int SORT_GAP = 4;
     private static final int SORT_BUTTON_GAP = 2;
     /** Past four digits a count runs out of its cell, so it is shortened and the tooltip carries the truth. */
     private static final int ABBREVIATE_ABOVE = 999;
@@ -103,14 +97,10 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         // a button that forgot its direction would sort the same way twice in a row.
         boolean nameReversed = this.nameSort != null && this.nameSort.isReversed();
         boolean countReversed = this.countSort != null && this.countSort.isReversed();
-        int sortY = this.topPos - SORT_TAB_HEIGHT - SORT_TAB_GAP + SORT_TAB_MARGIN;
-        this.nameSort = this.addRenderableWidget(
-            new SortButton(this.leftPos + SORT_TAB_MARGIN, sortY, CrateSort.NAME, nameReversed, this::sort)
-        );
+        int sortY = this.topPos - SortButton.SIZE - SORT_GAP;
+        this.nameSort = this.addRenderableWidget(new SortButton(this.leftPos, sortY, CrateSort.NAME, nameReversed, this::sort));
         this.countSort = this.addRenderableWidget(
-            new SortButton(
-                this.leftPos + SORT_TAB_MARGIN + SortButton.SIZE + SORT_BUTTON_GAP, sortY, CrateSort.COUNT, countReversed, this::sort
-            )
+            new SortButton(this.leftPos + SortButton.SIZE + SORT_BUTTON_GAP, sortY, CrateSort.COUNT, countReversed, this::sort)
         );
 
         this.pageButtons.clear();
@@ -147,7 +137,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         return super.hasClickedOutside(d, e, i, j)
             && !this.isOverPageButtons(d, e)
             && !this.isOverModuleTab(d, e, i, j)
-            && !isOverSortTab(d, e, i, j);
+            && !isOverSortButtons(d, e, i, j);
     }
 
     private boolean isOverModuleTab(double d, double e, int i, int j) {
@@ -156,9 +146,9 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         return d >= tabX && d < tabX + MODULE_TAB_WIDTH && e >= tabY && e < tabY + MODULE_TAB_HEIGHT;
     }
 
-    private static boolean isOverSortTab(double d, double e, int i, int j) {
-        int tabY = j - SORT_TAB_HEIGHT - SORT_TAB_GAP;
-        return d >= i && d < i + SORT_TAB_WIDTH && e >= tabY && e < tabY + SORT_TAB_HEIGHT;
+    private static boolean isOverSortButtons(double d, double e, int i, int j) {
+        int top = j - SortButton.SIZE - SORT_GAP;
+        return d >= i && d < i + SortButton.SIZE * 2 + SORT_BUTTON_GAP && e >= top && e < top + SortButton.SIZE;
     }
 
     private boolean isOverPageButtons(double d, double e) {
@@ -198,18 +188,6 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
 
         blit(guiGraphics, x, y + HEADER_HEIGHT + this.rows * 18, 0, PLAYER_PANEL_V, this.imageWidth, PLAYER_PANEL_HEIGHT);
         this.renderModuleTab(guiGraphics, x, y);
-        guiGraphics.blit(
-            RenderPipelines.GUI_TEXTURED,
-            SORT_TAB,
-            x,
-            y - SORT_TAB_HEIGHT - SORT_TAB_GAP,
-            0.0F,
-            0.0F,
-            SORT_TAB_WIDTH,
-            SORT_TAB_HEIGHT,
-            SORT_TAB_TEXTURE,
-            SORT_TAB_TEXTURE
-        );
     }
 
     /**
