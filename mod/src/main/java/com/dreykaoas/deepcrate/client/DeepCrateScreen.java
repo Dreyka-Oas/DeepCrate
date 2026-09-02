@@ -82,9 +82,11 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         );
         this.searchBox.setHint(Component.translatable("screen.deepcrate.search"));
         this.searchBox.setMaxLength(48);
-        this.searchBox.setResponder(text -> this.query = text.toLowerCase(Locale.ROOT).trim());
+        this.searchBox.setResponder(this::onQueryChanged);
+        this.searchBox.setValue(this.query);
         this.addRenderableWidget(this.searchBox);
 
+        this.pageButtons.clear();
         if (this.menu.layout().pageCount() < 2) {
             return;
         }
@@ -92,7 +94,6 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         // Stacked down the right edge, outside the panel: the crate grid already fills the width.
         // Four to a column, then a second column further right, so a crate with many pages does not
         // grow a strip taller than the screen.
-        this.pageButtons.clear();
         for (int page = 0; page < this.menu.layout().pageCount(); page++) {
             int target = page;
             this.pageButtons.add(
@@ -204,43 +205,64 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     @Override
     protected void renderSlot(GuiGraphics guiGraphics, Slot slot, int i, int j) {
         ItemStack itemStack = slot.getItem();
-        if (this.dims(slot)) {
-            super.renderSlot(guiGraphics, slot, i, j);
-            guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xB0101010);
-            return;
-        }
-
         if (slot instanceof DeepCrateSlot && itemStack.getCount() > ABBREVIATE_ABOVE) {
             guiGraphics.renderItem(itemStack, slot.x, slot.y, slot.x + slot.y * this.imageWidth);
             guiGraphics.renderItemDecorations(this.font, itemStack, slot.x, slot.y, abbreviate(itemStack.getCount()));
-            return;
+        } else {
+            super.renderSlot(guiGraphics, slot, i, j);
         }
 
-        super.renderSlot(guiGraphics, slot, i, j);
+        if (this.dims(slot)) {
+            guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xB0101010);
+        }
     }
 
+    /** The abbreviated count hides the real one, so the item's own tooltip carries it. */
     @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int i, int j) {
-        super.renderTooltip(guiGraphics, i, j);
-
-        // The abbreviated count hides the real one, so the tooltip says it.
-        if (this.hoveredSlot instanceof DeepCrateSlot && this.hoveredSlot.getItem().getCount() > ABBREVIATE_ABOVE && this.menu.getCarried().isEmpty()) {
-            guiGraphics.setTooltipForNextFrame(
-                this.font,
-                Component.translatable("screen.deepcrate.count", this.hoveredSlot.getItem().getCount()),
-                i,
-                j + 12
-            );
+    protected List<Component> getTooltipFromContainerItem(ItemStack itemStack) {
+        List<Component> lines = super.getTooltipFromContainerItem(itemStack);
+        if (this.hoveredSlot instanceof DeepCrateSlot && itemStack.getCount() > ABBREVIATE_ABOVE) {
+            lines = new ArrayList<>(lines);
+            lines.add(1, Component.translatable("screen.deepcrate.count", itemStack.getCount()));
         }
+
+        return lines;
     }
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int i, int j) {
-        super.renderLabels(guiGraphics, i, j);
-
         // The page being read, as a bare number against the right edge of the title line.
         String page = String.valueOf(this.menu.page() + 1);
-        guiGraphics.drawString(this.font, page, this.imageWidth - 7 - this.font.width(page), this.titleLabelY, 0xFF404040, false);
+        int pageX = this.imageWidth - 7 - this.font.width(page);
+        guiGraphics.drawString(this.font, page, pageX, this.titleLabelY, 0xFF404040, false);
+
+        // A crate named on an anvil can be longer than the panel; the name stops before the number
+        // rather than running under it.
+        int room = pageX - this.titleLabelX - 4;
+        Component title = this.font.width(this.title) <= room
+            ? this.title
+            : Component.literal(this.font.plainSubstrByWidth(this.title.getString(), room - this.font.width("...")) + "...");
+        guiGraphics.drawString(this.font, title, this.titleLabelX, this.titleLabelY, 0xFF404040, false);
+        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
+    }
+
+    /**
+     * A crate can hold twelve pages, and a slot on a page that is not open is not drawn at all, so a
+     * search that matched nothing visible would read as a search that matched nothing. The screen
+     * turns to the first page holding a match instead.
+     */
+    private void onQueryChanged(String text) {
+        this.query = text.toLowerCase(Locale.ROOT).trim();
+        if (this.query.isEmpty() || this.menu.layout().pageCount() < 2) {
+            return;
+        }
+
+        for (Slot slot : this.menu.slots) {
+            if (slot instanceof DeepCrateSlot deepCrateSlot && !slot.getItem().isEmpty() && !this.dims(slot)) {
+                this.menu.setPage(deepCrateSlot.page());
+                return;
+            }
+        }
     }
 
     /**

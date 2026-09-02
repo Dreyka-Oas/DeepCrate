@@ -9,6 +9,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 
 /** Row modules: they add rows, they add them to both halves of a pair, and taking them back spills. */
 public class CrateRowModuleGameTest {
@@ -51,6 +52,39 @@ public class CrateRowModuleGameTest {
 
         assertEquals(gameTestHelper, COPPER_SLOTS, deepCrateBlockEntity.getContainerSize(), "crate size after the trim");
         assertEquals(gameTestHelper, 40, CrateMenuGameTest.droppedCount(gameTestHelper, Items.DIRT), "what fell on the ground");
+        gameTestHelper.succeed();
+    }
+
+    @GameTest
+    public void acrateIsNotCutBackWhileSomeoneElseHasItOpen(GameTestHelper gameTestHelper) {
+        ServerPlayer first = gameTestHelper.makeMockServerPlayerInLevel();
+        ServerPlayer second = gameTestHelper.makeMockServerPlayerInLevel();
+        DeepCrateBlockEntity deepCrateBlockEntity = placeCrate(gameTestHelper);
+        deepCrateBlockEntity.setRowModules(new ItemStack(RegistryInit.ROW_MODULE_ITEM, 1));
+
+        // A mock player is made at the origin of the world; the crate only counts the ones standing
+        // next to it, as it does for a real player.
+        Vec3 atTheCrate = gameTestHelper.absoluteVec(Vec3.atCenterOf(CRATE));
+        first.snapTo(atTheCrate.x, atTheCrate.y, atTheCrate.z);
+        second.snapTo(atTheCrate.x, atTheCrate.y, atTheCrate.z);
+
+        DeepCrateMenu firstMenu = (DeepCrateMenu) deepCrateBlockEntity.createMenu(1, first.getInventory(), first);
+        DeepCrateMenu secondMenu = (DeepCrateMenu) deepCrateBlockEntity.createMenu(2, second.getInventory(), second);
+        // What openMenu does for a real player, and what the crate reads to know who is looking.
+        first.containerMenu = firstMenu;
+        second.containerMenu = secondMenu;
+        deepCrateBlockEntity.setRowModules(ItemStack.EMPTY);
+
+        firstMenu.removed(first);
+        first.containerMenu = first.inventoryMenu;
+        int whileSecondIsOpen = deepCrateBlockEntity.getContainerSize();
+
+        secondMenu.removed(second);
+        second.containerMenu = second.inventoryMenu;
+        int onceEveryoneIsGone = deepCrateBlockEntity.getContainerSize();
+
+        assertEquals(gameTestHelper, COPPER_SLOTS + 9, whileSecondIsOpen, "size while the second screen is open");
+        assertEquals(gameTestHelper, COPPER_SLOTS, onceEveryoneIsGone, "size once the last screen is gone");
         gameTestHelper.succeed();
     }
 

@@ -3,16 +3,16 @@ package com.dreykaoas.deepcrate.client;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 /**
  * The crate's search field, drawn smaller than the font of the game.
  *
  * There is one font and it does not come in sizes, so the whole widget is drawn under a scale. Its
- * own bounds are the inverse of that scale, which puts the drawn box back on the pixels asked for,
- * and {@link #isMouseOver} answers on those pixels rather than on the bounds. What stays out of step
- * is the caret placed by a click, which the base class works out from the raw mouse position: on a
- * long query it lands a character or two off. Typing and erasing are unaffected.
+ * own bounds are the inverse of that scale, which puts the drawn box back on the pixels asked for.
+ * {@link #isMouseOver} answers on the drawn pixels rather than on the bounds, and a click is handed
+ * on with its position mapped into the same space, so the caret lands under the pointer.
  */
 public class SearchBox extends EditBox {
     private static final float SCALE = 0.75F;
@@ -38,6 +38,29 @@ public class SearchBox extends EditBox {
         guiGraphics.pose().translate(-this.drawnX, -this.drawnY);
         super.renderWidget(guiGraphics, i, j, f);
         guiGraphics.pose().popMatrix();
+    }
+
+    @Override
+    public void onClick(MouseButtonEvent mouseButtonEvent, boolean bl) {
+        super.onClick(this.intoBoxSpace(mouseButtonEvent), bl);
+    }
+
+    @Override
+    protected void onDrag(MouseButtonEvent mouseButtonEvent, double d, double e) {
+        super.onDrag(this.intoBoxSpace(mouseButtonEvent), d, e);
+    }
+
+    /**
+     * The mouse arrives in screen pixels, while the base class reads it against bounds that live in
+     * the scaled space. Undoing the scale about the drawn corner is what keeps a click on the tenth
+     * letter from landing on the seventh.
+     */
+    private MouseButtonEvent intoBoxSpace(MouseButtonEvent mouseButtonEvent) {
+        return new MouseButtonEvent(
+            this.drawnX + (mouseButtonEvent.x() - this.drawnX) / SCALE,
+            this.drawnY + (mouseButtonEvent.y() - this.drawnY) / SCALE,
+            mouseButtonEvent.buttonInfo()
+        );
     }
 
     @Override

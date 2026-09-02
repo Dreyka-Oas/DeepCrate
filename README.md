@@ -58,6 +58,10 @@ in the rows that are gone drops at the crate's feet.
 On a double crate both halves grow by the same number of rows, one module giving one row on each
 side, since the two are shown as a single screen.
 
+A crate is only cut back once the last screen on it closes. Shrinking it under someone else's open
+screen would leave their menu holding slots the crate no longer has, and their next tick would ask
+for an index past the end.
+
 ## Pages
 
 A page holds four rows at most. Past that the screen splits, and the pages share the rows evenly:

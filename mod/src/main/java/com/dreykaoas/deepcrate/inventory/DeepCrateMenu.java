@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -47,6 +48,12 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     private final List<DeepCrateSlot> crateSlots = new ArrayList<>();
     private final List<DeepCrateBlockEntity> crates;
     private final Player player;
+    /**
+     * How many crate slots this menu was built with. Read from the container each time, it would
+     * follow a crate that grew under an open screen, and the slots past the old end are the player's
+     * own inventory: a shift-click would then move a stack into a slot the menu draws elsewhere.
+     */
+    private final int crateSlotCount;
 
     private int page;
     private int capacity;
@@ -69,6 +76,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         this.crates = crates;
         this.layout = crateLayout;
         this.capacity = container.getMaxStackSize();
+        this.crateSlotCount = container.getContainerSize();
         // Server side the slot reads the crate directly; client side there is no crate, so a plain
         // one-slot container stands in and only drives the predicted capacity.
         this.moduleContainer = crates.isEmpty()
@@ -121,7 +129,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
         // Read before the first change comes through, otherwise the menu reopens itself the moment
         // anything else in it moves.
-        this.rowModuleCount = this.moduleContainer.getItem(ModuleContainer.ROWS_SLOT).getCount();
+        this.rowModuleCount = DeepCrateApi.rowsOf(this.moduleContainer.getItem(ModuleContainer.ROWS_SLOT));
         this.setPage(0);
     }
 
@@ -182,7 +190,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
      */
     @Override
     public void clicked(int i, int j, ClickType clickType, Player player) {
-        if (clickType == ClickType.SWAP && i >= CRATE_SLOT_START && i < CRATE_SLOT_START + this.crate.getContainerSize()) {
+        if (clickType == ClickType.SWAP && i >= CRATE_SLOT_START && i < CRATE_SLOT_START + this.crateSlotCount) {
             ItemStack itemStack = this.slots.get(i).getItem();
             if (itemStack.getCount() > itemStack.getMaxStackSize()) {
                 return;
@@ -207,7 +215,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
         ItemStack itemStack2 = slot.getItem();
         itemStack = itemStack2.copy();
-        int crateEnd = CRATE_SLOT_START + this.crate.getContainerSize();
+        int crateEnd = CRATE_SLOT_START + this.crateSlotCount;
 
         if (i < crateEnd) {
             // Out of the crate, one hand-sized stack per click; doClick loops for the rest.
@@ -246,6 +254,10 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         }
 
         for (DeepCrateBlockEntity deepCrateBlockEntity : this.crates) {
+            if (anotherScreenIsOpen(deepCrateBlockEntity, player)) {
+                continue;
+            }
+
             List<ItemStack> spilled = new ArrayList<>(deepCrateBlockEntity.storage().overflow());
             // Row modules taken out shrink the crate the same way: what sat in the rows that are gone
             // goes to the ground rather than staying in a slot nobody can reach.
@@ -260,6 +272,22 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
             deepCrateBlockEntity.setChanged();
         }
+    }
+
+    /**
+     * Whether someone other than the player leaving still has this crate open. Cutting a crate back
+     * under an open screen would leave that menu holding slots the crate no longer has, and its next
+     * click would ask for an index past the end. The player closing is not counted: the game clears
+     * their own menu only after this call returns.
+     */
+    private static boolean anotherScreenIsOpen(DeepCrateBlockEntity deepCrateBlockEntity, Player closing) {
+        for (ContainerUser containerUser : deepCrateBlockEntity.getEntitiesWithContainerOpen()) {
+            if (containerUser.getLivingEntity() != closing) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -298,7 +326,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
      * ground.
      */
     private void reopenIfRowCountChanged() {
-        int rows = this.moduleContainer.getItem(ModuleContainer.ROWS_SLOT).getCount();
+        int rows = DeepCrateApi.rowsOf(this.moduleContainer.getItem(ModuleContainer.ROWS_SLOT));
         if (rows == this.rowModuleCount) {
             return;
         }

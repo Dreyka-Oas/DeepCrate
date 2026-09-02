@@ -149,6 +149,17 @@ public final class DeepCrateApi {
     }
 
     public static CrateLayout layoutFor(CrateTier crateTier, int rows) {
-        return CrateLayoutCallback.EVENT.invoker().layout(crateTier, rows, CrateLayout.balanced(rows));
+        CrateLayout crateLayout = CrateLayoutCallback.EVENT.invoker().layout(crateTier, rows, CrateLayout.balanced(rows));
+        if (crateLayout.rowsPerPage() * crateLayout.pageCount() >= rows) {
+            return crateLayout;
+        }
+
+        // An addon may shape the pages, but not hide rows: a layout that does not cover the crate
+        // would leave the slots past its end drawn nowhere and reachable by nothing.
+        DeepCrate.LOGGER.warn(
+            "[DeepCrate] a layout of {}x{} cannot hold the {} rows of {}, falling back to the balanced one",
+            crateLayout.rowsPerPage(), crateLayout.pageCount(), rows, crateTier.id()
+        );
+        return CrateLayout.balanced(rows);
     }
 }
