@@ -8,14 +8,18 @@ points and the chest of the game beside them, which the lock mapping is checked 
 
 The point of this file is the sampling. A crate is not one box but three, and each lays its six
 faces on the sheet at rectangles that depend on its own size. Painting every rectangle from the top
-of the material makes the lid show rows 0 to 4 of it and the body show rows 0 to 9 again, right
-underneath, so the same pixels appear twice on one surface. The two boxes also overlap by a row, and
-there the duplicate is two coplanar faces carrying different pixels.
+of the material makes the lid show rows 0 to 4 of it and the body show rows 0 to 9 again, so the same
+pixels appear twice on one surface.
 
-So the material is sampled along the crate rather than along the rectangle: the lid takes rows 0 to
-4 of a fourteen row column and the body rows 4 to 13, sharing the row where the boxes overlap.
-Sideways nothing is offset, because a crate is made of one block's material and two of those side by
-side repeat in the world as well.
+Worse, the lid runs from 9 to 14 and the body from 0 to 10: they share a row, and there two faces sit
+in exactly the same plane. Nothing can decide which of the two a pixel belongs to, so the pair
+flickers as the camera moves unless both carry the same colour. The chest of the game has the same
+row shared and paints it the same on both, which is why its own rows 14 and 42 are identical.
+
+So the material is sampled along the crate rather than along the rectangle. The first row of a side
+face is the low end of its box, so the body reads rows 0 to 9 of a fourteen row column and the lid
+rows 9 to 13, and row 9 lands on both sides of the shared plane. Sideways nothing is offset, because
+a crate is made of one block's material and two of those side by side repeat in the world as well.
 """
 import sys
 import zipfile
@@ -121,11 +125,24 @@ def build(material, width):
     paint(image, material, body["up"], 0, inside=True)
 
     for side in ("west", "north", "east", "south"):
-        paint(image, material, lid[side], 0)
-        # Four rows down: the lid stops where the body starts, on the row the two boxes share.
-        paint(image, material, body[side], LID_HEIGHT - 1)
+        paint(image, material, body[side], 0)
+        # The first row of a side face is the low end of its box, so the lid starts nine rows up,
+        # where the body's last row is: the one row the two boxes share.
+        paint(image, material, lid[side], BODY_HEIGHT - 1)
 
     return image
+
+
+SHARED_ROWS = (DEPTH, 19 + DEPTH + BODY_HEIGHT - 1)
+
+
+def check_shared_row(image, what):
+    """The two faces that sit in the same plane must carry the same pixels, or the pair flickers."""
+    px = image.load()
+    top, bottom = SHARED_ROWS
+    disagree = [x for x in range(64) if px[x, top] != px[x, bottom]]
+    if disagree:
+        raise SystemExit(f"{what}: rows {top} and {bottom} differ at columns {disagree[:8]}")
 
 
 def check_lock_mapping():
@@ -162,6 +179,10 @@ def unpack_what_the_game_gives_us():
 def main():
     unpack_what_the_game_gives_us()
     check_lock_mapping()
+    # The rule comes from the chest of the game, which follows it everywhere it shows: the two
+    # pixels where its own right half breaks it are on the edge the other half covers.
+    check_shared_row(Image.open(VANILLA / "normal.png").convert("RGBA"), "the chest of the game")
+
     ASSETS.mkdir(parents=True, exist_ok=True)
 
     for tier, block in TIERS.items():
@@ -169,6 +190,7 @@ def main():
         for suffix, width in (("", SINGLE_WIDTH), ("_left", HALF_WIDTH), ("_right", HALF_WIDTH)):
             image = build(material, width)
             paint_lock(image, suffix[1:] or None)
+            check_shared_row(image, f"{tier}{suffix}")
             image.save(ASSETS / f"{tier}_crate{suffix}.png")
 
         print(f"{tier}: single crate and both halves")
