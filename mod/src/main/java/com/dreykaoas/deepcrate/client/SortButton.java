@@ -18,12 +18,13 @@ import net.minecraft.resources.Identifier;
  * been pressed since, so there is no "current order" to show.
  */
 public class SortButton extends AbstractButton {
-    /** Four icons of sixteen, letters on the top row and counts under them, each way round. */
+    /** Four icons, letters on the top row and counts under them, each way round. */
     private static final Identifier ICONS = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/sort_icons.png");
     private static final int SHEET = 32;
-    private static final int ICON = 16;
-    /** The raised cell drawn on the tab, one pixel of bevel around the icon. */
-    public static final int SIZE = 18;
+    /** The cells of the sheet are spaced on sixteen, so a cell of fourteen leaves its neighbour alone. */
+    private static final int STRIDE = 16;
+    /** Smaller than a slot: these sit above the panel, where a full cell reads as a lump. */
+    public static final int SIZE = 14;
 
     private final CrateSort crateSort;
     private final BiConsumer<CrateSort, Boolean> onSort;
@@ -55,12 +56,12 @@ public class SortButton extends AbstractButton {
         guiGraphics.blit(
             RenderPipelines.GUI_TEXTURED,
             ICONS,
-            this.getX() + 1,
-            this.getY() + 1,
-            this.reversed ? ICON : 0,
-            this.crateSort == CrateSort.NAME ? 0 : ICON,
-            ICON,
-            ICON,
+            this.getX(),
+            this.getY(),
+            this.reversed ? STRIDE : 0,
+            this.crateSort == CrateSort.NAME ? 0 : STRIDE,
+            SIZE,
+            SIZE,
             SHEET,
             SHEET
         );

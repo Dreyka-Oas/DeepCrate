@@ -52,12 +52,12 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private static final int MODULE_TAB_TEXTURE = 64;
     /** The tab the two sort buttons sit on, above the panel and flush with its left edge. */
     private static final Identifier SORT_TAB = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/sort_tab.png");
-    private static final int SORT_TAB_WIDTH = 50;
-    private static final int SORT_TAB_HEIGHT = 30;
+    private static final int SORT_TAB_WIDTH = 38;
+    private static final int SORT_TAB_HEIGHT = 22;
     private static final int SORT_TAB_TEXTURE = 64;
     /** Standing clear of the panel rather than glued to it, as the module tab does. */
     private static final int SORT_TAB_GAP = 4;
-    private static final int SORT_TAB_MARGIN = 6;
+    private static final int SORT_TAB_MARGIN = 4;
     private static final int SORT_BUTTON_GAP = 2;
     /** Past four digits a count runs out of its cell, so it is shortened and the tooltip carries the truth. */
     private static final int ABBREVIATE_ABOVE = 999;
