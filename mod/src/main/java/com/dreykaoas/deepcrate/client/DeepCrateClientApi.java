@@ -2,6 +2,7 @@ package com.dreykaoas.deepcrate.client;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,23 +10,49 @@ import java.util.Locale;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
-/** The two orders the buttons above the crate offer. */
-public enum CrateSort {
-    /** Alphabetical, in the language the player has the game in. */
-    NAME,
-    /** The fullest pile first, then the letters between piles of the same size. */
-    COUNT;
+/** What a mod can add to the crate screen: for now, an order the sort buttons offer. */
+public final class DeepCrateClientApi {
+    private static final List<CrateSortOrder> SORT_ORDERS = new ArrayList<>();
+
+    private DeepCrateClientApi() {}
+
+    public static CrateSortOrder registerSortOrder(CrateSortOrder crateSortOrder) {
+        for (CrateSortOrder existing : SORT_ORDERS) {
+            if (existing.id().equals(crateSortOrder.id())) {
+                throw new IllegalStateException("Sort order " + crateSortOrder.id() + " registered twice");
+            }
+        }
+
+        SORT_ORDERS.add(crateSortOrder);
+        SORT_ORDERS.sort(Comparator.comparingInt(CrateSortOrder::order));
+        return crateSortOrder;
+    }
+
+    public static List<CrateSortOrder> sortOrders() {
+        return Collections.unmodifiableList(SORT_ORDERS);
+    }
+
+    public static @Nullable CrateSortOrder sortOrder(Identifier identifier) {
+        for (CrateSortOrder crateSortOrder : SORT_ORDERS) {
+            if (crateSortOrder.id().equals(identifier)) {
+                return crateSortOrder;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Which items the crate should hold in which order. Worked out here rather than on the server:
-     * "Pierre" and "Stone" do not sort to the same place, and only this side knows which of the two
-     * the player is reading.
+     * only this side knows which of the two names the player is reading.
      */
-    public List<Item> order(Container container, boolean reversed) {
+    public static List<Item> order(CrateSortOrder crateSortOrder, Container container, boolean reversed) {
         Map<Item, Long> totals = new LinkedHashMap<>();
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack itemStack = container.getItem(i);
@@ -34,12 +61,7 @@ public enum CrateSort {
             }
         }
 
-        Collator collator = Collator.getInstance(gameLocale());
-        Comparator<Item> byName = Comparator.comparing(CrateSort::nameOf, collator);
-        Comparator<Item> comparator = this == NAME
-            ? byName
-            : Comparator.<Item, Long>comparing(totals::get).reversed().thenComparing(byName);
-
+        Comparator<Item> comparator = crateSortOrder.rule().comparator(totals, Collator.getInstance(gameLocale()));
         List<Item> items = new ArrayList<>(totals.keySet());
         items.sort(reversed ? comparator.reversed() : comparator);
         return items;
@@ -49,7 +71,7 @@ public enum CrateSort {
      * The plain name of the item, not the name of the stack: a renamed pile belongs with the rest of
      * its kind rather than under the letter someone typed on an anvil.
      */
-    private static String nameOf(Item item) {
+    public static String nameOf(Item item) {
         return Component.translatable(item.getDescriptionId()).getString();
     }
 

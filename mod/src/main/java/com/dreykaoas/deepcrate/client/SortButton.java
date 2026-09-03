@@ -1,6 +1,5 @@
 package com.dreykaoas.deepcrate.client;
 
-import java.util.Locale;
 import java.util.function.BiConsumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
@@ -9,32 +8,35 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 
 /**
- * One of the two buttons above the crate. The plate under the drawing is the game's own button
- * sprite, which is what keeps it from looking home-made and gives the pressed and hovered states.
+ * One of the buttons above the crate, one per registered order. The plate under the drawing is the
+ * game's own button sprite, which is what keeps it from looking home-made and gives the pressed and
+ * hovered states.
  *
- * The icon shows what the next press will do, not what the last one did: the other button may have
- * been pressed since, so there is no "current order" to show.
+ * The icon shows what the next press will do, not what the last one did: another button may have been
+ * pressed since, so there is no "current order" to show.
  */
 public class SortButton extends AbstractButton {
-    /** Four icons of sixteen, letters on the top row and counts under them, each way round. */
-    private static final Identifier ICONS = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/sort_icons.png");
-    private static final int SHEET = 32;
+    /** Each order brings its own drawing: sixteen wide, thirty-two tall, plain over reversed. */
+    private static final int SHEET_HEIGHT = 32;
     public static final int SIZE = 16;
 
-    private final CrateSort crateSort;
-    private final BiConsumer<CrateSort, Boolean> onSort;
+    private final CrateSortOrder order;
+    private final BiConsumer<CrateSortOrder, Boolean> onSort;
 
     private boolean reversed;
 
-    public SortButton(int x, int y, CrateSort crateSort, boolean reversed, BiConsumer<CrateSort, Boolean> onSort) {
+    public SortButton(int x, int y, CrateSortOrder crateSortOrder, boolean reversed, BiConsumer<CrateSortOrder, Boolean> onSort) {
         super(x, y, SIZE, SIZE, Component.empty());
-        this.crateSort = crateSort;
+        this.order = crateSortOrder;
         this.reversed = reversed;
         this.onSort = onSort;
         this.tellWhatIsNext();
+    }
+
+    public CrateSortOrder order() {
+        return this.order;
     }
 
     /** Read back when the screen is rebuilt, so a resized window does not reset the direction. */
@@ -44,7 +46,7 @@ public class SortButton extends AbstractButton {
 
     @Override
     public void onPress(InputWithModifiers inputWithModifiers) {
-        this.onSort.accept(this.crateSort, this.reversed);
+        this.onSort.accept(this.order, this.reversed);
         this.reversed = !this.reversed;
         this.tellWhatIsNext();
     }
@@ -54,15 +56,15 @@ public class SortButton extends AbstractButton {
         this.renderDefaultSprite(guiGraphics);
         guiGraphics.blit(
             RenderPipelines.GUI_TEXTURED,
-            ICONS,
+            this.order.icon(),
             this.getX(),
             this.getY(),
-            this.reversed ? SIZE : 0,
-            this.crateSort == CrateSort.NAME ? 0 : SIZE,
+            0.0F,
+            this.reversed ? SIZE : 0.0F,
             SIZE,
             SIZE,
-            SHEET,
-            SHEET
+            SIZE,
+            SHEET_HEIGHT
         );
     }
 
@@ -72,9 +74,7 @@ public class SortButton extends AbstractButton {
     }
 
     private void tellWhatIsNext() {
-        Component component = Component.translatable(
-            "screen.deepcrate.sort." + this.crateSort.name().toLowerCase(Locale.ROOT) + (this.reversed ? "_reversed" : "")
-        );
+        Component component = this.order.label(this.reversed);
         this.setMessage(component);
         this.setTooltip(Tooltip.create(component));
     }

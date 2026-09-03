@@ -6,8 +6,10 @@ import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
 import com.dreykaoas.deepcrate.net.CrateSortPayload;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
@@ -62,9 +64,11 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private final int moduleTabHeight;
     private final List<Button> pageButtons = new ArrayList<>();
 
+    private final List<SortButton> sortButtons = new ArrayList<>();
+    /** Kept by name and not by position, so a mod loaded since does not shift every direction by one. */
+    private final Map<Identifier, Boolean> sortDirections = new HashMap<>();
+
     private SearchBox searchBox;
-    private SortButton nameSort;
-    private SortButton countSort;
     private String query = "";
 
     public DeepCrateScreen(DeepCrateMenu deepCrateMenu, Inventory inventory, Component component) {
@@ -99,13 +103,31 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
 
         // Read before the widgets are replaced: a window resized mid-session rebuilds the screen, and
         // a button that forgot its direction would sort the same way twice in a row.
-        boolean nameReversed = this.nameSort != null && this.nameSort.isReversed();
-        boolean countReversed = this.countSort != null && this.countSort.isReversed();
-        int sortY = this.topPos - SortButton.SIZE - SORT_GAP;
-        this.nameSort = this.addRenderableWidget(new SortButton(this.leftPos, sortY, CrateSort.NAME, nameReversed, this::sort));
-        this.countSort = this.addRenderableWidget(
-            new SortButton(this.leftPos + SortButton.SIZE + SORT_BUTTON_GAP, sortY, CrateSort.COUNT, countReversed, this::sort)
-        );
+        for (SortButton sortButton : this.sortButtons) {
+            this.sortDirections.put(sortButton.order().id(), sortButton.isReversed());
+        }
+
+        this.sortButtons.clear();
+        List<CrateSortOrder> orders = DeepCrateClientApi.sortOrders();
+        // Enough orders to outgrow the panel wrap onto a second line above the first, rather than
+        // running off the side of the screen.
+        int perRow = Math.max(1, this.imageWidth / (SortButton.SIZE + SORT_BUTTON_GAP));
+        int sortRows = (orders.size() + perRow - 1) / perRow;
+        for (int i = 0; i < orders.size(); i++) {
+            CrateSortOrder crateSortOrder = orders.get(i);
+            int row = sortRows - 1 - i / perRow;
+            this.sortButtons.add(
+                this.addRenderableWidget(
+                    new SortButton(
+                        this.leftPos + i % perRow * (SortButton.SIZE + SORT_BUTTON_GAP),
+                        this.topPos - SORT_GAP - SortButton.SIZE - row * (SortButton.SIZE + SORT_BUTTON_GAP),
+                        crateSortOrder,
+                        this.sortDirections.getOrDefault(crateSortOrder.id(), false),
+                        this::sort
+                    )
+                )
+            );
+        }
 
         this.pageButtons.clear();
         if (this.menu.layout().pageCount() < 2) {
@@ -141,7 +163,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         return super.hasClickedOutside(d, e, i, j)
             && !this.isOverPageButtons(d, e)
             && !this.isOverModuleTab(d, e, i, j)
-            && !isOverSortButtons(d, e, i, j);
+            && !this.isOverSortButtons(d, e);
     }
 
     private boolean isOverModuleTab(double d, double e, int i, int j) {
@@ -150,9 +172,14 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         return d >= tabX && d < tabX + MODULE_TAB_WIDTH && e >= tabY && e < tabY + this.moduleTabHeight;
     }
 
-    private static boolean isOverSortButtons(double d, double e, int i, int j) {
-        int top = j - SortButton.SIZE - SORT_GAP;
-        return d >= i && d < i + SortButton.SIZE * 2 + SORT_BUTTON_GAP && e >= top && e < top + SortButton.SIZE;
+    private boolean isOverSortButtons(double d, double e) {
+        for (SortButton sortButton : this.sortButtons) {
+            if (sortButton.isMouseOver(d, e)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean isOverPageButtons(double d, double e) {
@@ -283,9 +310,9 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
      * The order is worked out here and sent whole, because it comes from the item names in the
      * language this player reads and the crate has no idea what that is.
      */
-    private void sort(CrateSort crateSort, boolean reversed) {
+    private void sort(CrateSortOrder crateSortOrder, boolean reversed) {
         ClientPlayNetworking.send(
-            new CrateSortPayload(this.menu.containerId, crateSort.order(this.menu.getContainer(), reversed))
+            new CrateSortPayload(this.menu.containerId, DeepCrateClientApi.order(crateSortOrder, this.menu.getContainer(), reversed))
         );
     }
 
