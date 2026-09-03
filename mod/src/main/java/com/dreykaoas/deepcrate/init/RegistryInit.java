@@ -2,6 +2,7 @@ package com.dreykaoas.deepcrate.init;
 
 import com.dreykaoas.deepcrate.DeepCrate;
 import com.dreykaoas.deepcrate.api.CrateModule;
+import com.dreykaoas.deepcrate.api.CrateModuleSlot;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.api.RowModule;
@@ -55,6 +56,23 @@ public final class RegistryInit {
     public static final List<Item> MODULE_ITEMS = MODULE_SPECS.stream().map(RegistryInit::registerModule).toList();
 
     public static final Item ROW_MODULE_ITEM = registerRowModule();
+
+    /** The two cells the mod ships, in the order they are drawn. */
+    public static final Identifier CAPACITY_SLOT = id("capacity");
+    public static final Identifier ROWS_SLOT = id("rows");
+
+    static {
+        // The filters ask the module registries rather than a tag of their own, so adding an item to
+        // deepcrate:module_512 still makes it placeable with no second data file to write.
+        DeepCrateApi.registerModuleSlot(
+            new CrateModuleSlot(CAPACITY_SLOT, 0, 1, id("container/slot/module"), itemStack -> DeepCrateApi.moduleFor(itemStack) != null)
+        );
+        DeepCrateApi.registerModuleSlot(
+            new CrateModuleSlot(
+                ROWS_SLOT, 1, RowModule.STACK_LIMIT, id("container/slot/row_module"), itemStack -> DeepCrateApi.rowModuleFor(itemStack) != null
+            )
+        );
+    }
 
     public static final BlockEntityType<DeepCrateBlockEntity> BLOCK_ENTITY = Registry.register(
         BuiltInRegistries.BLOCK_ENTITY_TYPE,

@@ -3,6 +3,7 @@ package com.dreykaoas.deepcrate.api;
 import com.dreykaoas.deepcrate.DeepCrate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ public final class DeepCrateApi {
     private static final Map<Block, CrateTier> TIERS_BY_BLOCK = new HashMap<>();
     private static final List<CrateModule> MODULES = new ArrayList<>();
     private static final List<RowModule> ROW_MODULES = new ArrayList<>();
+    private static final List<CrateModuleSlot> MODULE_SLOTS = new ArrayList<>();
 
     private DeepCrateApi() {}
 
@@ -89,6 +91,33 @@ public final class DeepCrateApi {
         ROW_MODULES.add(rowModule);
         DeepCrate.LOGGER.info("[DeepCrate] row module {}: {} rows each", rowModule.id(), rowModule.rows());
         return rowModule;
+    }
+
+    public static CrateModuleSlot registerModuleSlot(CrateModuleSlot crateModuleSlot) {
+        for (CrateModuleSlot existing : MODULE_SLOTS) {
+            if (existing.id().equals(crateModuleSlot.id())) {
+                throw new IllegalStateException("Module slot " + crateModuleSlot.id() + " registered twice");
+            }
+        }
+
+        MODULE_SLOTS.add(crateModuleSlot);
+        MODULE_SLOTS.sort(Comparator.comparingInt(CrateModuleSlot::order));
+        DeepCrate.LOGGER.info("[DeepCrate] module slot {}: up to {} at a time", crateModuleSlot.id(), crateModuleSlot.stackLimit());
+        return crateModuleSlot;
+    }
+
+    public static List<CrateModuleSlot> moduleSlots() {
+        return Collections.unmodifiableList(MODULE_SLOTS);
+    }
+
+    public static @Nullable CrateModuleSlot moduleSlot(Identifier identifier) {
+        for (CrateModuleSlot crateModuleSlot : MODULE_SLOTS) {
+            if (crateModuleSlot.id().equals(identifier)) {
+                return crateModuleSlot;
+            }
+        }
+
+        return null;
     }
 
     public static List<RowModule> rowModules() {
@@ -146,6 +175,30 @@ public final class DeepCrateApi {
     public static int capacityOf(ItemStack moduleStack) {
         CrateModule crateModule = moduleFor(moduleStack);
         return crateModule == null ? BASE_CAPACITY : crateModule.capacity();
+    }
+
+    /**
+     * The strongest capacity any of these stacks asks for. A crate whose cells hold two capacity
+     * modules takes the better of the two rather than adding them, which is the rule one cell already
+     * followed between two tags.
+     */
+    public static int capacityAmong(Iterable<ItemStack> stacks) {
+        int capacity = BASE_CAPACITY;
+        for (ItemStack itemStack : stacks) {
+            capacity = Math.max(capacity, capacityOf(itemStack));
+        }
+
+        return capacity;
+    }
+
+    /** Rows add up, because each row module is a row and two of them are two rows. */
+    public static int rowsAmong(Iterable<ItemStack> stacks) {
+        int rows = 0;
+        for (ItemStack itemStack : stacks) {
+            rows += rowsOf(itemStack);
+        }
+
+        return rows;
     }
 
     public static CrateLayout layoutFor(CrateTier crateTier, int rows) {

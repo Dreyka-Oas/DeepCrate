@@ -1,6 +1,7 @@
 package com.dreykaoas.deepcrate.block;
 
 import com.dreykaoas.deepcrate.api.CrateLayout;
+import com.dreykaoas.deepcrate.api.CrateModules;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.init.RegistryInit;
@@ -8,6 +9,7 @@ import com.dreykaoas.deepcrate.inventory.CrateOpenData;
 import com.dreykaoas.deepcrate.inventory.CratePairContainer;
 import com.dreykaoas.deepcrate.inventory.CrateStorage;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
+import com.dreykaoas.deepcrate.inventory.StoredModule;
 import com.dreykaoas.deepcrate.inventory.StoredSlot;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -46,8 +49,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     private static final int EVENT_SET_OPEN_COUNT = 1;
 
     private CrateStorage storage = new CrateStorage(CrateTier.COLUMNS, DeepCrateApi.BASE_CAPACITY);
-    private ItemStack module = ItemStack.EMPTY;
-    private ItemStack rowModules = ItemStack.EMPTY;
+    private final CrateModules modules = new CrateModules();
 
     private final ChestLidController lidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
@@ -101,36 +103,48 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         return this.storage;
     }
 
+    public CrateModules modules() {
+        return this.modules;
+    }
+
     public ItemStack module() {
-        return this.module;
+        return this.modules.get(RegistryInit.CAPACITY_SLOT);
     }
 
     public void setModule(ItemStack itemStack) {
-        this.module = itemStack;
-        this.storage().setCapacity(DeepCrateApi.capacityOf(itemStack));
-        this.setChanged();
+        this.setModuleIn(RegistryInit.CAPACITY_SLOT, itemStack);
     }
 
     public ItemStack rowModules() {
-        return this.rowModules;
+        return this.modules.get(RegistryInit.ROWS_SLOT);
+    }
+
+    public void setRowModules(ItemStack itemStack) {
+        this.setModuleIn(RegistryInit.ROWS_SLOT, itemStack);
     }
 
     /**
-     * Row modules live with the capacity module, on the holder of the pair, and both halves grow by
-     * the same number of rows: a double crate is two containers shown as one, so one module adds one
-     * row to each of them.
+     * Puts a stack in one cell and lets the whole table decide again. Capacity and rows are read
+     * across every cell rather than from the one that changed: which cell an item sits in no longer
+     * says what it does.
+     *
+     * Both halves of a pair follow, because a double crate is two containers shown as one screen and
+     * one module has to give one row to each of them.
      */
-    public void setRowModules(ItemStack itemStack) {
-        this.rowModules = itemStack;
+    public void setModuleIn(Identifier identifier, ItemStack itemStack) {
+        this.modules.set(identifier, itemStack);
+        this.storage().setCapacity(DeepCrateApi.capacityAmong(this.modules));
         for (DeepCrateBlockEntity deepCrateBlockEntity : DeepCrateBlock.cratesFor(this)) {
             deepCrateBlockEntity.storage();
             deepCrateBlockEntity.setChanged();
         }
+
+        this.setChanged();
     }
 
     /** Rows this crate has beyond its tier's own, read from wherever the pair keeps its modules. */
     public int extraRows() {
-        return DeepCrateApi.rowsOf(this.moduleHolder().rowModules);
+        return DeepCrateApi.rowsAmong(this.moduleHolder().modules);
     }
 
     /**
@@ -176,7 +190,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     }
 
     private boolean hasAnyModule() {
-        return !this.module.isEmpty() || !this.rowModules.isEmpty();
+        return !this.modules.isEmpty();
     }
 
     @Override
@@ -282,20 +296,28 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         }
 
         valueOutput.putInt("Size", crateStorage.size());
-        if (!this.module.isEmpty()) {
-            valueOutput.store("Module", ItemStack.CODEC, this.module);
-        }
-
-        if (!this.rowModules.isEmpty()) {
-            valueOutput.store("RowModules", ItemStack.CODEC, this.rowModules);
+        if (!this.modules.isEmpty()) {
+            ValueOutput.TypedOutputList<StoredModule> savedModules = valueOutput.list("Modules", StoredModule.CODEC);
+            for (Identifier identifier : this.modules.ids()) {
+                savedModules.add(StoredModule.of(identifier, this.modules.get(identifier)));
+            }
         }
     }
 
     @Override
     protected void loadAdditional(ValueInput valueInput) {
         super.loadAdditional(valueInput);
-        this.module = valueInput.read("Module", ItemStack.CODEC).orElse(ItemStack.EMPTY);
-        this.rowModules = valueInput.read("RowModules", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        this.modules.clear();
+        for (StoredModule storedModule : valueInput.listOrEmpty("Modules", StoredModule.CODEC)) {
+            this.modules.set(storedModule.id(), storedModule.toStack());
+        }
+
+        // A crate saved before the cells were a registry kept its two stacks under their own keys.
+        // Read once and never written again, so a world upgrades on the first load of each crate.
+        if (this.modules.isEmpty()) {
+            this.modules.set(RegistryInit.CAPACITY_SLOT, valueInput.read("Module", ItemStack.CODEC).orElse(ItemStack.EMPTY));
+            this.modules.set(RegistryInit.ROWS_SLOT, valueInput.read("RowModules", ItemStack.CODEC).orElse(ItemStack.EMPTY));
+        }
 
         // Read the slots first: the crate has to be at least large enough to hold every one of them,
         // whatever Size says and whatever the tier says. A missing or shrunken Size must never be a
@@ -310,7 +332,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         }
 
         int size = Math.max(Math.max(CrateTier.COLUMNS, highest), valueInput.getIntOr("Size", CrateTier.COLUMNS));
-        this.storage = new CrateStorage(size, DeepCrateApi.capacityOf(this.module));
+        this.storage = new CrateStorage(size, DeepCrateApi.capacityAmong(this.modules));
 
         for (StoredSlot storedSlot : storedSlots) {
             this.storage.restore(storedSlot.slot(), storedSlot.toStack());
@@ -329,6 +351,9 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     public void removeComponentsFromTag(ValueOutput valueOutput) {
         super.removeComponentsFromTag(valueOutput);
         valueOutput.discard("Slots");
+        valueOutput.discard("Modules");
+        // The two keys of the previous format, still discarded: a crate saved by it and picked up by
+        // this one must not carry its old modules along in the item.
         valueOutput.discard("Module");
         valueOutput.discard("RowModules");
         valueOutput.discard("Size");
@@ -342,15 +367,11 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
         List<ItemStack> list = this.storage().splitForVanilla();
         this.storage.clear();
-        if (!this.module.isEmpty()) {
-            list.add(this.module);
-            this.module = ItemStack.EMPTY;
+        for (ItemStack itemStack : this.modules) {
+            list.add(itemStack);
         }
 
-        if (!this.rowModules.isEmpty()) {
-            list.add(this.rowModules);
-            this.rowModules = ItemStack.EMPTY;
-        }
+        this.modules.clear();
 
         // One entity per stack of 64: the vanilla helper cuts each stack into ten-to-thirty pieces, and
         // a full echo crate would put several thousand entities on one block in a single tick.
@@ -417,7 +438,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
             return;
         }
 
-        int target = crateTier.slotCount() + DeepCrateApi.rowsOf(this.moduleHolder().rowModules) * CrateTier.COLUMNS;
+        int target = crateTier.slotCount() + this.extraRows() * CrateTier.COLUMNS;
         if (target > this.storage.size()) {
             this.storage.grow(target);
         }
@@ -445,7 +466,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     private void alignCapacityWithHolder() {
         DeepCrateBlockEntity holder = this.moduleHolder();
         if (holder != this) {
-            this.storage.setCapacity(DeepCrateApi.capacityOf(holder.module()));
+            this.storage.setCapacity(DeepCrateApi.capacityAmong(holder.modules));
         }
     }
 
