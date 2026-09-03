@@ -1,6 +1,7 @@
 package com.dreykaoas.deepcrate.inventory;
 
 import com.dreykaoas.deepcrate.api.CrateLayout;
+import com.dreykaoas.deepcrate.api.CrateModuleSlot;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
@@ -38,10 +39,8 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     /** Left of the panel, on its own tab, standing clear of it rather than glued to its edge. */
     public static final int MODULE_X = -25;
     public static final int MODULE_Y = 18;
-    /** Row modules sit under the capacity module, in the same tab. */
-    public static final int ROW_MODULE_Y = MODULE_Y + 18;
-    /** The crate's own slots start after the two module slots. */
-    public static final int CRATE_SLOT_START = 2;
+    /** One cell under the next, eighteen pixels apart, as many as there are registered kinds. */
+    public static final int MODULE_SPACING = 18;
 
     private final Container crate;
     private final Container moduleContainer;
@@ -55,6 +54,12 @@ public class DeepCrateMenu extends AbstractContainerMenu {
      * own inventory: a shift-click would then move a stack into a slot the menu draws elsewhere.
      */
     private final int crateSlotCount;
+    /**
+     * Where the crate's own slots begin, which is how many module cells were registered when this
+     * menu was built. Read once: a mod loading a new cell while a screen is open must not move the
+     * slots under it.
+     */
+    private final int crateSlotStart;
 
     private int page;
     private int capacity;
@@ -78,10 +83,12 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         this.layout = crateLayout;
         this.capacity = container.getMaxStackSize();
         this.crateSlotCount = container.getContainerSize();
+        List<CrateModuleSlot> kinds = DeepCrateApi.moduleSlots();
+        this.crateSlotStart = kinds.size();
         // Server side the slot reads the crate directly; client side there is no crate, so a plain
-        // one-slot container stands in and only drives the predicted capacity.
+        // container stands in and only drives the predicted capacity.
         this.moduleContainer = crates.isEmpty()
-            ? new SimpleContainer(2) {
+            ? new SimpleContainer(kinds.size()) {
                 @Override
                 public void setChanged() {
                     super.setChanged();
@@ -92,8 +99,9 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
         container.startOpen(inventory.player);
         this.player = inventory.player;
-        this.addSlot(new ModuleSlot(this.moduleContainer, ModuleContainer.CAPACITY_SLOT, MODULE_X, MODULE_Y));
-        this.addSlot(new RowModuleSlot(this.moduleContainer, ModuleContainer.ROWS_SLOT, MODULE_X, ROW_MODULE_Y));
+        for (int cell = 0; cell < kinds.size(); cell++) {
+            this.addSlot(new ModuleSlot(this.moduleContainer, cell, MODULE_X, MODULE_Y + cell * MODULE_SPACING, kinds.get(cell)));
+        }
 
         for (int slot = 0; slot < container.getContainerSize(); slot++) {
             int row = slot / CrateTier.COLUMNS;
@@ -130,12 +138,16 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
         // Read before the first change comes through, otherwise the menu reopens itself the moment
         // anything else in it moves.
-        this.rowModuleCount = DeepCrateApi.rowsOf(this.moduleContainer.getItem(ModuleContainer.ROWS_SLOT));
+        this.rowModuleCount = DeepCrateApi.rowsAmong(this.moduleStacks());
         this.setPage(0);
     }
 
     public CrateLayout layout() {
         return this.layout;
+    }
+
+    public int crateSlotStart() {
+        return this.crateSlotStart;
     }
 
     public Container getContainer() {
@@ -164,7 +176,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
      * item rather than refused.
      */
     private boolean moveModuleToItsSlot(ItemStack itemStack) {
-        for (int i = 0; i < CRATE_SLOT_START; i++) {
+        for (int i = 0; i < this.crateSlotStart; i++) {
             Slot slot = this.getSlot(i);
             if (!slot.mayPlace(itemStack) || slot.getItem().getCount() >= slot.getMaxStackSize()) {
                 continue;
@@ -208,7 +220,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
      */
     @Override
     public void clicked(int i, int j, ClickType clickType, Player player) {
-        if (clickType == ClickType.SWAP && i >= CRATE_SLOT_START && i < CRATE_SLOT_START + this.crateSlotCount) {
+        if (clickType == ClickType.SWAP && i >= this.crateSlotStart && i < this.crateSlotStart + this.crateSlotCount) {
             ItemStack itemStack = this.slots.get(i).getItem();
             if (itemStack.getCount() > itemStack.getMaxStackSize()) {
                 return;
@@ -233,7 +245,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
         ItemStack itemStack2 = slot.getItem();
         itemStack = itemStack2.copy();
-        int crateEnd = CRATE_SLOT_START + this.crateSlotCount;
+        int crateEnd = this.crateSlotStart + this.crateSlotCount;
 
         if (i < crateEnd) {
             // Out of the crate, one hand-sized stack per click; doClick loops for the rest.
@@ -245,7 +257,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
             }
         } else if (this.moveModuleToItsSlot(itemStack2)) {
             // Nothing else to do: the module found its own slot.
-        } else if (!this.moveItemStackTo(itemStack2, CRATE_SLOT_START, crateEnd, false)) {
+        } else if (!this.moveItemStackTo(itemStack2, this.crateSlotStart, crateEnd, false)) {
             // Deliberately every crate slot, not only the visible page: a player shift-clicking a
             // stack expects it stored, not refused because the right page is not open.
             return ItemStack.EMPTY;
@@ -320,7 +332,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     }
 
     private void onModuleChanged() {
-        this.capacity = DeepCrateApi.capacityOf(this.moduleContainer.getItem(ModuleContainer.CAPACITY_SLOT));
+        this.capacity = DeepCrateApi.capacityAmong(this.moduleStacks());
         this.reopenIfRowCountChanged();
 
         if (this.crates.isEmpty()) {
@@ -343,8 +355,18 @@ public class DeepCrateMenu extends AbstractContainerMenu {
      * that caused it: closing a menu mid-click would put whatever the player is carrying on the
      * ground.
      */
+    /** The cells as a plain list, which is what the two api helpers walk. */
+    private List<ItemStack> moduleStacks() {
+        List<ItemStack> stacks = new ArrayList<>(this.moduleContainer.getContainerSize());
+        for (int i = 0; i < this.moduleContainer.getContainerSize(); i++) {
+            stacks.add(this.moduleContainer.getItem(i));
+        }
+
+        return stacks;
+    }
+
     private void reopenIfRowCountChanged() {
-        int rows = DeepCrateApi.rowsOf(this.moduleContainer.getItem(ModuleContainer.ROWS_SLOT));
+        int rows = DeepCrateApi.rowsAmong(this.moduleStacks());
         if (rows == this.rowModuleCount) {
             return;
         }

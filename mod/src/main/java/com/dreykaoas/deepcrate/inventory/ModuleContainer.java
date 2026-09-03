@@ -1,23 +1,23 @@
 package com.dreykaoas.deepcrate.inventory;
 
-import com.dreykaoas.deepcrate.api.RowModule;
+import com.dreykaoas.deepcrate.api.CrateModuleSlot;
+import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import java.util.List;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 /**
- * The two module slots, reading and writing the crate itself rather than a copy.
+ * The module cells, reading and writing the crate itself rather than a copy.
  *
  * A copy would be a duplication bug: two players opening the same crate would each hold their own
- * module, and the one who takes it out leaves the other with a phantom that can still be dropped
- * into the world.
+ * module, and the one who takes it out leaves the other with a phantom that can still be dropped into
+ * the world.
  */
 public class ModuleContainer implements Container {
-    public static final int CAPACITY_SLOT = 0;
-    public static final int ROWS_SLOT = 1;
-
     private final List<DeepCrateBlockEntity> crates;
     private final Runnable onChanged;
 
@@ -28,22 +28,18 @@ public class ModuleContainer implements Container {
 
     @Override
     public int getContainerSize() {
-        return 2;
+        return DeepCrateApi.moduleSlots().size();
     }
 
     @Override
     public boolean isEmpty() {
-        return this.getItem(CAPACITY_SLOT).isEmpty() && this.getItem(ROWS_SLOT).isEmpty();
+        return this.crates.isEmpty() || this.crates.get(0).modules().isEmpty();
     }
 
     @Override
     public ItemStack getItem(int i) {
-        if (this.crates.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-
-        DeepCrateBlockEntity holder = this.crates.get(0);
-        return i == ROWS_SLOT ? holder.rowModules() : holder.module();
+        Identifier identifier = idAt(i);
+        return this.crates.isEmpty() || identifier == null ? ItemStack.EMPTY : this.crates.get(0).modules().get(identifier);
     }
 
     @Override
@@ -67,13 +63,9 @@ public class ModuleContainer implements Container {
 
     @Override
     public void setItem(int i, ItemStack itemStack) {
-        if (!this.crates.isEmpty()) {
-            DeepCrateBlockEntity holder = this.crates.get(0);
-            if (i == ROWS_SLOT) {
-                holder.setRowModules(itemStack);
-            } else {
-                holder.setModule(itemStack);
-            }
+        Identifier identifier = idAt(i);
+        if (!this.crates.isEmpty() && identifier != null) {
+            this.crates.get(0).setModuleIn(identifier, itemStack);
         }
 
         this.setChanged();
@@ -91,12 +83,27 @@ public class ModuleContainer implements Container {
 
     @Override
     public void clearContent() {
-        this.setItem(CAPACITY_SLOT, ItemStack.EMPTY);
-        this.setItem(ROWS_SLOT, ItemStack.EMPTY);
+        for (int i = 0; i < this.getContainerSize(); i++) {
+            this.setItem(i, ItemStack.EMPTY);
+        }
     }
 
+    /**
+     * The widest cell of the lot. A slot answers its own limit through {@link ModuleSlot}; this is
+     * what the container promises, and promising less than a cell allows would clamp it.
+     */
     @Override
     public int getMaxStackSize() {
-        return RowModule.STACK_LIMIT;
+        int limit = 1;
+        for (CrateModuleSlot crateModuleSlot : DeepCrateApi.moduleSlots()) {
+            limit = Math.max(limit, crateModuleSlot.stackLimit());
+        }
+
+        return limit;
+    }
+
+    private static @Nullable Identifier idAt(int i) {
+        List<CrateModuleSlot> kinds = DeepCrateApi.moduleSlots();
+        return i < 0 || i >= kinds.size() ? null : kinds.get(i).id();
     }
 }

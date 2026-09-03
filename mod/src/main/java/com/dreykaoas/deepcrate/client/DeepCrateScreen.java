@@ -1,6 +1,7 @@
 package com.dreykaoas.deepcrate.client;
 
 import com.dreykaoas.deepcrate.api.CrateTier;
+import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
 import com.dreykaoas.deepcrate.net.CrateSortPayload;
@@ -45,8 +46,9 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** The tab the module slot sits on, left of the panel: its own small panel with the same border. */
     private static final Identifier MODULE_TAB = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/module_tab.png");
     private static final int MODULE_TAB_WIDTH = 28;
-    /** Two cells: the capacity module, then the row modules under it. */
-    private static final int MODULE_TAB_HEIGHT = 46;
+    /** The tab is built as a cap, one cell, a foot: five rows of texture, eighteen, five. */
+    private static final int MODULE_TAB_CAP = 5;
+    private static final int MODULE_TAB_CELL = 18;
     /** The tab is drawn this far up and left of the slot, so its frame lands exactly around it. */
     private static final int MODULE_TAB_MARGIN = 6;
     private static final int MODULE_TAB_TEXTURE = 64;
@@ -57,6 +59,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private static final int ABBREVIATE_ABOVE = 999;
 
     private final int rows;
+    private final int moduleTabHeight;
     private final List<Button> pageButtons = new ArrayList<>();
 
     private SearchBox searchBox;
@@ -67,6 +70,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     public DeepCrateScreen(DeepCrateMenu deepCrateMenu, Inventory inventory, Component component) {
         super(deepCrateMenu, inventory, component);
         this.rows = deepCrateMenu.layout().rowsPerPage();
+        this.moduleTabHeight = MODULE_TAB_CAP * 2 + DeepCrateApi.moduleSlots().size() * MODULE_TAB_CELL;
         // Exactly a chest of this many rows: the module hangs off the left edge rather than taking a
         // band inside the panel.
         this.imageHeight = 114 + this.rows * 18;
@@ -143,7 +147,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private boolean isOverModuleTab(double d, double e, int i, int j) {
         int tabX = i + DeepCrateMenu.MODULE_X - MODULE_TAB_MARGIN;
         int tabY = j + DeepCrateMenu.MODULE_Y - MODULE_TAB_MARGIN;
-        return d >= tabX && d < tabX + MODULE_TAB_WIDTH && e >= tabY && e < tabY + MODULE_TAB_HEIGHT;
+        return d >= tabX && d < tabX + MODULE_TAB_WIDTH && e >= tabY && e < tabY + this.moduleTabHeight;
     }
 
     private static boolean isOverSortButtons(double d, double e, int i, int j) {
@@ -196,17 +200,21 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
      * A slot itself has no texture in Minecraft: it is the background that carries the 18 by 18 cell.
      */
     private void renderModuleTab(GuiGraphics guiGraphics, int x, int y) {
+        int tabX = x + DeepCrateMenu.MODULE_X - MODULE_TAB_MARGIN;
+        int tabY = y + DeepCrateMenu.MODULE_Y - MODULE_TAB_MARGIN;
+        int cells = DeepCrateApi.moduleSlots().size();
+
+        blitTab(guiGraphics, tabX, tabY, 0, MODULE_TAB_CAP);
+        for (int cell = 0; cell < cells; cell++) {
+            blitTab(guiGraphics, tabX, tabY + MODULE_TAB_CAP + cell * MODULE_TAB_CELL, MODULE_TAB_CAP, MODULE_TAB_CELL);
+        }
+
+        blitTab(guiGraphics, tabX, tabY + MODULE_TAB_CAP + cells * MODULE_TAB_CELL, MODULE_TAB_CAP + MODULE_TAB_CELL, MODULE_TAB_CAP);
+    }
+
+    private static void blitTab(GuiGraphics guiGraphics, int x, int y, int v, int height) {
         guiGraphics.blit(
-            RenderPipelines.GUI_TEXTURED,
-            MODULE_TAB,
-            x + DeepCrateMenu.MODULE_X - MODULE_TAB_MARGIN,
-            y + DeepCrateMenu.MODULE_Y - MODULE_TAB_MARGIN,
-            0.0F,
-            0.0F,
-            MODULE_TAB_WIDTH,
-            MODULE_TAB_HEIGHT,
-            MODULE_TAB_TEXTURE,
-            MODULE_TAB_TEXTURE
+            RenderPipelines.GUI_TEXTURED, MODULE_TAB, x, y, 0.0F, (float) v, MODULE_TAB_WIDTH, height, MODULE_TAB_TEXTURE, MODULE_TAB_TEXTURE
         );
     }
 

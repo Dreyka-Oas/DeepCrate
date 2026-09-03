@@ -75,7 +75,7 @@ public class CrateMenuGameTest {
         ServerPlayer serverPlayer = gameTestHelper.makeMockServerPlayerInLevel();
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState(), serverPlayer);
 
-        int firstPlayerSlot = DeepCrateMenu.CRATE_SLOT_START + deepCrateMenu.getContainer().getContainerSize();
+        int firstPlayerSlot = deepCrateMenu.crateSlotStart() + deepCrateMenu.getContainer().getContainerSize();
         deepCrateMenu.getSlot(firstPlayerSlot).set(new ItemStack(Items.DIRT, 64));
 
         deepCrateMenu.quickMoveStack(serverPlayer, firstPlayerSlot);
@@ -269,7 +269,7 @@ public class CrateMenuGameTest {
         ServerPlayer serverPlayer = gameTestHelper.makeMockServerPlayerInLevel();
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState(), serverPlayer);
 
-        int firstPlayerSlot = DeepCrateMenu.CRATE_SLOT_START + deepCrateMenu.getContainer().getContainerSize();
+        int firstPlayerSlot = deepCrateMenu.crateSlotStart() + deepCrateMenu.getContainer().getContainerSize();
         deepCrateMenu.getSlot(firstPlayerSlot).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(0)));
         deepCrateMenu.quickMoveStack(serverPlayer, firstPlayerSlot);
         assertEquals(gameTestHelper, 1, deepCrateMenu.getSlot(0).getItem().getCount(), "the first module went to its slot");

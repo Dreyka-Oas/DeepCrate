@@ -1,32 +1,36 @@
 package com.dreykaoas.deepcrate.inventory;
 
-import com.dreykaoas.deepcrate.DeepCrate;
-import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import com.dreykaoas.deepcrate.api.CrateModuleSlot;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-/** The one slot that takes a capacity module, on its own tab to the left of the screen. */
+/** One cell of the module tab, taking whatever its registered kind allows. */
 public class ModuleSlot extends Slot {
-    private static final Identifier EMPTY_ICON = Identifier.fromNamespaceAndPath(DeepCrate.MOD_ID, "container/slot/module");
+    private final CrateModuleSlot kind;
 
-    public ModuleSlot(Container container, int i, int j, int k) {
+    public ModuleSlot(Container container, int i, int j, int k, CrateModuleSlot crateModuleSlot) {
         super(container, i, j, k);
+        this.kind = crateModuleSlot;
+    }
+
+    public CrateModuleSlot kind() {
+        return this.kind;
     }
 
     @Override
     public Identifier getNoItemIcon() {
-        return EMPTY_ICON;
+        return this.kind.emptyIcon();
     }
 
     @Override
     public boolean mayPlace(ItemStack itemStack) {
-        return DeepCrateApi.moduleFor(itemStack) != null;
+        return this.kind.accepts(itemStack);
     }
 
     @Override
     public int getMaxStackSize() {
-        return 1;
+        return this.kind.stackLimit();
     }
 }
