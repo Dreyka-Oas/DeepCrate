@@ -11,7 +11,7 @@ tier is the previous crate surrounded by eight of the new material, and adds a r
 
 | Crate | Material | Slots |
 |---|---|---|
-| Copper | copper ingot, around a chest | 27 |
+| Copper | copper ingot, around a copper chest | 27 |
 | Iron | iron ingot | 36 |
 | Amethyst | amethyst shard | 45 |
 | Prismarine | prismarine crystals | 54 |
