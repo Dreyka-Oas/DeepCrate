@@ -11,6 +11,9 @@
       "com.dreykaoas.deepcrate.gametest.CrateHopperGameTest",
       "com.dreykaoas.deepcrate.gametest.CrateRowModuleGameTest",
       "com.dreykaoas.deepcrate.gametest.CrateSortGameTest"
+    ],
+    "fabric-client-gametest": [
+      "com.dreykaoas.deepcrate.gametest.CrateLookClientGameTest"
     ]
   },
   "depends": {

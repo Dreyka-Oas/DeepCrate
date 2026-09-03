@@ -64,10 +64,10 @@ for an index past the end.
 
 ## Sorting
 
-Two buttons sit on a tab above the top left corner of the screen. One orders by name, the other by
-how full each pile is; both gather identical stacks into one, up to whatever the module allows, which
-is where the free slots come from. Pressing the same button again reverses it, and the icon shows
-which way the next press will go.
+Two buttons stand above the top left corner of the screen, on the button sprite the rest of the game
+uses. One orders by name, the other by how full each pile is; both gather identical stacks into one,
+up to whatever the module allows, which is where the free slots come from. Pressing the same button
+again reverses it, and the drawing shows which way the next press will go, A over Z or Z over A.
 
 The order is worked out on the player's machine and sent whole, as a list of items. A server holds
 no language files, so it cannot know that this player reads Pierre where another reads Stone, and
@@ -128,11 +128,13 @@ enough to make it a module, with no code at all.
     ./gradlew test           # storage rules, paging arithmetic, save format
     ./gradlew runClient      # dev client, world "DeepCrate" under run/saves/
 
-`mod/scripts/headless-test.sh` starts a dedicated server, or a client inside an invisible sway
-session, and takes screenshots. The screenshot half does not work here yet: Loom launches the game
-from the Gradle daemon, which hands it the desktop compositor rather than the headless one, so the
-window opens on the real screen and the capture comes back black. The server half works and is what
-the in-game checks used.
+    ./gradlew runClientGameTest   # drives a real client and photographs it
+
+`runClientGameTest` builds a fixed scene with commands, a stone platform in cleared air at noon, and
+takes its pictures from inside the game rather than off the compositor. They land in
+`build/run/clientGameTest/screenshots/`. A chest of the game stands in the same scene as the control
+every shot is read against. `mod/scripts/headless-test.sh` starts a dedicated server, or a client
+inside an invisible sway session, for the cases those shots do not cover.
 
 ## Layout
 

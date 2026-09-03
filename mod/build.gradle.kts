@@ -88,6 +88,9 @@ fabricApi {
         createSourceSet = true
         modId = "deepcrate-gametest"
         enableGameTests = true
+        // The screen and the crate model are the two things a headless server cannot answer for, so
+        // the client tests drive a real client and photograph what it draws.
+        enableClientGameTests = true
         eula = true
     }
 }
