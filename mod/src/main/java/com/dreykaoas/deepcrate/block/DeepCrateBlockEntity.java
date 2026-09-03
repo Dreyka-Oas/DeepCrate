@@ -255,6 +255,12 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         this.setChanged();
     }
 
+    /** What a crate refuses, it refuses through its slots too, which is where a player meets it. */
+    @Override
+    public boolean canPlaceItem(int i, ItemStack itemStack) {
+        return this.storage().accepts(itemStack);
+    }
+
     @Override
     protected NonNullList<ItemStack> getItems() {
         return this.storage().slots();
@@ -442,6 +448,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
             return;
         }
 
+        this.storage.setTier(crateTier);
         int target = crateTier.slotCount() + this.extraRows() * crateTier.columns();
         if (target > this.storage.size()) {
             this.storage.grow(target);

@@ -1,23 +1,39 @@
 package com.dreykaoas.deepcrate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.dreykaoas.deepcrate.api.CrateCapacityCallback;
 import com.dreykaoas.deepcrate.inventory.CrateStorage;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class CrateStorageTest {
+    /** The rule the tests swap in and out. A Fabric event never lets go of a listener once given one. */
+    private static final AtomicReference<CrateCapacityCallback> RULE = new AtomicReference<>();
+
     @BeforeAll
     static void bootstrap() {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
+        CrateCapacityCallback.EVENT.register((tier, itemStack, proposed) -> {
+            CrateCapacityCallback rule = RULE.get();
+            return rule == null ? proposed : rule.capacity(tier, itemStack, proposed);
+        });
+    }
+
+    @AfterEach
+    void forgetTheRule() {
+        RULE.set(null);
     }
 
     @Test
@@ -153,5 +169,47 @@ class CrateStorageTest {
         crateStorage.set(0, new ItemStack(Items.DIRT, 300));
 
         assertEquals(128, crateStorage.get(0).getCount());
+    }
+
+    @Test
+    void anEventCanRaiseWhatOneSlotHolds() {
+        CrateStorage crateStorage = new CrateStorage(9, 64);
+        RULE.set((tier, itemStack, proposed) -> itemStack.is(Items.DIAMOND) ? proposed * 4 : proposed);
+
+        assertEquals(256, crateStorage.capacityFor(new ItemStack(Items.DIAMOND)));
+        assertEquals(64, crateStorage.capacityFor(new ItemStack(Items.COBBLESTONE)));
+    }
+
+    @Test
+    void aRefusedItemIsNeverStoredAndNeverDestroyed() {
+        CrateStorage crateStorage = new CrateStorage(9, 64);
+        RULE.set((tier, itemStack, proposed) -> itemStack.is(Items.GUNPOWDER) ? 0 : proposed);
+
+        ItemStack leftover = crateStorage.insert(new ItemStack(Items.GUNPOWDER, 30));
+
+        assertEquals(30, leftover.getCount());
+        assertTrue(crateStorage.isEmpty());
+        assertFalse(crateStorage.accepts(new ItemStack(Items.GUNPOWDER)));
+        // Never zero: a slot told it holds nothing would write a stack of nothing, which is how an
+        // item gets destroyed rather than refused.
+        assertEquals(1, crateStorage.capacityFor(new ItemStack(Items.GUNPOWDER)));
+    }
+
+    @Test
+    void automationIsTurnedAwayFromARefusedItemToo() {
+        CrateStorage crateStorage = new CrateStorage(9, 64);
+        RULE.set((tier, itemStack, proposed) -> itemStack.is(Items.GUNPOWDER) ? 0 : proposed);
+
+        assertEquals(0, crateStorage.automationCapacityFor(new ItemStack(Items.GUNPOWDER)));
+    }
+
+    @Test
+    void whatIsAlreadyStoredSurvivesTheCrateRefusingIt() {
+        CrateStorage crateStorage = new CrateStorage(9, 64);
+        crateStorage.set(0, new ItemStack(Items.GUNPOWDER, 30));
+        RULE.set((tier, itemStack, proposed) -> itemStack.is(Items.GUNPOWDER) ? 0 : proposed);
+
+        assertTrue(crateStorage.overflow().isEmpty());
+        assertEquals(30, crateStorage.get(0).getCount());
     }
 }

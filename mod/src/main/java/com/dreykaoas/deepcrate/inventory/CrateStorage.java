@@ -1,10 +1,13 @@
 package com.dreykaoas.deepcrate.inventory;
 
+import com.dreykaoas.deepcrate.api.CrateCapacityCallback;
+import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The slots of one crate, each holding up to whatever the inserted module allows.
@@ -19,6 +22,7 @@ public final class CrateStorage {
 
     private NonNullList<ItemStack> slots;
     private int capacity;
+    private @Nullable CrateTier tier;
 
     public CrateStorage(int slotCount, int capacity) {
         if (slotCount < 1) {
@@ -37,21 +41,38 @@ public final class CrateStorage {
         return this.capacity;
     }
 
+    /** Set when the crate lines up with its block, which is the first moment the tier is known. */
+    public void setTier(@Nullable CrateTier crateTier) {
+        this.tier = crateTier;
+    }
+
     /**
      * What one slot holds for a given item. A tool, a bucket or anything else the game refuses to
      * stack stays at its own limit: a module lifts stacks, it does not turn a sword into a stack of
      * swords.
      */
     public int capacityFor(ItemStack itemStack) {
-        if (!itemStack.isEmpty() && itemStack.getMaxStackSize() <= 1) {
-            return itemStack.getMaxStackSize();
-        }
+        // Never below one. A slot told it holds nothing would write a stack of nothing, and that is
+        // how an item gets destroyed rather than refused; refusing is what accepts is for.
+        return Math.max(1, this.limitFor(itemStack));
+    }
 
-        return this.capacity;
+    /** Whether this crate takes the item at all, which an addon decides through the event. */
+    public boolean accepts(ItemStack itemStack) {
+        return this.limitFor(itemStack) > 0;
+    }
+
+    private int limitFor(ItemStack itemStack) {
+        int proposed = !itemStack.isEmpty() && itemStack.getMaxStackSize() <= 1 ? itemStack.getMaxStackSize() : this.capacity;
+        return CrateCapacityCallback.EVENT.invoker().capacity(this.tier, itemStack, proposed);
     }
 
     /** What a hopper or a pipe may push into one slot, which is not always what a player may. */
     public int automationCapacityFor(ItemStack itemStack) {
+        if (!this.accepts(itemStack)) {
+            return 0;
+        }
+
         int limit = this.capacityFor(itemStack);
         return DeepCrateApi.AUTOMATION_LIMITED ? Math.min(limit, VANILLA_LIMIT) : limit;
     }
@@ -132,9 +153,13 @@ public final class CrateStorage {
     }
 
     public void set(int i, ItemStack itemStack) {
-        int limit = this.capacityFor(itemStack);
-        if (itemStack.getCount() > limit) {
-            itemStack.setCount(limit);
+        // A refused item written here is written whole: the caller is a command or another mod
+        // forcing it, and clamping it to the refusal would grind the stack down to one.
+        if (this.accepts(itemStack)) {
+            int limit = this.capacityFor(itemStack);
+            if (itemStack.getCount() > limit) {
+                itemStack.setCount(limit);
+            }
         }
 
         this.slots.set(i, itemStack);
@@ -169,7 +194,7 @@ public final class CrateStorage {
      * caller holding it sees the same remainder.
      */
     public ItemStack insert(ItemStack itemStack) {
-        if (itemStack.isEmpty()) {
+        if (itemStack.isEmpty() || !this.accepts(itemStack)) {
             return itemStack;
         }
 
@@ -218,6 +243,12 @@ public final class CrateStorage {
         List<ItemStack> spilled = new ArrayList<>();
 
         for (ItemStack itemStack : this.slots) {
+            // A crate that has started refusing what it already holds keeps it: there is no capacity
+            // to cut back to, and the player takes it out by hand.
+            if (!this.accepts(itemStack)) {
+                continue;
+            }
+
             int limit = this.capacityFor(itemStack);
             int excess = itemStack.getCount() - limit;
             if (excess > 0) {

@@ -23,4 +23,14 @@ public class CratePairContainer extends CompoundContainer {
     public int getMaxStackSize(ItemStack itemStack) {
         return this.holder.getMaxStackSize(itemStack);
     }
+
+    /**
+     * Both halves answer the same, because both follow the same module and the same tier. Asking the
+     * first is what CompoundContainer does everywhere else, and it saves resolving which half a slot
+     * index falls in.
+     */
+    @Override
+    public boolean canPlaceItem(int i, ItemStack itemStack) {
+        return this.holder.canPlaceItem(0, itemStack);
+    }
 }
