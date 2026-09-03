@@ -20,8 +20,4 @@ public record CrateLayout(int rowsPerPage, int pageCount) {
             throw new IllegalArgumentException("Crate layout needs at least one row and one page, got " + rowsPerPage + "x" + pageCount);
         }
     }
-
-    public int visibleSlots() {
-        return this.rowsPerPage * CrateTier.COLUMNS;
-    }
 }
