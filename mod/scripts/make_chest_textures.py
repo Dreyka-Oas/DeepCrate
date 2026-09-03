@@ -68,15 +68,20 @@ def faces(u0, v0, width, height):
     }
 
 
-def paint(image, material, rectangle, row, inside=False):
-    """One face, read from the material at the given row of the crate, framed, dimmed if inward."""
+def paint(image, material, rectangle, row, inside=False, seam=None):
+    """One face, read from the material at the given row of the crate, framed, dimmed if inward.
+
+    seam names the column where the other half of the same crate is joined, 'first' or 'last'. Its
+    frame is left off so the two halves run into one another rather than reading as two crates
+    pushed together, which is what the chest of the game does at the same edge.
+    """
     px = image.load()
     mx = material.load()
     u0, v0, width, height = rectangle
     for y in range(height):
         for x in range(width):
             red, green, blue, _ = mx[x % material.width, (row + y) % material.height]
-            framed = y in (0, height - 1) or x in (0, width - 1)
+            framed = y in (0, height - 1) or (x == 0 and seam != "first") or (x == width - 1 and seam != "last")
             shade = (FRAME if framed else 1.0) * (INSIDE if inside else 1.0)
             px[u0 + x, v0 + y] = (round(red * shade), round(green * shade), round(blue * shade), 255)
 
@@ -114,21 +119,32 @@ def paint_lock(image, half=None):
             px[x, row + 1] = colour
 
 
-def build(material, width):
+# Which column of each face touches the other half. The front is the one face whose pixels run
+# against the x axis, so its joined edge is the opposite end from the other three.
+SEAMS = {
+    None: {},
+    "left": {"north": "first", "up": "first", "down": "first", "south": "last"},
+    "right": {"north": "last", "up": "last", "down": "last", "south": "first"},
+}
+
+
+def build(material, width, half=None):
     image = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
     lid = faces(0, 0, width, LID_HEIGHT)
     body = faces(0, 19, width, BODY_HEIGHT)
+    seams = SEAMS[half]
 
-    paint(image, material, lid["down"], 0, inside=True)
-    paint(image, material, lid["up"], 0)
-    paint(image, material, body["down"], 0)
-    paint(image, material, body["up"], 0, inside=True)
+    paint(image, material, lid["down"], 0, inside=True, seam=seams.get("down"))
+    paint(image, material, lid["up"], 0, seam=seams.get("up"))
+    paint(image, material, body["down"], 0, seam=seams.get("down"))
+    paint(image, material, body["up"], 0, inside=True, seam=seams.get("up"))
 
     for side in ("west", "north", "east", "south"):
-        paint(image, material, body[side], 0)
+        seam = seams.get(side)
+        paint(image, material, body[side], 0, seam=seam)
         # The first row of a side face is the low end of its box, so the lid starts nine rows up,
         # where the body's last row is: the one row the two boxes share.
-        paint(image, material, lid[side], BODY_HEIGHT - 1)
+        paint(image, material, lid[side], BODY_HEIGHT - 1, seam=seam)
 
     return image
 
@@ -188,8 +204,9 @@ def main():
     for tier, block in TIERS.items():
         material = Image.open(BLOCKS / f"{block}.png").convert("RGBA")
         for suffix, width in (("", SINGLE_WIDTH), ("_left", HALF_WIDTH), ("_right", HALF_WIDTH)):
-            image = build(material, width)
-            paint_lock(image, suffix[1:] or None)
+            half = suffix[1:] or None
+            image = build(material, width, half)
+            paint_lock(image, half)
             check_shared_row(image, f"{tier}{suffix}")
             image.save(ASSETS / f"{tier}_crate{suffix}.png")
 
