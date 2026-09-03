@@ -2,7 +2,6 @@ package com.dreykaoas.deepcrate.inventory;
 
 import com.dreykaoas.deepcrate.api.CrateLayout;
 import com.dreykaoas.deepcrate.api.CrateModuleSlot;
-import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.dreykaoas.deepcrate.init.RegistryInit;
@@ -33,6 +32,17 @@ import net.minecraft.world.level.Level;
  * server-side index can be steered from outside, which is what would open the door to duplication.
  */
 public class DeepCrateMenu extends AbstractContainerMenu {
+    /** Border, cells, border: the 176 of a chest screen is 7 + 9 * 18 + 7. */
+    public static final int PANEL_BORDER = 7;
+    public static final int CELL = 18;
+    /**
+     * No panel is narrower than a chest's, whatever the crate is. The player's own nine columns are
+     * drawn on it too, and they do not fit in less.
+     */
+    public static final int MIN_PANEL_WIDTH = 176;
+    /** A player's inventory is nine wide, and a crate of another width does not change that. */
+    public static final int COLUMNS_OF_A_PLAYER = 9;
+
     public static final int GRID_LEFT = 8;
     /** The chest's own grid position: the module lives outside the panel, so nothing is pushed down. */
     public static final int GRID_TOP = 18;
@@ -45,6 +55,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     private final Container crate;
     private final Container moduleContainer;
     private final CrateLayout layout;
+    private final int columns;
     private final List<DeepCrateSlot> crateSlots = new ArrayList<>();
     private final List<DeepCrateBlockEntity> crates;
     private final Player player;
@@ -72,15 +83,19 @@ public class DeepCrateMenu extends AbstractContainerMenu {
             inventory,
             new CrateContainer(crateOpenData.slotCount(), crateOpenData.capacity()),
             List.of(),
-            new CrateLayout(crateOpenData.rowsPerPage(), crateOpenData.pageCount())
+            new CrateLayout(crateOpenData.rowsPerPage(), crateOpenData.pageCount()),
+            crateOpenData.columns()
         );
     }
 
-    public DeepCrateMenu(int i, Inventory inventory, Container container, List<DeepCrateBlockEntity> crates, CrateLayout crateLayout) {
+    public DeepCrateMenu(
+        int i, Inventory inventory, Container container, List<DeepCrateBlockEntity> crates, CrateLayout crateLayout, int columns
+    ) {
         super(RegistryInit.MENU, i);
         this.crate = container;
         this.crates = crates;
         this.layout = crateLayout;
+        this.columns = columns;
         this.capacity = container.getMaxStackSize();
         this.crateSlotCount = container.getContainerSize();
         List<CrateModuleSlot> kinds = DeepCrateApi.moduleSlots();
@@ -103,13 +118,15 @@ public class DeepCrateMenu extends AbstractContainerMenu {
             this.addSlot(new ModuleSlot(this.moduleContainer, cell, MODULE_X, MODULE_Y + cell * MODULE_SPACING, kinds.get(cell)));
         }
 
+        int panelWidth = panelWidth(columns);
+        int crateLeft = gridLeft(panelWidth, columns);
         for (int slot = 0; slot < container.getContainerSize(); slot++) {
-            int row = slot / CrateTier.COLUMNS;
-            int column = slot % CrateTier.COLUMNS;
+            int row = slot / columns;
+            int column = slot % columns;
             DeepCrateSlot deepCrateSlot = new DeepCrateSlot(
                 container,
                 slot,
-                GRID_LEFT + column * 18,
+                crateLeft + column * CELL,
                 GRID_TOP + row % crateLayout.rowsPerPage() * 18,
                 row / crateLayout.rowsPerPage()
             );
@@ -117,7 +134,10 @@ public class DeepCrateMenu extends AbstractContainerMenu {
             this.addSlot(deepCrateSlot);
         }
 
-        this.addStandardInventorySlots(inventory, GRID_LEFT, GRID_TOP + crateLayout.rowsPerPage() * 18 + 13);
+        // The player keeps nine columns whatever the crate is: their inventory is not the crate's.
+        // Both grids are centred, so neither a wide crate nor a narrow one reads as lopsided.
+        int playerLeft = gridLeft(panelWidth, COLUMNS_OF_A_PLAYER);
+        this.addStandardInventorySlots(inventory, playerLeft, GRID_TOP + crateLayout.rowsPerPage() * 18 + 13);
 
         // Another player inserting a module has to reach this screen too, and the opening payload is
         // only sent once. A data slot is the vanilla way of keeping one number in step.
@@ -148,6 +168,26 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
     public int crateSlotStart() {
         return this.crateSlotStart;
+    }
+
+    public int columns() {
+        return this.columns;
+    }
+
+    public int panelWidth() {
+        return panelWidth(this.columns);
+    }
+
+    public static int panelWidth(int columns) {
+        return Math.max(MIN_PANEL_WIDTH, PANEL_BORDER * 2 + columns * CELL);
+    }
+
+    /**
+     * Where the first slot of a run of {@code cells} columns sits, centred in the panel. The extra
+     * pixel is the cell frame: a slot is drawn one in from the corner of its cell.
+     */
+    public static int gridLeft(int panelWidth, int cells) {
+        return PANEL_BORDER + (panelWidth - PANEL_BORDER * 2 - cells * CELL) / 2 + 1;
     }
 
     public Container getContainer() {

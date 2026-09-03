@@ -4,6 +4,8 @@ import com.dreykaoas.deepcrate.DeepCrate;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.dreykaoas.deepcrate.client.DeepCrateScreen;
 import com.dreykaoas.deepcrate.init.RegistryInit;
+import com.dreykaoas.deepcrate.inventory.CrateOpenData;
+import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
@@ -77,7 +79,29 @@ public class CrateLookClientGameTest implements FabricClientGameTest {
             context.waitTicks(20);
             look(context, server, -1.5, 2.6, 180, 34);
             context.takeScreenshot("single-crate-after-sorting");
+
+            showAWidthOtherThanNine(context, 36, 12, "twelve");
+            showAWidthOtherThanNine(context, 9, 3, "three");
+            context.setScreen(() -> null);
+            context.waitTicks(10);
         }
+    }
+
+    /**
+     * No shipped tier is anything but nine wide, so the panel at another width is looked at through a
+     * menu built straight from an opening packet that claims one. Everything the screen draws comes
+     * from that packet, which is what makes the picture worth taking.
+     */
+    private static void showAWidthOtherThanNine(ClientGameTestContext context, int slotCount, int columns, String name) {
+        context.runOnClient(minecraft -> minecraft.setScreen(
+            new DeepCrateScreen(
+                new DeepCrateMenu(90 + columns, minecraft.player.getInventory(), new CrateOpenData(slotCount, 3, 1, 512, columns)),
+                minecraft.player.getInventory(),
+                Component.literal(name + " columns")
+            )
+        ));
+        context.waitTicks(20);
+        context.takeScreenshot("screen-" + name + "-columns");
     }
 
     /**

@@ -48,7 +48,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     private static final Component DEFAULT_NAME = Component.translatable("container.deepcrate.crate");
     private static final int EVENT_SET_OPEN_COUNT = 1;
 
-    private CrateStorage storage = new CrateStorage(CrateTier.COLUMNS, DeepCrateApi.BASE_CAPACITY);
+    private CrateStorage storage = new CrateStorage(CrateTier.DEFAULT_COLUMNS, DeepCrateApi.BASE_CAPACITY);
     private final CrateModules modules = new CrateModules();
 
     private final ChestLidController lidController = new ChestLidController();
@@ -158,7 +158,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
             return List.of();
         }
 
-        return this.storage().trimTo(crateTier.slotCount() + this.extraRows() * CrateTier.COLUMNS);
+        return this.storage().trimTo(crateTier.slotCount() + this.extraRows() * crateTier.columns());
     }
 
     /**
@@ -268,16 +268,20 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     @Override
     public CrateOpenData getScreenOpeningData(ServerPlayer serverPlayer) {
         Container container = DeepCrateBlock.containerFor(DeepCrateBlock.cratesFor(this));
-        CrateLayout crateLayout = DeepCrateApi.layoutFor(this.tier(), container.getContainerSize() / CrateTier.COLUMNS);
-        return new CrateOpenData(container.getContainerSize(), crateLayout.rowsPerPage(), crateLayout.pageCount(), container.getMaxStackSize());
+        CrateTier crateTier = this.tier();
+        CrateLayout crateLayout = DeepCrateApi.layoutFor(crateTier, container.getContainerSize() / crateTier.columns());
+        return new CrateOpenData(
+            container.getContainerSize(), crateLayout.rowsPerPage(), crateLayout.pageCount(), container.getMaxStackSize(), crateTier.columns()
+        );
     }
 
     @Override
     protected AbstractContainerMenu createMenu(int i, Inventory inventory) {
         List<DeepCrateBlockEntity> crates = DeepCrateBlock.cratesFor(this);
         Container container = DeepCrateBlock.containerFor(crates);
-        CrateLayout crateLayout = DeepCrateApi.layoutFor(this.tier(), container.getContainerSize() / CrateTier.COLUMNS);
-        return new DeepCrateMenu(i, inventory, container, crates, crateLayout);
+        CrateTier crateTier = this.tier();
+        CrateLayout crateLayout = DeepCrateApi.layoutFor(crateTier, container.getContainerSize() / crateTier.columns());
+        return new DeepCrateMenu(i, inventory, container, crates, crateLayout, crateTier.columns());
     }
 
     @Override
@@ -331,7 +335,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
             }
         }
 
-        int size = Math.max(Math.max(CrateTier.COLUMNS, highest), valueInput.getIntOr("Size", CrateTier.COLUMNS));
+        int size = Math.max(Math.max(CrateTier.DEFAULT_COLUMNS, highest), valueInput.getIntOr("Size", CrateTier.DEFAULT_COLUMNS));
         this.storage = new CrateStorage(size, DeepCrateApi.capacityAmong(this.modules));
 
         for (StoredSlot storedSlot : storedSlots) {
@@ -438,7 +442,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
             return;
         }
 
-        int target = crateTier.slotCount() + this.extraRows() * CrateTier.COLUMNS;
+        int target = crateTier.slotCount() + this.extraRows() * crateTier.columns();
         if (target > this.storage.size()) {
             this.storage.grow(target);
         }
