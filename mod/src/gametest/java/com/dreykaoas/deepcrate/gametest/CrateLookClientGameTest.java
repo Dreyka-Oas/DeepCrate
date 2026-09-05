@@ -157,6 +157,10 @@ public class CrateLookClientGameTest implements FabricClientGameTest {
                 echo.setRowModules(new ItemStack(RegistryInit.ROW_MODULE_ITEM, 16));
                 echo.storage().set(0, new ItemStack(Items.AMETHYST_SHARD, 512));
                 echo.storage().set(5, new ItemStack(Items.ECHO_SHARD, 300));
+                // Thirty-six slots to a page. Filling the third and the last leaves pages two, four
+                // and five empty, so one shot carries a page button in both of its states.
+                echo.storage().set(74, new ItemStack(Items.COPPER_INGOT, 64));
+                echo.storage().set(190, new ItemStack(Items.PRISMARINE_CRYSTALS, 32));
                 echo.setChanged();
             }
         });
