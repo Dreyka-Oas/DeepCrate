@@ -3,17 +3,16 @@ package com.dreykaoas.deepcrate.inventory;
 import com.dreykaoas.deepcrate.api.CrateLayout;
 import com.dreykaoas.deepcrate.api.CrateModuleSlot;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import com.dreykaoas.deepcrate.block.CrateDrops;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.ContainerUser;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -22,7 +21,6 @@ import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 
 /**
  * The crate screen: every slot of the crate exists from the start, but only the ones on the page
@@ -337,7 +335,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
             }
 
             for (ItemStack itemStack : spilled) {
-                dropWholeStack(player.level(), deepCrateBlockEntity.getBlockPos(), itemStack);
+                CrateDrops.dropWhole(player.level(), deepCrateBlockEntity.getBlockPos(), 1.0, itemStack);
             }
 
             deepCrateBlockEntity.setChanged();
@@ -358,17 +356,6 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         }
 
         return false;
-    }
-
-    /**
-     * One entity per stack of 64, rather than the ten-to-thirty pieces Containers.dropItemStack makes.
-     * A full double echo crate losing its module spills two thousand stacks; through the vanilla
-     * helper that would be nearer seven thousand entities in a single tick.
-     */
-    private static void dropWholeStack(Level level, BlockPos blockPos, ItemStack itemStack) {
-        ItemEntity itemEntity = new ItemEntity(level, blockPos.getX() + 0.5, blockPos.getY() + 1.0, blockPos.getZ() + 0.5, itemStack);
-        itemEntity.setDefaultPickUpDelay();
-        level.addFreshEntity(itemEntity);
     }
 
     private void onModuleChanged() {

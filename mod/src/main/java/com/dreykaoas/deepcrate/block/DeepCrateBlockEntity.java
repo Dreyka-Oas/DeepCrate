@@ -27,7 +27,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.ContainerUser;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -382,12 +381,8 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
         this.modules.clear();
 
-        // One entity per stack of 64: the vanilla helper cuts each stack into ten-to-thirty pieces, and
-        // a full echo crate would put several thousand entities on one block in a single tick.
         for (ItemStack itemStack : list) {
-            ItemEntity itemEntity = new ItemEntity(this.level, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5, itemStack);
-            itemEntity.setDefaultPickUpDelay();
-            this.level.addFreshEntity(itemEntity);
+            CrateDrops.dropWhole(this.level, blockPos, 0.5, itemStack);
         }
     }
 
