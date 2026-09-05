@@ -36,6 +36,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     private CrateStorage storage = new CrateStorage(CrateTier.DEFAULT_COLUMNS, DeepCrateApi.BASE_CAPACITY);
     private final CrateModules modules = new CrateModules();
     private final CrateLid crateLid = new CrateLid(this);
+    private final CrateModuleHolder crateModuleHolder = new CrateModuleHolder(this);
 
     public DeepCrateBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(RegistryInit.BLOCK_ENTITY, blockPos, blockState);
@@ -56,7 +57,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     public CrateStorage storage() {
         this.alignStorageWithTier();
-        this.alignCapacityWithHolder();
+        this.crateModuleHolder.alignCapacityWithHolder();
         return this.storage;
     }
 
@@ -64,90 +65,44 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         return this.modules;
     }
 
+    /**
+     * The field itself, skipping the tier and holder alignment {@link #storage()} runs: the alignment
+     * methods themselves read this instead, or they would recurse through it.
+     */
+    CrateStorage unalignedStorage() {
+        return this.storage;
+    }
+
     public ItemStack module() {
-        return this.modules.get(RegistryInit.CAPACITY_SLOT);
+        return this.crateModuleHolder.module();
     }
 
     public void setModule(ItemStack itemStack) {
-        this.setModuleIn(RegistryInit.CAPACITY_SLOT, itemStack);
+        this.crateModuleHolder.setModule(itemStack);
     }
 
     public ItemStack rowModules() {
-        return this.modules.get(RegistryInit.ROWS_SLOT);
+        return this.crateModuleHolder.rowModules();
     }
 
     public void setRowModules(ItemStack itemStack) {
-        this.setModuleIn(RegistryInit.ROWS_SLOT, itemStack);
+        this.crateModuleHolder.setRowModules(itemStack);
     }
 
-    /**
-     * Puts a stack in one cell and lets the whole table decide again. Capacity and rows are read
-     * across every cell rather than from the one that changed: which cell an item sits in no longer
-     * says what it does.
-     *
-     * Both halves of a pair follow, because a double crate is two containers shown as one screen and
-     * one module has to give one row to each of them.
-     */
     public void setModuleIn(Identifier identifier, ItemStack itemStack) {
-        this.modules.set(identifier, itemStack);
-        this.storage().setCapacity(DeepCrateApi.capacityAmong(this.modules));
-        for (DeepCrateBlockEntity deepCrateBlockEntity : DeepCrateBlock.cratesFor(this)) {
-            deepCrateBlockEntity.storage();
-            deepCrateBlockEntity.setChanged();
-        }
-
-        this.setChanged();
+        this.crateModuleHolder.setModuleIn(identifier, itemStack);
     }
 
-    /** Rows this crate has beyond its tier's own, read from wherever the pair keeps its modules. */
     public int extraRows() {
-        return DeepCrateApi.rowsAmong(this.moduleHolder().modules);
+        return this.crateModuleHolder.extraRows();
     }
 
-    /**
-     * Cuts the crate back to the size its modules now call for and hands back what was above it.
-     * Called when the screen closes, the same rule the capacity module follows: pulling modules out
-     * spills rather than silently swallowing.
-     */
     public List<ItemStack> trimToRows() {
-        CrateTier crateTier = DeepCrateApi.tierOf(this.getBlockState().getBlock());
-        if (crateTier == null) {
-            return List.of();
-        }
-
-        return this.storage().trimTo(crateTier.slotCount() + this.extraRows() * crateTier.columns());
+        return this.crateModuleHolder.trimToRows();
     }
 
-    /**
-     * Where the module of a pair lives.
-     *
-     * A crate that already holds one keeps it, whichever side of the pair it ended up on; otherwise
-     * it is the half the game calls first. Deciding rather than moving anything means both halves
-     * always name the same holder, and a crate that marries another does not have to be rewritten.
-     */
     public DeepCrateBlockEntity moduleHolder() {
-        if (this.level == null || this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.SINGLE) {
-            return this;
-        }
-
-        BlockPos blockPos = DeepCrateBlock.connectedPos(this.getBlockState(), this.getBlockPos());
-        if (!(this.level.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity other)) {
-            return this;
-        }
-
-        if (this.hasAnyModule()) {
-            return !other.hasAnyModule() || this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.RIGHT ? this : other;
-        }
-
-        if (other.hasAnyModule()) {
-            return other;
-        }
-
-        return this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.RIGHT ? this : other;
-    }
-
-    private boolean hasAnyModule() {
-        return !this.modules.isEmpty();
+        return this.crateModuleHolder.holder();
     }
 
     @Override
@@ -357,16 +312,4 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
         return this.getDefaultName();
     }
-
-    /**
-     * A crate paired with another follows its partner's module. Without this the half that does not
-     * hold the module keeps the 64 it was loaded with, and every insertion into it is clamped.
-     */
-    private void alignCapacityWithHolder() {
-        DeepCrateBlockEntity holder = this.moduleHolder();
-        if (holder != this) {
-            this.storage.setCapacity(DeepCrateApi.capacityAmong(holder.modules));
-        }
-    }
-
 }
