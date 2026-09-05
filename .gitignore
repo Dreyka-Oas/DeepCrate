@@ -56,6 +56,8 @@ rs.txt
 .skills/
 .claude/
 .codex/
+# Task briefs, reports and review packages of a multi-agent run
+.superpowers/
 opencode.json
 # Local Cloudflare Wrangler cache
 .wrangler/
