@@ -20,16 +20,6 @@ public record CrateModule(Identifier id, int capacity, TagKey<Item> items) {
     }
 
     public boolean matches(ItemStack itemStack) {
-        if (itemStack.isEmpty()) {
-            return false;
-        }
-
-        try {
-            return itemStack.is(this.items);
-        } catch (IllegalStateException e) {
-            // Tags are bound when a world loads. Anything asking before that, a creative tab build or
-            // an addon's own registration, gets "no" rather than a crash.
-            return false;
-        }
+        return TagMatch.matches(itemStack, this.items);
     }
 }

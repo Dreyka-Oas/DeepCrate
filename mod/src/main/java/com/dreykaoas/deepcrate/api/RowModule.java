@@ -23,15 +23,6 @@ public record RowModule(Identifier id, int rows, TagKey<Item> items) {
     }
 
     public boolean matches(ItemStack itemStack) {
-        if (itemStack.isEmpty()) {
-            return false;
-        }
-
-        try {
-            return itemStack.is(this.items);
-        } catch (IllegalStateException e) {
-            // Tags bind when a world loads; anything asking earlier gets "no" rather than a crash.
-            return false;
-        }
+        return TagMatch.matches(itemStack, this.items);
     }
 }

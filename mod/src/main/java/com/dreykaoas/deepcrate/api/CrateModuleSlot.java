@@ -29,15 +29,11 @@ public record CrateModuleSlot(Identifier id, int order, int stackLimit, Identifi
         return !itemStack.isEmpty() && this.filter.test(itemStack);
     }
 
-    /** The common case: a cell that takes whatever an item tag names, with no Java on the other side. */
+    /**
+     * The common case: a cell that takes whatever an item tag names, with no Java on the other side.
+     * Answers false for an empty stack, whatever the tag.
+     */
     public static Predicate<ItemStack> tagged(TagKey<Item> items) {
-        return itemStack -> {
-            try {
-                return itemStack.is(items);
-            } catch (IllegalStateException e) {
-                // Tags bind when a world loads; anything asking earlier gets "no" rather than a crash.
-                return false;
-            }
-        };
+        return itemStack -> TagMatch.matches(itemStack, items);
     }
 }

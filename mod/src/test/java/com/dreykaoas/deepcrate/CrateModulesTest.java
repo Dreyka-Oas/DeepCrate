@@ -5,9 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.dreykaoas.deepcrate.api.CrateModules;
+import com.dreykaoas.deepcrate.api.TagMatch;
 import net.minecraft.SharedConstants;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeAll;
@@ -66,5 +69,10 @@ class CrateModulesTest {
         }
 
         assertEquals(4, total);
+    }
+
+    @Test
+    void tagMatchSaysNoForAnEmptyStack() {
+        assertFalse(TagMatch.matches(ItemStack.EMPTY, TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("deepcrate", "module_512"))));
     }
 }
