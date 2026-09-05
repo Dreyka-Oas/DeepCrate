@@ -9,16 +9,12 @@ import com.dreykaoas.deepcrate.inventory.CrateOpenData;
 import com.dreykaoas.deepcrate.inventory.CratePairContainer;
 import com.dreykaoas.deepcrate.inventory.CrateStorage;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
-import com.dreykaoas.deepcrate.inventory.StoredModule;
-import com.dreykaoas.deepcrate.inventory.StoredSlot;
-import java.util.ArrayList;
 import java.util.List;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,7 +27,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.ChestLidController;
@@ -293,78 +288,25 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         super.saveAdditional(valueOutput);
         // storage(), not the field: a crate saved before anyone opened it would otherwise write the
         // nine slots it starts with rather than the size its tier calls for.
-        CrateStorage crateStorage = this.storage();
-        ValueOutput.TypedOutputList<StoredSlot> typedOutputList = valueOutput.list("Slots", StoredSlot.CODEC);
-
-        for (int i = 0; i < crateStorage.size(); i++) {
-            ItemStack itemStack = crateStorage.get(i);
-            if (!itemStack.isEmpty()) {
-                typedOutputList.add(StoredSlot.of(i, itemStack));
-            }
-        }
-
-        valueOutput.putInt("Size", crateStorage.size());
-        if (!this.modules.isEmpty()) {
-            ValueOutput.TypedOutputList<StoredModule> savedModules = valueOutput.list("Modules", StoredModule.CODEC);
-            for (Identifier identifier : this.modules.ids()) {
-                savedModules.add(StoredModule.of(identifier, this.modules.get(identifier)));
-            }
-        }
+        CrateSave.save(valueOutput, this.storage(), this.modules);
     }
 
     @Override
     protected void loadAdditional(ValueInput valueInput) {
         super.loadAdditional(valueInput);
-        this.modules.clear();
-        for (StoredModule storedModule : valueInput.listOrEmpty("Modules", StoredModule.CODEC)) {
-            this.modules.set(storedModule.id(), storedModule.toStack());
-        }
-
-        // A crate saved before the cells were a registry kept its two stacks under their own keys.
-        // Read once and never written again, so a world upgrades on the first load of each crate.
-        if (this.modules.isEmpty()) {
-            this.modules.set(RegistryInit.CAPACITY_SLOT, valueInput.read("Module", ItemStack.CODEC).orElse(ItemStack.EMPTY));
-            this.modules.set(RegistryInit.ROWS_SLOT, valueInput.read("RowModules", ItemStack.CODEC).orElse(ItemStack.EMPTY));
-        }
-
-        // Read the slots first: the crate has to be at least large enough to hold every one of them,
-        // whatever Size says and whatever the tier says. A missing or shrunken Size must never be a
-        // reason to drop stored items on the floor of the save file.
-        List<StoredSlot> storedSlots = new ArrayList<>();
-        int highest = 0;
-        for (StoredSlot storedSlot : valueInput.listOrEmpty("Slots", StoredSlot.CODEC)) {
-            if (storedSlot.slot() >= 0) {
-                storedSlots.add(storedSlot);
-                highest = Math.max(highest, storedSlot.slot() + 1);
-            }
-        }
-
-        int size = Math.max(Math.max(CrateTier.DEFAULT_COLUMNS, highest), valueInput.getIntOr("Size", CrateTier.DEFAULT_COLUMNS));
-        this.storage = new CrateStorage(size, DeepCrateApi.capacityAmong(this.modules));
-
-        for (StoredSlot storedSlot : storedSlots) {
-            this.storage.restore(storedSlot.slot(), storedSlot.toStack());
-        }
+        this.storage = CrateSave.load(valueInput, this.modules);
     }
 
     @Override
     protected void collectImplicitComponents(DataComponentMap.Builder builder) {
         super.collectImplicitComponents(builder);
-        // Deliberately emptied: ItemContainerContents runs through the vanilla stack codec, which
-        // refuses a slot above 99. A broken crate drops its content on the ground instead.
-        builder.set(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        CrateSave.collectImplicitComponents(builder);
     }
 
     @Override
     public void removeComponentsFromTag(ValueOutput valueOutput) {
         super.removeComponentsFromTag(valueOutput);
-        valueOutput.discard("Slots");
-        valueOutput.discard("Modules");
-        // The two keys of the previous format, still discarded: a crate saved by it and picked up by
-        // this one must not carry its old modules along in the item.
-        valueOutput.discard("Module");
-        valueOutput.discard("RowModules");
-        valueOutput.discard("Size");
+        CrateSave.removeComponentsFromTag(valueOutput);
     }
 
     @Override
