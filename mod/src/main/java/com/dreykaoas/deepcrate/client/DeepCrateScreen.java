@@ -1,7 +1,6 @@
 package com.dreykaoas.deepcrate.client;
 
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
-import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
 import com.dreykaoas.deepcrate.net.CrateSortPayload;
@@ -16,7 +15,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -31,9 +29,6 @@ import net.minecraft.world.item.ItemStack;
  * any row count.
  */
 public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
-    private static final Identifier BACKGROUND = Identifier.withDefaultNamespace("textures/gui/container/generic_54.png");
-
-    private static final int HEADER_HEIGHT = 17;
     /**
      * The panel of generic_54: seven pixels of border, nine cells of eighteen, seven more.
      *
@@ -41,34 +36,10 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
      * file, which is what lets a panel of any width be built out of it without a seam.
      */
     private static final int PANEL_BORDER = DeepCrateMenu.PANEL_BORDER;
-    private static final int PANEL_WIDTH = DeepCrateMenu.MIN_PANEL_WIDTH;
     private static final int CELL = DeepCrateMenu.CELL;
-    /** The only band of the texture that is bare panel, measured on generic_54: rows 125 to 138. */
-    private static final int BARE_PANEL_V = 125;
-    private static final int BARE_PANEL_HEIGHT = 14;
-    private static final int PLAYER_PANEL_V = 126;
-    private static final int PLAYER_PANEL_HEIGHT = 96;
-    /** The three rows that close the panel at the bottom. They run its full width, cells or not. */
-    private static final int PANEL_FOOT = 3;
-    private static final int PANEL_FOOT_V = PLAYER_PANEL_V + PLAYER_PANEL_HEIGHT - PANEL_FOOT;
     private static final int PAGE_BUTTONS_PER_COLUMN = 4;
     /** The gap between the last crate row and the first inventory row is fourteen pixels; this fits it. */
     private static final int SEARCH_HEIGHT = 11;
-    /** The tab the module slot sits on, left of the panel: its own small panel with the same border. */
-    private static final Identifier MODULE_TAB = RegistryInit.id("textures/gui/module_tab.png");
-    private static final int MODULE_TAB_WIDTH = 28;
-    /** The tab is built as a cap, one cell, a foot: five rows of texture, eighteen, five. */
-    private static final int MODULE_TAB_CAP = 5;
-    private static final int MODULE_TAB_CELL = 18;
-    /**
-     * The texture carries two cells, so its foot starts below both. Reading it one cell up lands on
-     * the top edge of the second, which closes the tab on the beginning of a slot that holds nothing.
-     */
-    private static final int MODULE_TAB_CELLS_DRAWN = 2;
-    private static final int MODULE_TAB_FOOT_V = MODULE_TAB_CAP + MODULE_TAB_CELLS_DRAWN * MODULE_TAB_CELL;
-    /** The tab is drawn this far up and left of the slot, so its frame lands exactly around it. */
-    private static final int MODULE_TAB_MARGIN = 6;
-    private static final int MODULE_TAB_TEXTURE = 64;
     /** The two sort buttons stand above the panel, flush with its left edge and clear of it. */
     private static final int SORT_GAP = 4;
     private static final int SORT_BUTTON_GAP = 2;
@@ -93,7 +64,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         super(deepCrateMenu, inventory, component);
         this.rows = deepCrateMenu.layout().rowsPerPage();
         this.columns = deepCrateMenu.columns();
-        this.moduleTabHeight = MODULE_TAB_CAP * 2 + DeepCrateApi.moduleSlots().size() * MODULE_TAB_CELL;
+        this.moduleTabHeight = CratePanel.MODULE_TAB_CAP * 2 + DeepCrateApi.moduleSlots().size() * CratePanel.MODULE_TAB_CELL;
         // Exactly a chest of this many rows: the module hangs off the left edge rather than taking a
         // band inside the panel.
         this.imageWidth = deepCrateMenu.panelWidth();
@@ -165,7 +136,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
                 this.addRenderableWidget(
                     new PageButton(
                         this.leftPos + this.imageWidth + 3 + page / PAGE_BUTTONS_PER_COLUMN * (PageButton.SIZE + 2),
-                        this.topPos + HEADER_HEIGHT + page % PAGE_BUTTONS_PER_COLUMN * (PageButton.SIZE + 2),
+                        this.topPos + CratePanel.HEADER_HEIGHT + page % PAGE_BUTTONS_PER_COLUMN * (PageButton.SIZE + 2),
                         Component.literal(String.valueOf(page + 1)),
                         () -> this.pagesHoldingItems[target],
                         () -> this.menu.setPage(target)
@@ -188,9 +159,9 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     }
 
     private boolean isOverModuleTab(double d, double e, int i, int j) {
-        int tabX = i + DeepCrateMenu.MODULE_X - MODULE_TAB_MARGIN;
-        int tabY = j + DeepCrateMenu.MODULE_Y - MODULE_TAB_MARGIN;
-        return d >= tabX && d < tabX + MODULE_TAB_WIDTH && e >= tabY && e < tabY + this.moduleTabHeight;
+        int tabX = i + DeepCrateMenu.MODULE_X - CratePanel.MODULE_TAB_MARGIN;
+        int tabY = j + DeepCrateMenu.MODULE_Y - CratePanel.MODULE_TAB_MARGIN;
+        return d >= tabX && d < tabX + CratePanel.MODULE_TAB_WIDTH && e >= tabY && e < tabY + this.moduleTabHeight;
     }
 
     private boolean isOverSortButtons(double d, double e) {
@@ -254,76 +225,29 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
             Math.max(0, this.menu.getContainer().getContainerSize() / this.columns - this.menu.page() * this.rows)
         );
 
-        this.blitBand(guiGraphics, x, y, 0, HEADER_HEIGHT + rowsOnPage * 18, this.columns);
+        CratePanel.blitBand(guiGraphics, x, y, 0, CratePanel.HEADER_HEIGHT + rowsOnPage * 18, this.columns, this.imageWidth);
         if (rowsOnPage < this.rows) {
-            this.fillBarePanel(guiGraphics, x, y + HEADER_HEIGHT + rowsOnPage * 18, (this.rows - rowsOnPage) * 18);
+            CratePanel.fillBarePanel(
+                guiGraphics, x, y + CratePanel.HEADER_HEIGHT + rowsOnPage * 18, (this.rows - rowsOnPage) * 18, this.imageWidth, this.columns
+            );
         }
 
         // The player keeps their nine columns whatever the crate has, so the band is asked for nine.
         // Its foot is drawn apart: bare panel carries no bottom edge, and a crate wider than the
         // player's inventory would otherwise stop short of closing on either side of it.
-        int playerY = y + HEADER_HEIGHT + this.rows * 18;
-        this.blitBand(guiGraphics, x, playerY, PLAYER_PANEL_V, PLAYER_PANEL_HEIGHT - PANEL_FOOT, DeepCrateMenu.COLUMNS_OF_A_PLAYER);
+        int playerY = y + CratePanel.HEADER_HEIGHT + this.rows * 18;
+        CratePanel.blitBand(
+            guiGraphics, x, playerY, CratePanel.PLAYER_PANEL_V, CratePanel.PLAYER_PANEL_HEIGHT - CratePanel.PANEL_FOOT,
+            DeepCrateMenu.COLUMNS_OF_A_PLAYER, this.imageWidth
+        );
         // Asked for a full interior of cells rather than the crate's count: the foot carries no cell,
         // so tiling it end to end is what leaves no bare panel where the edge should be.
         int interior = this.imageWidth - PANEL_BORDER * 2;
-        this.blitBand(guiGraphics, x, playerY + PLAYER_PANEL_HEIGHT - PANEL_FOOT, PANEL_FOOT_V, PANEL_FOOT, interior / CELL);
-        this.renderModuleTab(guiGraphics, x, y);
-    }
-
-    /**
-     * One horizontal band of the panel: the left border, a centred run of cells, the right border,
-     * and bare panel filling whatever the run leaves on either side.
-     *
-     * At nine cells on a chest-wide panel the run fills the interior exactly and the three pieces
-     * land where the single blit of a chest screen does, corners included.
-     */
-    private void blitBand(GuiGraphics guiGraphics, int x, int y, int v, int height, int cells) {
-        int interior = this.imageWidth - PANEL_BORDER * 2;
-        int left = (interior - cells * CELL) / 2;
-
-        blit(guiGraphics, x, y, 0, v, PANEL_BORDER, height);
-        this.fillBare(guiGraphics, x + PANEL_BORDER, y, left, height);
-        for (int cell = 0; cell < cells; cell++) {
-            blit(guiGraphics, x + PANEL_BORDER + left + cell * CELL, y, PANEL_BORDER, v, CELL, height);
-        }
-
-        this.fillBare(guiGraphics, x + PANEL_BORDER + left + cells * CELL, y, interior - left - cells * CELL, height);
-        blit(guiGraphics, x + this.imageWidth - PANEL_BORDER, y, PANEL_WIDTH - PANEL_BORDER, v, PANEL_BORDER, height);
-    }
-
-    /** Panel with nothing on it, tiled both ways out of the one band of the texture that has none. */
-    private void fillBare(GuiGraphics guiGraphics, int x, int y, int width, int height) {
-        for (int drawnDown = 0; drawnDown < height; drawnDown += BARE_PANEL_HEIGHT) {
-            int band = Math.min(BARE_PANEL_HEIGHT, height - drawnDown);
-            for (int drawnAcross = 0; drawnAcross < width; drawnAcross += CELL) {
-                blit(guiGraphics, x + drawnAcross, y + drawnDown, PANEL_BORDER, BARE_PANEL_V, Math.min(CELL, width - drawnAcross), band);
-            }
-        }
-    }
-
-    /**
-     * The bit of panel the module slot sits on: a small window of its own, bordered on all four sides
-     * and standing a few pixels clear of the crate panel.
-     * A slot itself has no texture in Minecraft: it is the background that carries the 18 by 18 cell.
-     */
-    private void renderModuleTab(GuiGraphics guiGraphics, int x, int y) {
-        int tabX = x + DeepCrateMenu.MODULE_X - MODULE_TAB_MARGIN;
-        int tabY = y + DeepCrateMenu.MODULE_Y - MODULE_TAB_MARGIN;
-        int cells = DeepCrateApi.moduleSlots().size();
-
-        blitTab(guiGraphics, tabX, tabY, 0, MODULE_TAB_CAP);
-        for (int cell = 0; cell < cells; cell++) {
-            blitTab(guiGraphics, tabX, tabY + MODULE_TAB_CAP + cell * MODULE_TAB_CELL, MODULE_TAB_CAP, MODULE_TAB_CELL);
-        }
-
-        blitTab(guiGraphics, tabX, tabY + MODULE_TAB_CAP + cells * MODULE_TAB_CELL, MODULE_TAB_FOOT_V, MODULE_TAB_CAP);
-    }
-
-    private static void blitTab(GuiGraphics guiGraphics, int x, int y, int v, int height) {
-        guiGraphics.blit(
-            RenderPipelines.GUI_TEXTURED, MODULE_TAB, x, y, 0.0F, (float) v, MODULE_TAB_WIDTH, height, MODULE_TAB_TEXTURE, MODULE_TAB_TEXTURE
+        CratePanel.blitBand(
+            guiGraphics, x, playerY + CratePanel.PLAYER_PANEL_HEIGHT - CratePanel.PANEL_FOOT, CratePanel.PANEL_FOOT_V, CratePanel.PANEL_FOOT,
+            interior / CELL, this.imageWidth
         );
+        CratePanel.renderModuleTab(guiGraphics, x, y);
     }
 
     /**
@@ -426,20 +350,6 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         }
 
         return !slot.getItem().getHoverName().getString().toLowerCase(Locale.ROOT).contains(this.query);
-    }
-
-    /** Tiles the one bare band of the texture over a height it does not natively cover. */
-    private void fillBarePanel(GuiGraphics guiGraphics, int x, int y, int height) {
-        int drawn = 0;
-        while (drawn < height) {
-            int slice = Math.min(BARE_PANEL_HEIGHT, height - drawn);
-            this.blitBand(guiGraphics, x, y + drawn, BARE_PANEL_V, slice, this.columns);
-            drawn += slice;
-        }
-    }
-
-    private static void blit(GuiGraphics guiGraphics, int x, int y, int u, int v, int width, int height) {
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, x, y, u, v, width, height, 256, 256);
     }
 
     private static String abbreviate(int count) {
