@@ -6,21 +6,16 @@ import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.CrateOpenData;
-import com.dreykaoas.deepcrate.inventory.CratePairContainer;
 import com.dreykaoas.deepcrate.inventory.CrateStorage;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import java.util.List;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.player.Inventory;
@@ -29,8 +24,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
-import net.minecraft.world.level.block.entity.ChestLidController;
-import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -39,39 +32,10 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements LidBlockEntity, ExtendedScreenHandlerFactory<CrateOpenData> {
     private static final Component DEFAULT_NAME = Component.translatable("container.deepcrate.crate");
-    private static final int EVENT_SET_OPEN_COUNT = 1;
 
     private CrateStorage storage = new CrateStorage(CrateTier.DEFAULT_COLUMNS, DeepCrateApi.BASE_CAPACITY);
     private final CrateModules modules = new CrateModules();
-
-    private final ChestLidController lidController = new ChestLidController();
-    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
-        @Override
-        protected void onOpen(Level level, BlockPos blockPos, BlockState blockState) {
-            DeepCrateBlockEntity.playSound(level, blockPos, blockState, SoundEvents.CHEST_OPEN);
-        }
-
-        @Override
-        protected void onClose(Level level, BlockPos blockPos, BlockState blockState) {
-            DeepCrateBlockEntity.playSound(level, blockPos, blockState, SoundEvents.CHEST_CLOSE);
-        }
-
-        @Override
-        protected void openerCountChanged(Level level, BlockPos blockPos, BlockState blockState, int i, int j) {
-            level.blockEvent(blockPos, blockState.getBlock(), EVENT_SET_OPEN_COUNT, j);
-        }
-
-        @Override
-        public boolean isOwnContainer(Player player) {
-            if (!(player.containerMenu instanceof DeepCrateMenu deepCrateMenu)) {
-                return false;
-            }
-
-            Container container = deepCrateMenu.getContainer();
-            return container == DeepCrateBlockEntity.this
-                || container instanceof CratePairContainer cratePairContainer && cratePairContainer.contains(DeepCrateBlockEntity.this);
-        }
-    };
+    private final CrateLid crateLid = new CrateLid(this);
 
     public DeepCrateBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(RegistryInit.BLOCK_ENTITY, blockPos, blockState);
@@ -330,47 +294,35 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     @Override
     public void startOpen(ContainerUser containerUser) {
-        if (!this.remove && !containerUser.getLivingEntity().isSpectator()) {
-            this.openersCounter
-                .incrementOpeners(containerUser.getLivingEntity(), this.getLevel(), this.getBlockPos(), this.getBlockState(), containerUser.getContainerInteractionRange());
-        }
+        this.crateLid.startOpen(containerUser);
     }
 
     @Override
     public void stopOpen(ContainerUser containerUser) {
-        if (!this.remove && !containerUser.getLivingEntity().isSpectator()) {
-            this.openersCounter.decrementOpeners(containerUser.getLivingEntity(), this.getLevel(), this.getBlockPos(), this.getBlockState());
-        }
+        this.crateLid.stopOpen(containerUser);
     }
 
     @Override
     public List<ContainerUser> getEntitiesWithContainerOpen() {
-        return this.openersCounter.getEntitiesWithContainerOpen(this.getLevel(), this.getBlockPos());
+        return this.crateLid.getEntitiesWithContainerOpen();
     }
 
     public void recheckOpen() {
-        if (!this.remove) {
-            this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
-        }
+        this.crateLid.recheckOpen();
     }
 
     public static void lidAnimateTick(Level level, BlockPos blockPos, BlockState blockState, DeepCrateBlockEntity deepCrateBlockEntity) {
-        deepCrateBlockEntity.lidController.tickLid();
+        deepCrateBlockEntity.crateLid.tickLid();
     }
 
     @Override
     public boolean triggerEvent(int i, int j) {
-        if (i == EVENT_SET_OPEN_COUNT) {
-            this.lidController.shouldBeOpen(j > 0);
-            return true;
-        }
-
-        return super.triggerEvent(i, j);
+        return this.crateLid.triggerEvent(i, j) || super.triggerEvent(i, j);
     }
 
     @Override
     public float getOpenNess(float f) {
-        return this.lidController.getOpenness(f);
+        return this.crateLid.getOpenNess(f);
     }
 
     /**
@@ -417,22 +369,4 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         }
     }
 
-    private static void playSound(Level level, BlockPos blockPos, BlockState blockState, SoundEvent soundEvent) {
-        ChestType chestType = blockState.getValue(DeepCrateBlock.TYPE);
-        // Only one half speaks, otherwise a pair opens twice as loud as a single crate, and it speaks
-        // from the middle of the pair rather than from its own block.
-        if (chestType == ChestType.LEFT) {
-            return;
-        }
-
-        double x = blockPos.getX() + 0.5;
-        double z = blockPos.getZ() + 0.5;
-        if (chestType == ChestType.RIGHT) {
-            Direction direction = DeepCrateBlock.connectedDirection(blockState);
-            x += direction.getStepX() * 0.5;
-            z += direction.getStepZ() * 0.5;
-        }
-
-        level.playSound(null, x, blockPos.getY() + 0.5, z, soundEvent, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
-    }
 }
