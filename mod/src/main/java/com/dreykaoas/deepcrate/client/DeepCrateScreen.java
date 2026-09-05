@@ -5,6 +5,7 @@ import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
 import com.dreykaoas.deepcrate.net.CrateSortPayload;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -12,7 +13,6 @@ import java.util.Map;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -52,7 +52,6 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** The three rows that close the panel at the bottom. They run its full width, cells or not. */
     private static final int PANEL_FOOT = 3;
     private static final int PANEL_FOOT_V = PLAYER_PANEL_V + PLAYER_PANEL_HEIGHT - PANEL_FOOT;
-    private static final int PAGE_BUTTON_SIZE = 16;
     private static final int PAGE_BUTTONS_PER_COLUMN = 4;
     /** The gap between the last crate row and the first inventory row is fourteen pixels; this fits it. */
     private static final int SEARCH_HEIGHT = 11;
@@ -80,7 +79,9 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private final int rows;
     private final int columns;
     private final int moduleTabHeight;
-    private final List<Button> pageButtons = new ArrayList<>();
+    private final List<PageButton> pageButtons = new ArrayList<>();
+    /** One flag per page, raised while that page holds a stack. What the dot on a page button reads. */
+    private boolean[] pagesHoldingItems = new boolean[0];
 
     private final List<SortButton> sortButtons = new ArrayList<>();
     /** Kept by name and not by position, so a mod loaded since does not shift every direction by one. */
@@ -150,6 +151,8 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         }
 
         this.pageButtons.clear();
+        this.pagesHoldingItems = new boolean[this.menu.layout().pageCount()];
+        this.readPagesHoldingItems();
         if (this.menu.layout().pageCount() < 2) {
             return;
         }
@@ -161,14 +164,13 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
             int target = page;
             this.pageButtons.add(
                 this.addRenderableWidget(
-                    Button.builder(Component.literal(String.valueOf(page + 1)), button -> this.menu.setPage(target))
-                        .bounds(
-                            this.leftPos + this.imageWidth + 3 + page / PAGE_BUTTONS_PER_COLUMN * (PAGE_BUTTON_SIZE + 2),
-                            this.topPos + HEADER_HEIGHT + page % PAGE_BUTTONS_PER_COLUMN * (PAGE_BUTTON_SIZE + 2),
-                            PAGE_BUTTON_SIZE,
-                            PAGE_BUTTON_SIZE
-                        )
-                        .build()
+                    new PageButton(
+                        this.leftPos + this.imageWidth + 3 + page / PAGE_BUTTONS_PER_COLUMN * (PageButton.SIZE + 2),
+                        this.topPos + HEADER_HEIGHT + page % PAGE_BUTTONS_PER_COLUMN * (PageButton.SIZE + 2),
+                        Component.literal(String.valueOf(page + 1)),
+                        () -> this.pagesHoldingItems[target],
+                        () -> this.menu.setPage(target)
+                    )
                 )
             );
         }
@@ -203,13 +205,34 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     }
 
     private boolean isOverPageButtons(double d, double e) {
-        for (Button button : this.pageButtons) {
-            if (button.isMouseOver(d, e)) {
+        for (PageButton pageButton : this.pageButtons) {
+            if (pageButton.isMouseOver(d, e)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * A page emptied into the player's inventory has to lose its dot while the screen stays open, so
+     * the flags are read again as the crate changes. Once a tick and once for every page, rather than
+     * once a frame and once for every button: twelve buttons would otherwise walk the same slots
+     * twelve times, sixty times a second.
+     */
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        this.readPagesHoldingItems();
+    }
+
+    private void readPagesHoldingItems() {
+        Arrays.fill(this.pagesHoldingItems, false);
+        for (Slot slot : this.menu.slots) {
+            if (slot instanceof DeepCrateSlot deepCrateSlot && !slot.getItem().isEmpty()) {
+                this.pagesHoldingItems[deepCrateSlot.page()] = true;
+            }
+        }
     }
 
     @Override
