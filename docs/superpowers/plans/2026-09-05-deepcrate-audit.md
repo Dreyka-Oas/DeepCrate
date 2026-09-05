@@ -1025,6 +1025,88 @@ git commit -m "docs: the readme names all eight extension points, not the three 
 
 ---
 
+### Task 10: le chemin chaud de la trémie
+
+Ajoutée le 5 septembre après que le gabarit a gagné un huitième contrôle, la performance mesurée. Le chiffre est mesuré, pas supposé, et il vient d'un gametest jeté après lecture dont la sortie brute est dans `.superpowers/sdd/perf-report.md`.
+
+`storage()`, [DeepCrateBlockEntity.java:100](../../../mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java), ressemble à un accesseur et n'en est pas un : chaque appel relance `alignStorageWithTier()` et `alignCapacityWithHolder()`, qui appellent chacun `moduleHolder()`, lequel fait un `getBlockEntity` sur la position voisine quand le coffre est apparié. La boucle du mixin appelle `getItem(i)` puis `getMaxStackSize(itemStack)` par emplacement, et les deux passent par `storage()`, donc quatre `moduleHolder()` par emplacement.
+
+Mesuré sur 5000 parcours de 216 emplacements après 500 tours de chauffe : 99,85 ns par emplacement sur un coffre simple, 286,02 ns sur un apparié, un facteur 2,86. Une trémie contre un demi coffre echo plein coûte 62 µs par tick, et cent trémies contre cent grands coffres tournent autour de 6 ms sur les 50 ms du tick.
+
+Rien n'est alloué dans cette boucle. `cratesFor` et `containerFor` allouent, mais leurs appelants sont l'ouverture d'écran, le comparateur et le changement de module.
+
+**Files:**
+- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/block/CrateModuleHolder.java`
+- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java`
+- Test: `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateHopperGameTest.java`
+
+**Interfaces:**
+- Consumes: `CrateModuleHolder` de la tâche 4, qui porte alors `moduleHolder()` et `alignCapacityWithHolder()`.
+- Produces: rien de public. Aucune signature ne change, ce qui est la condition pour qu'un addon ne voie rien.
+
+Cette tâche vient après la tâche 4, puisqu'elle modifie un fichier que la tâche 4 crée.
+
+- [ ] **Step 1: reproduire la mesure de départ**
+
+Refaire tourner le gametest de mesure décrit dans `.superpowers/sdd/perf-report.md`, cette fois en le gardant. Il devient un test de non-régression : un chiffre qui remonte plus tard veut dire que quelqu'un a remis du travail dans `storage()`.
+
+Le nommer `CrateHopperCostGameTest`, l'ajouter à `mod/src/gametest/resources/fabric.mod.json` sous `fabric-gametest`, sinon il ne tourne jamais et passe au vert sans rien avoir mesuré.
+
+Il asserte, il ne se contente pas d'imprimer : le coût par emplacement d'un coffre apparié reste sous trois fois celui d'un coffre simple. Un seuil large exprès, parce qu'un chiffre serré sur une machine de développement casse chez quelqu'un d'autre pour rien.
+
+- [ ] **Step 2: le voir passer avant tout changement**
+
+```bash
+cd mod && ./gradlew check --console=plain --max-workers=2
+```
+
+Attendu : vert, avec le rapport 2,86 imprimé. C'est la ligne de base.
+
+- [ ] **Step 3: mémoriser le holder pour la durée du tick**
+
+`moduleHolder()` refait le même `getBlockEntity` quatre fois par emplacement alors que la réponse ne peut pas changer entre deux emplacements du même parcours. Garder le résultat dans un champ, invalidé quand le voisinage change.
+
+Les deux moments où il doit être invalidé, et rien d'autre ne le touche : `setBlockState`, que le jeu appelle quand la propriété `TYPE` du coffre change, donc quand une paire se forme ou se défait ; et `setRemoved`, quand le coffre disparaît. Les deux sont des redéfinitions de `BlockEntity`.
+
+```java
+    private @Nullable DeepCrateBlockEntity cachedHolder;
+
+    @Override
+    public void setBlockState(BlockState blockState) {
+        super.setBlockState(blockState);
+        // The pairing itself lives in the TYPE property, so a crate marrying or losing its partner
+        // arrives here. Keeping a stale holder past that point would send a module's capacity to a
+        // crate that is no longer part of the pair.
+        this.cachedHolder = null;
+    }
+```
+
+L'autre moitié de la paire doit être invalidée aussi quand celle-ci change, sinon elle garde un pointeur vers un coffre retiré. Le faire dans `setRemoved`, en allant chercher le voisin avant de disparaître.
+
+- [ ] **Step 4: vérifier que le comportement n'a pas bougé**
+
+Le cache est une optimisation, donc les 44 gametests et les 36 tests JUnit doivent passer sans qu'aucun soit modifié. Un test qu'il faut retoucher pour passer est un test qui dit que le comportement a changé.
+
+```bash
+cd mod && ./gradlew build check --console=plain --max-workers=2
+```
+
+Attendu : `BUILD SUCCESSFUL`, 36 JUnit et 45 gametests verts, dont le nouveau.
+
+- [ ] **Step 5: relire le chiffre**
+
+Le rapport imprimé par `CrateHopperCostGameTest` doit être descendu nettement sous 2,86. S'il n'a pas bougé, le cache n'est pas sur le chemin mesuré : le dire et chercher où, plutôt que de committer une optimisation qui n'optimise rien.
+
+- [ ] **Step 6: commit**
+
+```bash
+cd /run/media/dreykaoas/O.A.S/projects/mods/DeepCrate
+git add mod/src
+git commit -m "perf(block): a paired crate resolves its module holder once, not four times a slot"
+```
+
+---
+
 ## Ce que ce plan ne fait pas
 
 Les dossiers de ressources qui passent huit fichiers, `items/` à 10, `recipe/` à 10, `advancement/recipes/` à 10 et `textures/entity/chest/` à 18, restent tels quels. Le format du jeu impose un fichier par objet et par recette, et les sous-dossiers y changeraient les chemins que le jeu lit.
