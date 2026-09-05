@@ -62,6 +62,12 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** The tab is built as a cap, one cell, a foot: five rows of texture, eighteen, five. */
     private static final int MODULE_TAB_CAP = 5;
     private static final int MODULE_TAB_CELL = 18;
+    /**
+     * The texture carries two cells, so its foot starts below both. Reading it one cell up lands on
+     * the top edge of the second, which closes the tab on the beginning of a slot that holds nothing.
+     */
+    private static final int MODULE_TAB_CELLS_DRAWN = 2;
+    private static final int MODULE_TAB_FOOT_V = MODULE_TAB_CAP + MODULE_TAB_CELLS_DRAWN * MODULE_TAB_CELL;
     /** The tab is drawn this far up and left of the slot, so its frame lands exactly around it. */
     private static final int MODULE_TAB_MARGIN = 6;
     private static final int MODULE_TAB_TEXTURE = 64;
@@ -289,7 +295,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
             blitTab(guiGraphics, tabX, tabY + MODULE_TAB_CAP + cell * MODULE_TAB_CELL, MODULE_TAB_CAP, MODULE_TAB_CELL);
         }
 
-        blitTab(guiGraphics, tabX, tabY + MODULE_TAB_CAP + cells * MODULE_TAB_CELL, MODULE_TAB_CAP + MODULE_TAB_CELL, MODULE_TAB_CAP);
+        blitTab(guiGraphics, tabX, tabY + MODULE_TAB_CAP + cells * MODULE_TAB_CELL, MODULE_TAB_FOOT_V, MODULE_TAB_CAP);
     }
 
     private static void blitTab(GuiGraphics guiGraphics, int x, int y, int v, int height) {
