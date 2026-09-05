@@ -92,6 +92,25 @@ d'une poignée de lignes, un compte de gametests à 44 là où l'arbre en a 45, 
 interne dans la fiche des réglages sur une ligne de tableau. À relire avant d'implémenter d'après
 elles.
 
+## Le troisième tour, arrêté en cours
+
+Lancé sur les quatre tâches restantes, une à la fois avec des adversaires entre chacune, et interrompu
+pendant la première. Rien de ce tour n'est dans l'arbre, le dépôt est propre et le build vert avec ses
+44 gametests.
+
+Une chose est à récupérer au retour. Le test de non-régression de la dixième tâche est écrit et il
+mesure vraiment, mais il attend le cache qu'il doit valider, donc il échoue : il a rendu un rapport de
+3,60 contre un plafond de 3,0. Le laisser inscrit aurait mis la branche au rouge, alors il est mis de
+côté hors dépôt, à `.superpowers/sdd/CrateHopperCostGameTest.java.pending`. Pour le reprendre, le
+remettre dans `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/` et rajouter sa ligne dans
+`mod/src/gametest/resources/fabric.mod.json` sous `fabric-gametest`, sans quoi il ne tournera jamais
+et passera au vert sans rien avoir mesuré.
+
+Ce chiffre de 3,60 mérite d'être noté : la mesure du matin donnait 2,86 sur les mêmes 216
+emplacements. L'écart vient de la machine et de sa charge, pas du code, qui n'a pas bougé entre les
+deux. Un seuil serré sur ce genre de mesure casse chez quelqu'un d'autre pour rien, et 3,0 était déjà
+trop serré.
+
 ## Ce qui reste
 
 La septième tâche, les réglages : la fiche est écrite, le code non. Il n'y a toujours aucun
