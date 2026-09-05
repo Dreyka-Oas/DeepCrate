@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.gametest;
+package com.dreykaoas.deepcrate.gametest.client;
 
 import com.dreykaoas.deepcrate.DeepCrate;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;

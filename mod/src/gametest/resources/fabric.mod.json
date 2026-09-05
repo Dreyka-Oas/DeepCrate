@@ -15,7 +15,8 @@
       "com.dreykaoas.deepcrate.gametest.CrateColumnsGameTest"
     ],
     "fabric-client-gametest": [
-      "com.dreykaoas.deepcrate.gametest.CrateLookClientGameTest"
+      "com.dreykaoas.deepcrate.gametest.client.CrateLookClientGameTest",
+      "com.dreykaoas.deepcrate.gametest.client.CrateShowcaseClientGameTest"
     ]
   },
   "depends": {
