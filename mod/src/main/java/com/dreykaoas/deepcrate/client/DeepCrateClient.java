@@ -1,5 +1,9 @@
 package com.dreykaoas.deepcrate.client;
 
+import com.dreykaoas.deepcrate.client.render.DeepCrateRenderer;
+import com.dreykaoas.deepcrate.client.screen.DeepCrateScreen;
+import com.dreykaoas.deepcrate.client.sort.CrateSortOrder;
+import com.dreykaoas.deepcrate.client.sort.DeepCrateClientApi;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import java.util.Comparator;
 import net.fabricmc.api.ClientModInitializer;

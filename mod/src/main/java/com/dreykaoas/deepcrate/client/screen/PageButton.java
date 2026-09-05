@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.client;
+package com.dreykaoas.deepcrate.client.screen;
 
 import java.util.function.BooleanSupplier;
 import net.minecraft.client.gui.GuiGraphics;

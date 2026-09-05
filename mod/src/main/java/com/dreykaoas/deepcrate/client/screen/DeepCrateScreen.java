@@ -1,6 +1,9 @@
-package com.dreykaoas.deepcrate.client;
+package com.dreykaoas.deepcrate.client.screen;
 
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import com.dreykaoas.deepcrate.client.sort.CrateSortOrder;
+import com.dreykaoas.deepcrate.client.sort.DeepCrateClientApi;
+import com.dreykaoas.deepcrate.client.sort.SortButton;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
 import com.dreykaoas.deepcrate.net.CrateSortPayload;

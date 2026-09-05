@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.client;
+package com.dreykaoas.deepcrate.client.sort;
 
 import java.text.Collator;
 import java.util.Comparator;

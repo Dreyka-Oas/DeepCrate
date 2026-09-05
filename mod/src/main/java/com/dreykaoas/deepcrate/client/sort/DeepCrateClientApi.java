@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.client;
+package com.dreykaoas.deepcrate.client.sort;
 
 import com.dreykaoas.deepcrate.api.Registrations;
 import java.text.Collator;

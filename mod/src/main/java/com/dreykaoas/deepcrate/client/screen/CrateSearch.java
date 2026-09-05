@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.client;
+package com.dreykaoas.deepcrate.client.screen;
 
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;

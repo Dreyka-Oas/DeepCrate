@@ -2,7 +2,7 @@ package com.dreykaoas.deepcrate.gametest;
 
 import com.dreykaoas.deepcrate.DeepCrate;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
-import com.dreykaoas.deepcrate.client.DeepCrateScreen;
+import com.dreykaoas.deepcrate.client.screen.DeepCrateScreen;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.CrateOpenData;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;

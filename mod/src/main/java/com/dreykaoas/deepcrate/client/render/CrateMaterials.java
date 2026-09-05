@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.client;
+package com.dreykaoas.deepcrate.client.render;
 
 import com.dreykaoas.deepcrate.api.CrateTier;
 import java.util.HashMap;

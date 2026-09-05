@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.client;
+package com.dreykaoas.deepcrate.client.sort;
 
 import java.util.function.BiConsumer;
 import net.minecraft.client.gui.GuiGraphics;

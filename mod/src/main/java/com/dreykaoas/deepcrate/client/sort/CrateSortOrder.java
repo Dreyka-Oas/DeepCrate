@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.client;
+package com.dreykaoas.deepcrate.client.sort;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
