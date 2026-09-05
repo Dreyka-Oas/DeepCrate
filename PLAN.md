@@ -50,19 +50,52 @@ lecture : 99,85 ns par emplacement sur un coffre simple, 286,02 ns sur un appari
 vient de `moduleHolder()`, appelé quatre fois par emplacement, qui refait un `getBlockEntity` à chaque
 fois. Les chiffres bruts sont dans `.superpowers/sdd/perf-report.md`.
 
+## Le second tour, cinq conceptions et leurs adversaires
+
+Cinq livrables produits en parallèle, chacun passé à un agent chargé de le réfuter en lisant les
+fichiers plutôt que le rapport. Quatre sur cinq ont été réfutés, ce qui est le but de la manoeuvre.
+
+La cinquième tâche est faite. Le mod a son icône, 128 pixels, un coffre avec la languette de module
+qui pend à gauche, lisible une fois réduite à 32 où le lanceur la dessine vraiment. `fabric.mod.json`
+déclare l'icône et un bloc `contact` sans `homepage`, puisqu'aucun site n'existe. Le `.gitattributes`
+est posé.
+
+La sixième aussi. `store/curseforge.md` et `store/modrinth.md` portent un seul corps, l'incompatibilité
+lithium en tête, et ne diffèrent que par les deux paragraphes mis en citation côté Modrinth.
+
+Les septième et huitième tâches ont leur fiche de conception, pas leur code :
+`docs/superpowers/specs/2026-09-05-reglages.md` et `2026-09-05-decoupes-restantes.md`.
+
+Le terrain demandé existe, `CrateShowcaseClientGameTest`, douze prises couvrant chaque cas qui dessine
+autrement, et les tests clients sont passés dans leur propre paquet `gametest/client` pour tenir sous
+huit fichiers par dossier.
+
+## Ce que les adversaires ont trouvé, et qui n'est pas réglé
+
+Le dépôt GitHub est privé. `gh repo view` rend `PRIVATE` et un `curl` anonyme sur
+`https://github.com/Dreyka-Oas/DeepCrate` rend 404. Les pages de boutique ont donc été écrites sans
+aucun lien vivant, et leur champ Source porte la consigne de le remplir le jour où le dépôt s'ouvre.
+Tant qu'il reste fermé, publier ces pages revient à publier un mod dont personne ne peut lire la
+source.
+
+Le `LICENSE` de DeepCrate renvoie deux fois au site d'un autre mod, lignes 21 et 45, et le canal de
+signalement qu'on y trouve a `lethalbreed` câblé en dur dans son adresse. Un redistributeur de
+DeepCrate est donc tenu de créditer ce mod en pointant la page d'un autre, et une demande de modpack
+atterrit dans la file du voisin. À corriger dans le fichier, pas sur une page de boutique.
+
+La fiche des réglages avait une option morte-née, `rowModuleStackLimit`, lue pendant l'initialisation
+statique de `RegistryInit`, qui tourne avant que le fichier de configuration soit chargé. Réglé dans
+la fiche, mais c'est le genre de faute qui aurait donné un réglage sans effet.
+
+Restent des mineurs non repris, tous dans les deux fiches de conception : des renvois de ligne périmés
+d'une poignée de lignes, un compte de gametests à 44 là où l'arbre en a 45, et une contradiction
+interne dans la fiche des réglages sur une ligne de tableau. À relire avant d'implémenter d'après
+elles.
+
 ## Ce qui reste
 
-Six tâches du plan, dans l'ordre où il les pose.
-
-La cinquième, l'identité : le mod n'a toujours pas d'icône, donc le lanceur dessine un carré vide dans
-la liste. Il manque aussi le bloc `contact` dans `fabric.mod.json` et le `.gitattributes` que le mod
-voisin porte.
-
-La sixième, les deux pages de boutique. `store/` n'existe pas.
-
-La septième, les réglages. Il n'y a aucun `config/oas/deepcrate.json`, et quatre nombres décidés dans
-le code se discutent : la contenance de base, le comportement avec lithium, les rangées par page et le
-seuil d'abréviation.
+La septième tâche, les réglages : la fiche est écrite, le code non. Il n'y a toujours aucun
+`config/oas/deepcrate.json`.
 
 La huitième, le dernier mur de la fiche du 3 septembre : personne ne peut poser un bouton ni une ligne
 d'infobulle sur l'écran du coffre. Le code complet dort dans le plan du 3 septembre à partir de la
@@ -71,6 +104,9 @@ ligne 1813.
 La neuvième, la documentation. Le README nomme trois points d'extension, il y en a huit.
 
 La dixième, le chemin chaud mesuré plus haut.
+
+Et les six découpes de la fiche du jour, dont l'adversaire a montré qu'au moins une, `MenuModules`, ne
+tient pas telle qu'elle est dessinée.
 
 Six fichiers dépassent encore 150 lignes après la tâche 4, dont trois que le plan ne prévoyait pas de
 toucher : `DeepCrateMenu` à 404, `DeepCrateScreen` à 323, `DeepCrateBlockEntity` à 315, `CrateStorage`
