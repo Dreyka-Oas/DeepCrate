@@ -1,5 +1,6 @@
-package com.dreykaoas.deepcrate.inventory;
+package com.dreykaoas.deepcrate.inventory.slot;
 
+import com.dreykaoas.deepcrate.inventory.CrateStorage;
 import java.util.Optional;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;

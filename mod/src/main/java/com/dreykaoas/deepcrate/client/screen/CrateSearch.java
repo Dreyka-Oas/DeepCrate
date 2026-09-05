@@ -1,7 +1,7 @@
 package com.dreykaoas.deepcrate.client.screen;
 
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
-import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
+import com.dreykaoas.deepcrate.inventory.slot.DeepCrateSlot;
 import java.util.Locale;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;

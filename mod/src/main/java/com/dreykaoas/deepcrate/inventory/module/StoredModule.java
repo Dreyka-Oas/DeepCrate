@@ -1,6 +1,7 @@
-package com.dreykaoas.deepcrate.inventory;
+package com.dreykaoas.deepcrate.inventory.module;
 
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import com.dreykaoas.deepcrate.inventory.slot.StoredSlot;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.Identifier;

@@ -5,7 +5,7 @@ import com.dreykaoas.deepcrate.client.sort.CrateSortOrder;
 import com.dreykaoas.deepcrate.client.sort.DeepCrateClientApi;
 import com.dreykaoas.deepcrate.client.sort.SortButton;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
-import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
+import com.dreykaoas.deepcrate.inventory.slot.DeepCrateSlot;
 import com.dreykaoas.deepcrate.net.CrateSortPayload;
 import java.util.ArrayList;
 import java.util.Arrays;

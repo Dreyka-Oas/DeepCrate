@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.inventory;
+package com.dreykaoas.deepcrate.inventory.module;
 
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.api.module.CrateModuleSlot;

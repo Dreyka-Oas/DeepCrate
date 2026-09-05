@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.inventory;
+package com.dreykaoas.deepcrate.inventory.slot;
 
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.mojang.serialization.Codec;

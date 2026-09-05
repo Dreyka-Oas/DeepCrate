@@ -3,7 +3,7 @@ package com.dreykaoas.deepcrate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.dreykaoas.deepcrate.inventory.StoredSlot;
+import com.dreykaoas.deepcrate.inventory.slot.StoredSlot;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.registries.VanillaRegistries;
