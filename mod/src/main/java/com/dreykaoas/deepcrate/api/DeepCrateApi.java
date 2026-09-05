@@ -69,13 +69,7 @@ public final class DeepCrateApi {
             );
         }
 
-        for (CrateModule existing : MODULES) {
-            if (existing.id().equals(crateModule.id())) {
-                throw new IllegalStateException("Crate module " + crateModule.id() + " registered twice");
-            }
-        }
-
-        MODULES.add(crateModule);
+        Registrations.addUnique(MODULES, crateModule, CrateModule::id, "Crate module");
         // Highest capacity first, so a stack matching two tags gets the better of the two.
         MODULES.sort((a, b) -> Integer.compare(b.capacity(), a.capacity()));
         DeepCrate.LOGGER.info("[DeepCrate] module {}: {} per slot", crateModule.id(), crateModule.capacity());
@@ -83,25 +77,13 @@ public final class DeepCrateApi {
     }
 
     public static RowModule registerRowModule(RowModule rowModule) {
-        for (RowModule existing : ROW_MODULES) {
-            if (existing.id().equals(rowModule.id())) {
-                throw new IllegalStateException("Row module " + rowModule.id() + " registered twice");
-            }
-        }
-
-        ROW_MODULES.add(rowModule);
+        Registrations.addUnique(ROW_MODULES, rowModule, RowModule::id, "Row module");
         DeepCrate.LOGGER.info("[DeepCrate] row module {}: {} rows each", rowModule.id(), rowModule.rows());
         return rowModule;
     }
 
     public static CrateModuleSlot registerModuleSlot(CrateModuleSlot crateModuleSlot) {
-        for (CrateModuleSlot existing : MODULE_SLOTS) {
-            if (existing.id().equals(crateModuleSlot.id())) {
-                throw new IllegalStateException("Module slot " + crateModuleSlot.id() + " registered twice");
-            }
-        }
-
-        MODULE_SLOTS.add(crateModuleSlot);
+        Registrations.addUnique(MODULE_SLOTS, crateModuleSlot, CrateModuleSlot::id, "Module slot");
         MODULE_SLOTS.sort(Comparator.comparingInt(CrateModuleSlot::order));
         DeepCrate.LOGGER.info("[DeepCrate] module slot {}: up to {} at a time", crateModuleSlot.id(), crateModuleSlot.stackLimit());
         return crateModuleSlot;

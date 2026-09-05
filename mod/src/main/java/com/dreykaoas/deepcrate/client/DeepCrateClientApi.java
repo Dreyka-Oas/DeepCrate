@@ -1,5 +1,6 @@
 package com.dreykaoas.deepcrate.client;
 
+import com.dreykaoas.deepcrate.api.Registrations;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,13 +24,7 @@ public final class DeepCrateClientApi {
     private DeepCrateClientApi() {}
 
     public static CrateSortOrder registerSortOrder(CrateSortOrder crateSortOrder) {
-        for (CrateSortOrder existing : SORT_ORDERS) {
-            if (existing.id().equals(crateSortOrder.id())) {
-                throw new IllegalStateException("Sort order " + crateSortOrder.id() + " registered twice");
-            }
-        }
-
-        SORT_ORDERS.add(crateSortOrder);
+        Registrations.addUnique(SORT_ORDERS, crateSortOrder, CrateSortOrder::id, "Sort order");
         SORT_ORDERS.sort(Comparator.comparingInt(CrateSortOrder::order));
         return crateSortOrder;
     }
