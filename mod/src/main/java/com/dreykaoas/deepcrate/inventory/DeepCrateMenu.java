@@ -30,25 +30,17 @@ import net.minecraft.world.item.ItemStack;
  * server-side index can be steered from outside, which is what would open the door to duplication.
  */
 public class DeepCrateMenu extends AbstractContainerMenu {
-    /** Border, cells, border: the 176 of a chest screen is 7 + 9 * 18 + 7. */
-    public static final int PANEL_BORDER = 7;
-    public static final int CELL = 18;
-    /**
-     * No panel is narrower than a chest's, whatever the crate is. The player's own nine columns are
-     * drawn on it too, and they do not fit in less.
-     */
-    public static final int MIN_PANEL_WIDTH = 176;
-    /** A player's inventory is nine wide, and a crate of another width does not change that. */
-    public static final int COLUMNS_OF_A_PLAYER = 9;
-
-    public static final int GRID_LEFT = 8;
-    /** The chest's own grid position: the module lives outside the panel, so nothing is pushed down. */
-    public static final int GRID_TOP = 18;
-    /** Left of the panel, on its own tab, standing clear of it rather than glued to its edge. */
-    public static final int MODULE_X = -25;
-    public static final int MODULE_Y = 18;
-    /** One cell under the next, eighteen pixels apart, as many as there are registered kinds. */
-    public static final int MODULE_SPACING = 18;
+    // Delegated to CratePanelGeometry: DeepCrateScreen and the gametests read these names under
+    // DeepCrateMenu, so the constants stay here even though the measurements live elsewhere.
+    public static final int PANEL_BORDER = CratePanelGeometry.PANEL_BORDER;
+    public static final int CELL = CratePanelGeometry.CELL;
+    public static final int MIN_PANEL_WIDTH = CratePanelGeometry.MIN_PANEL_WIDTH;
+    public static final int COLUMNS_OF_A_PLAYER = CratePanelGeometry.COLUMNS_OF_A_PLAYER;
+    public static final int GRID_LEFT = CratePanelGeometry.GRID_LEFT;
+    public static final int GRID_TOP = CratePanelGeometry.GRID_TOP;
+    public static final int MODULE_X = CratePanelGeometry.MODULE_X;
+    public static final int MODULE_Y = CratePanelGeometry.MODULE_Y;
+    public static final int MODULE_SPACING = CratePanelGeometry.MODULE_SPACING;
 
     private final Container crate;
     private final Container moduleContainer;
@@ -177,15 +169,11 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     }
 
     public static int panelWidth(int columns) {
-        return Math.max(MIN_PANEL_WIDTH, PANEL_BORDER * 2 + columns * CELL);
+        return CratePanelGeometry.panelWidth(columns);
     }
 
-    /**
-     * Where the first slot of a run of {@code cells} columns sits, centred in the panel. The extra
-     * pixel is the cell frame: a slot is drawn one in from the corner of its cell.
-     */
     public static int gridLeft(int panelWidth, int cells) {
-        return PANEL_BORDER + (panelWidth - PANEL_BORDER * 2 - cells * CELL) / 2 + 1;
+        return CratePanelGeometry.gridLeft(panelWidth, cells);
     }
 
     public Container getContainer() {
