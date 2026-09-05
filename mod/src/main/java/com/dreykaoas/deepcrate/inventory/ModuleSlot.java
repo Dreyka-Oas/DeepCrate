@@ -15,10 +15,6 @@ public class ModuleSlot extends Slot {
         this.kind = crateModuleSlot;
     }
 
-    public CrateModuleSlot kind() {
-        return this.kind;
-    }
-
     @Override
     public Identifier getNoItemIcon() {
         return this.kind.emptyIcon();

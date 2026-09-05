@@ -72,5 +72,4 @@ public abstract class HopperBlockEntityMixin {
 
         callbackInfoReturnable.setReturnValue(true);
     }
-
 }

@@ -45,8 +45,6 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** The only band of the texture that is bare panel, measured on generic_54: rows 125 to 138. */
     private static final int BARE_PANEL_V = 125;
     private static final int BARE_PANEL_HEIGHT = 14;
-    private static final int SLOT_FRAME_U = 7;
-    private static final int SLOT_FRAME_V = 17;
     private static final int PLAYER_PANEL_V = 126;
     private static final int PLAYER_PANEL_HEIGHT = 96;
     /** The three rows that close the panel at the bottom. They run its full width, cells or not. */

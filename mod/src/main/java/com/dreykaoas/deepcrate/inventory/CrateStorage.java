@@ -268,7 +268,6 @@ public final class CrateStorage {
             list.addAll(split(itemStack, itemStack.getCount()));
         }
 
-
         return list;
     }
 

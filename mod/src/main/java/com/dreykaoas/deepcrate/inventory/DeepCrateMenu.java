@@ -389,12 +389,6 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         }
     }
 
-    /**
-     * A row module changes how many slots the screen has, and a menu's slot list is fixed once it is
-     * built. So the crate is opened again, at the start of the next tick rather than inside the click
-     * that caused it: closing a menu mid-click would put whatever the player is carrying on the
-     * ground.
-     */
     /** The cells as a plain list, which is what the two api helpers walk. */
     private List<ItemStack> moduleStacks() {
         List<ItemStack> stacks = new ArrayList<>(this.moduleContainer.getContainerSize());
@@ -405,6 +399,12 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         return stacks;
     }
 
+    /**
+     * A row module changes how many slots the screen has, and a menu's slot list is fixed once it is
+     * built. So the crate is opened again, at the start of the next tick rather than inside the click
+     * that caused it: closing a menu mid-click would put whatever the player is carrying on the
+     * ground.
+     */
     private void reopenIfRowCountChanged() {
         int rows = DeepCrateApi.rowsAmong(this.moduleStacks());
         if (rows == this.rowModuleCount) {
