@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -38,8 +37,6 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     private static final int PANEL_BORDER = DeepCrateMenu.PANEL_BORDER;
     private static final int CELL = DeepCrateMenu.CELL;
     private static final int PAGE_BUTTONS_PER_COLUMN = 4;
-    /** The gap between the last crate row and the first inventory row is fourteen pixels; this fits it. */
-    private static final int SEARCH_HEIGHT = 11;
     /** The two sort buttons stand above the panel, flush with its left edge and clear of it. */
     private static final int SORT_GAP = 4;
     private static final int SORT_BUTTON_GAP = 2;
@@ -57,13 +54,14 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** Kept by name and not by position, so a mod loaded since does not shift every direction by one. */
     private final Map<Identifier, Boolean> sortDirections = new HashMap<>();
 
+    private final CrateSearch crateSearch;
     private SearchBox searchBox;
-    private String query = "";
 
     public DeepCrateScreen(DeepCrateMenu deepCrateMenu, Inventory inventory, Component component) {
         super(deepCrateMenu, inventory, component);
         this.rows = deepCrateMenu.layout().rowsPerPage();
         this.columns = deepCrateMenu.columns();
+        this.crateSearch = new CrateSearch(deepCrateMenu);
         this.moduleTabHeight = CratePanel.MODULE_TAB_CAP * 2 + DeepCrateApi.moduleSlots().size() * CratePanel.MODULE_TAB_CELL;
         // Exactly a chest of this many rows: the module hangs off the left edge rather than taking a
         // band inside the panel.
@@ -78,18 +76,9 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
 
         // On the inventory line, to the right of its label and running to the edge of the panel.
         int labelEnd = DeepCrateMenu.GRID_LEFT + this.font.width(this.playerInventoryTitle) + 6;
-        this.searchBox = new SearchBox(
-            this.font,
-            this.leftPos + labelEnd,
-            this.topPos + this.inventoryLabelY - 2,
-            this.imageWidth - labelEnd - DeepCrateMenu.GRID_LEFT,
-            SEARCH_HEIGHT,
-            Component.translatable("screen.deepcrate.search")
+        this.searchBox = this.crateSearch.buildBox(
+            this.font, this.leftPos + labelEnd, this.topPos + this.inventoryLabelY - 2, this.imageWidth - labelEnd - DeepCrateMenu.GRID_LEFT
         );
-        this.searchBox.setHint(Component.translatable("screen.deepcrate.search"));
-        this.searchBox.setMaxLength(48);
-        this.searchBox.setResponder(this::onQueryChanged);
-        this.searchBox.setValue(this.query);
         this.addRenderableWidget(this.searchBox);
 
         // Read before the widgets are replaced: a window resized mid-session rebuilds the screen, and
@@ -277,7 +266,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
             super.renderSlot(guiGraphics, slot, i, j);
         }
 
-        if (this.dims(slot)) {
+        if (this.crateSearch.dims(slot)) {
             guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xB0101010);
         }
     }
@@ -319,37 +308,6 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         ClientPlayNetworking.send(
             new CrateSortPayload(this.menu.containerId, DeepCrateClientApi.order(crateSortOrder, this.menu.getContainer(), reversed))
         );
-    }
-
-    /**
-     * A crate can hold twelve pages, and a slot on a page that is not open is not drawn at all, so a
-     * search that matched nothing visible would read as a search that matched nothing. The screen
-     * turns to the first page holding a match instead.
-     */
-    private void onQueryChanged(String text) {
-        this.query = text.toLowerCase(Locale.ROOT).trim();
-        if (this.query.isEmpty() || this.menu.layout().pageCount() < 2) {
-            return;
-        }
-
-        for (Slot slot : this.menu.slots) {
-            if (slot instanceof DeepCrateSlot deepCrateSlot && !slot.getItem().isEmpty() && !this.dims(slot)) {
-                this.menu.setPage(deepCrateSlot.page());
-                return;
-            }
-        }
-    }
-
-    /**
-     * Whether a slot is greyed out by the search. Only the crate's own slots answer: dimming the
-     * player's inventory as well would leave nothing readable on screen.
-     */
-    private boolean dims(Slot slot) {
-        if (this.query.isEmpty() || !(slot instanceof DeepCrateSlot) || slot.getItem().isEmpty()) {
-            return false;
-        }
-
-        return !slot.getItem().getHoverName().getString().toLowerCase(Locale.ROOT).contains(this.query);
     }
 
     private static String abbreviate(int count) {
