@@ -1,11 +1,11 @@
 package com.dreykaoas.deepcrate.init;
 
 import com.dreykaoas.deepcrate.DeepCrate;
-import com.dreykaoas.deepcrate.api.CrateModule;
-import com.dreykaoas.deepcrate.api.CrateModuleSlot;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
-import com.dreykaoas.deepcrate.api.RowModule;
+import com.dreykaoas.deepcrate.api.module.CrateModule;
+import com.dreykaoas.deepcrate.api.module.CrateModuleSlot;
+import com.dreykaoas.deepcrate.api.module.RowModule;
 import com.dreykaoas.deepcrate.block.DeepCrateBlock;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.dreykaoas.deepcrate.inventory.CrateOpenData;

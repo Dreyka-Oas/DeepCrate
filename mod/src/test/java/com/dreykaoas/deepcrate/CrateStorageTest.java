@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.dreykaoas.deepcrate.api.CrateCapacityCallback;
+import com.dreykaoas.deepcrate.api.module.CrateCapacityCallback;
 import com.dreykaoas.deepcrate.inventory.CrateStorage;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;

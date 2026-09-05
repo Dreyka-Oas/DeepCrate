@@ -1,6 +1,9 @@
 package com.dreykaoas.deepcrate.api;
 
 import com.dreykaoas.deepcrate.DeepCrate;
+import com.dreykaoas.deepcrate.api.module.CrateModule;
+import com.dreykaoas.deepcrate.api.module.CrateModuleSlot;
+import com.dreykaoas.deepcrate.api.module.RowModule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.dreykaoas.deepcrate.api.CrateModules;
 import com.dreykaoas.deepcrate.api.TagMatch;
+import com.dreykaoas.deepcrate.api.module.CrateModules;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;

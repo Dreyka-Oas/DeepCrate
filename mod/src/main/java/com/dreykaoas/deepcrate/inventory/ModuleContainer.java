@@ -1,7 +1,7 @@
 package com.dreykaoas.deepcrate.inventory;
 
-import com.dreykaoas.deepcrate.api.CrateModuleSlot;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import com.dreykaoas.deepcrate.api.module.CrateModuleSlot;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import java.util.List;
 import net.minecraft.resources.Identifier;

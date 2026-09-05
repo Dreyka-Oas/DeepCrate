@@ -1,4 +1,4 @@
-package com.dreykaoas.deepcrate.api;
+package com.dreykaoas.deepcrate.api.module;
 
 import java.util.Collections;
 import java.util.Iterator;

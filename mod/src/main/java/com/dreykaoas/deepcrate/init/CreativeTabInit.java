@@ -1,9 +1,9 @@
 package com.dreykaoas.deepcrate.init;
 
-import com.dreykaoas.deepcrate.api.CrateModule;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
-import com.dreykaoas.deepcrate.api.RowModule;
+import com.dreykaoas.deepcrate.api.module.CrateModule;
+import com.dreykaoas.deepcrate.api.module.RowModule;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;

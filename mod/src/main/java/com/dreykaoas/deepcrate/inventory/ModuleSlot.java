@@ -1,6 +1,6 @@
 package com.dreykaoas.deepcrate.inventory;
 
-import com.dreykaoas.deepcrate.api.CrateModuleSlot;
+import com.dreykaoas.deepcrate.api.module.CrateModuleSlot;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;

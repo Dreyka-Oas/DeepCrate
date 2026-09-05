@@ -1,5 +1,6 @@
-package com.dreykaoas.deepcrate.api;
+package com.dreykaoas.deepcrate.api.module;
 
+import com.dreykaoas.deepcrate.api.TagMatch;
 import java.util.function.Predicate;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;

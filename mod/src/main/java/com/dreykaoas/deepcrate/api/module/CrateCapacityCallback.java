@@ -1,5 +1,6 @@
-package com.dreykaoas.deepcrate.api;
+package com.dreykaoas.deepcrate.api.module;
 
+import com.dreykaoas.deepcrate.api.CrateTier;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.item.ItemStack;

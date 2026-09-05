@@ -1,8 +1,8 @@
 package com.dreykaoas.deepcrate.block;
 
-import com.dreykaoas.deepcrate.api.CrateModules;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import com.dreykaoas.deepcrate.api.module.CrateModules;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.CrateStorage;
 import com.dreykaoas.deepcrate.inventory.StoredModule;

@@ -1,8 +1,8 @@
 package com.dreykaoas.deepcrate.inventory;
 
-import com.dreykaoas.deepcrate.api.CrateCapacityCallback;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import com.dreykaoas.deepcrate.api.module.CrateCapacityCallback;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.NonNullList;
