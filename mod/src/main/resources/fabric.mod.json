@@ -8,6 +8,11 @@
     "Dreyka Oas"
   ],
   "license": "All rights reserved. See LICENSE",
+  "contact": {
+    "sources": "https://github.com/Dreyka-Oas/DeepCrate",
+    "issues": "https://github.com/Dreyka-Oas/DeepCrate/issues"
+  },
+  "icon": "assets/deepcrate/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
