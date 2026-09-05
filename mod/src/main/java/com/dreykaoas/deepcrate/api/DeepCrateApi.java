@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -33,7 +34,7 @@ public final class DeepCrateApi {
      * measured, eight blocks of dirt destroyed per run. Telling automation 64 in that case costs the
      * feature and keeps the items; the player's own hands are unaffected, they go through the menu.
      */
-    public static final boolean AUTOMATION_LIMITED = net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("lithium");
+    public static final boolean AUTOMATION_LIMITED = FabricLoader.getInstance().isModLoaded("lithium");
 
     private static final List<Runnable> TIER_LISTENERS = new ArrayList<>();
     private static final Map<Identifier, CrateTier> TIERS = new HashMap<>();

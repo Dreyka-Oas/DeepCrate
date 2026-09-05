@@ -1,5 +1,6 @@
 package com.dreykaoas.deepcrate.net;
 
+import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import java.util.List;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -9,7 +10,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 
 /**
@@ -27,7 +27,7 @@ public record CrateSortPayload(int containerId, List<Item> order) implements Cus
      */
     private static final int MAX_ITEMS = 512;
 
-    public static final Type<CrateSortPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath("deepcrate", "sort"));
+    public static final Type<CrateSortPayload> TYPE = new Type<>(RegistryInit.id("sort"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CrateSortPayload> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.VAR_INT,

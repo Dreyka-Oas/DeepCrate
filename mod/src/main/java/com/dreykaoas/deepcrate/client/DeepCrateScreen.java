@@ -1,6 +1,7 @@
 package com.dreykaoas.deepcrate.client;
 
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.DeepCrateSlot;
 import com.dreykaoas.deepcrate.net.CrateSortPayload;
@@ -54,7 +55,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** The gap between the last crate row and the first inventory row is fourteen pixels; this fits it. */
     private static final int SEARCH_HEIGHT = 11;
     /** The tab the module slot sits on, left of the panel: its own small panel with the same border. */
-    private static final Identifier MODULE_TAB = Identifier.fromNamespaceAndPath("deepcrate", "textures/gui/module_tab.png");
+    private static final Identifier MODULE_TAB = RegistryInit.id("textures/gui/module_tab.png");
     private static final int MODULE_TAB_WIDTH = 28;
     /** The tab is built as a cap, one cell, a foot: five rows of texture, eighteen, five. */
     private static final int MODULE_TAB_CAP = 5;
