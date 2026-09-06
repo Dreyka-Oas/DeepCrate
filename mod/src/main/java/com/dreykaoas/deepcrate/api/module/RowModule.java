@@ -14,9 +14,6 @@ import net.minecraft.world.item.ItemStack;
  * item it already ships without any code.
  */
 public record RowModule(Identifier id, int rows, TagKey<Item> items) {
-    /** How many of them one crate accepts, which is also the item's own stack limit. */
-    public static final int STACK_LIMIT = 16;
-
     public RowModule {
         if (rows < 1) {
             throw new IllegalArgumentException("Row module " + id + " needs a positive row count, got " + rows);

@@ -4,6 +4,7 @@ import com.dreykaoas.deepcrate.api.CrateLayout;
 import com.dreykaoas.deepcrate.api.CrateTier;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.api.module.CrateModules;
+import com.dreykaoas.deepcrate.config.domain.CrateConfig;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.CrateOpenData;
 import com.dreykaoas.deepcrate.inventory.CrateStorage;
@@ -33,10 +34,10 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements LidBlockEntity, ExtendedScreenHandlerFactory<CrateOpenData> {
     private static final Component DEFAULT_NAME = Component.translatable("container.deepcrate.crate");
 
-    private CrateStorage storage = new CrateStorage(CrateTier.DEFAULT_COLUMNS, DeepCrateApi.BASE_CAPACITY);
+    private CrateStorage storage = new CrateStorage(CrateTier.DEFAULT_COLUMNS, CrateConfig.baseCapacity);
     private final CrateModules modules = new CrateModules();
     private final CrateLid crateLid = new CrateLid(this);
-    private final CrateModuleHolder crateModuleHolder = new CrateModuleHolder(this);
+    final CrateModuleHolder crateModuleHolder = new CrateModuleHolder(this);
 
     public DeepCrateBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(RegistryInit.BLOCK_ENTITY, blockPos, blockState);

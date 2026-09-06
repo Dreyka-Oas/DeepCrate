@@ -8,6 +8,7 @@ import com.dreykaoas.deepcrate.api.module.CrateModuleSlot;
 import com.dreykaoas.deepcrate.api.module.RowModule;
 import com.dreykaoas.deepcrate.block.DeepCrateBlock;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
+import com.dreykaoas.deepcrate.config.domain.CrateConfig;
 import com.dreykaoas.deepcrate.inventory.CrateOpenData;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import java.util.List;
@@ -49,7 +50,7 @@ public final class RegistryInit {
         new ModuleSpec("module_512", 512)
     );
 
-    /** One row of nine slots each, sixteen to a crate. */
+    /** One row of nine slots each. */
     private static final String ROW_MODULE_NAME = "module_row";
 
     public static final List<CrateTier> TIERS = TIER_SPECS.stream().map(RegistryInit::registerTier).toList();
@@ -69,7 +70,8 @@ public final class RegistryInit {
         );
         DeepCrateApi.registerModuleSlot(
             new CrateModuleSlot(
-                ROWS_SLOT, 1, RowModule.STACK_LIMIT, id("container/slot/row_module"), itemStack -> DeepCrateApi.rowModuleFor(itemStack) != null
+                ROWS_SLOT, 1, CrateConfig.rowModuleStackLimit, id("container/slot/row_module"),
+                itemStack -> DeepCrateApi.rowModuleFor(itemStack) != null
             )
         );
     }
@@ -93,6 +95,10 @@ public final class RegistryInit {
     /**
      * Touching the class runs its static fields, which is where the registration happens. Java would
      * otherwise defer them until the first read, long after the registries are frozen.
+     *
+     * That same touch is what reads {@code rowModuleStackLimit}, twice and for good: once for the row
+     * cell and once for the item's own stack limit. The settings file has to be loaded before this is
+     * called, or the option is frozen at its default while looking like it works.
      */
     public static void register() {
         // A tier registered later by an addon has to join the shared block entity type, or the game
@@ -130,7 +136,7 @@ public final class RegistryInit {
     private static Item registerRowModule() {
         Identifier identifier = id(ROW_MODULE_NAME);
         Item item = Items.registerItem(
-            ResourceKey.create(Registries.ITEM, identifier), Item::new, new Item.Properties().stacksTo(RowModule.STACK_LIMIT)
+            ResourceKey.create(Registries.ITEM, identifier), Item::new, new Item.Properties().stacksTo(CrateConfig.rowModuleStackLimit)
         );
         DeepCrateApi.registerRowModule(new RowModule(identifier, 1, TagKey.create(Registries.ITEM, identifier)));
         return item;

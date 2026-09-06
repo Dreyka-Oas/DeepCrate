@@ -16,5 +16,10 @@
   "screen.deepcrate.sort.name": "Ranger de A à Z",
   "screen.deepcrate.sort.name_reversed": "Ranger de Z à A",
   "screen.deepcrate.sort.count": "Ranger du plus rempli au moins rempli",
-  "screen.deepcrate.sort.count_reversed": "Ranger du moins rempli au plus rempli"
+  "screen.deepcrate.sort.count_reversed": "Ranger du moins rempli au plus rempli",
+  "deepcrate.notice.config_problems": "%s problème(s) dans la structure de config/oas/deepcrate.json :",
+  "deepcrate.notice.unknown_option": "  '%s' ne correspond à aucune option.",
+  "deepcrate.notice.unknown_ambiguous": "  '%s' : vouliez-vous '%s' ? Trop ambigu pour être corrigé tout seul.",
+  "deepcrate.notice.duplicated": "  '%s' est écrit dans deux catégories, une seule copie est lue.",
+  "deepcrate.notice.more_lines": "  et %s de plus, dans latest.log."
 }

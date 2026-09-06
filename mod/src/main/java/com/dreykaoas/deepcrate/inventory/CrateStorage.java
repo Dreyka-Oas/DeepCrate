@@ -74,7 +74,7 @@ public final class CrateStorage {
         }
 
         int limit = this.capacityFor(itemStack);
-        return DeepCrateApi.AUTOMATION_LIMITED ? Math.min(limit, VANILLA_LIMIT) : limit;
+        return DeepCrateApi.automationLimited() ? Math.min(limit, VANILLA_LIMIT) : limit;
     }
 
     /**

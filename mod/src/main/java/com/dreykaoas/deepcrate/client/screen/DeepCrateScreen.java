@@ -4,6 +4,7 @@ import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.client.sort.CrateSortOrder;
 import com.dreykaoas.deepcrate.client.sort.DeepCrateClientApi;
 import com.dreykaoas.deepcrate.client.sort.SortButton;
+import com.dreykaoas.deepcrate.config.domain.ScreenConfig;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import com.dreykaoas.deepcrate.inventory.slot.DeepCrateSlot;
 import com.dreykaoas.deepcrate.net.CrateSortPayload;
@@ -43,8 +44,6 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** The two sort buttons stand above the panel, flush with its left edge and clear of it. */
     private static final int SORT_GAP = 4;
     private static final int SORT_BUTTON_GAP = 2;
-    /** Past four digits a count runs out of its cell, so it is shortened and the tooltip carries the truth. */
-    private static final int ABBREVIATE_ABOVE = 999;
 
     private final int rows;
     private final int columns;
@@ -262,7 +261,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     @Override
     protected void renderSlot(GuiGraphics guiGraphics, Slot slot, int i, int j) {
         ItemStack itemStack = slot.getItem();
-        if (slot instanceof DeepCrateSlot && itemStack.getCount() > ABBREVIATE_ABOVE) {
+        if (slot instanceof DeepCrateSlot && itemStack.getCount() > ScreenConfig.abbreviateAbove) {
             guiGraphics.renderItem(itemStack, slot.x, slot.y, slot.x + slot.y * this.imageWidth);
             guiGraphics.renderItemDecorations(this.font, itemStack, slot.x, slot.y, abbreviate(itemStack.getCount()));
         } else {
@@ -278,7 +277,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     @Override
     protected List<Component> getTooltipFromContainerItem(ItemStack itemStack) {
         List<Component> lines = super.getTooltipFromContainerItem(itemStack);
-        if (this.hoveredSlot instanceof DeepCrateSlot && itemStack.getCount() > ABBREVIATE_ABOVE) {
+        if (this.hoveredSlot instanceof DeepCrateSlot && itemStack.getCount() > ScreenConfig.abbreviateAbove) {
             lines = new ArrayList<>(lines);
             lines.add(1, Component.translatable("screen.deepcrate.count", itemStack.getCount()));
         }

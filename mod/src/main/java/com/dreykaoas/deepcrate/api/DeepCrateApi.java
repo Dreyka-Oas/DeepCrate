@@ -4,6 +4,7 @@ import com.dreykaoas.deepcrate.DeepCrate;
 import com.dreykaoas.deepcrate.api.module.CrateModule;
 import com.dreykaoas.deepcrate.api.module.CrateModuleSlot;
 import com.dreykaoas.deepcrate.api.module.RowModule;
+import com.dreykaoas.deepcrate.config.domain.CrateConfig;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,9 +19,6 @@ import org.jspecify.annotations.Nullable;
 
 /** What a crate tier is, what a module is, and how to look either one up. */
 public final class DeepCrateApi {
-    /** A slot with no module in the crate, which is what the rest of the game holds. */
-    public static final int BASE_CAPACITY = 64;
-
     /**
      * Ceiling on what a module may raise a slot to.
      *
@@ -29,15 +27,8 @@ public final class DeepCrateApi {
      */
     public static final int MAX_CAPACITY = Short.MAX_VALUE;
 
-    /**
-     * Whether automation may go past a vanilla stack.
-     *
-     * Lithium replaces the hopper wholesale and keeps its own copy of the target inventory. Against a
-     * container that answers more than 64 it takes items out of the hopper and never writes them in:
-     * measured, eight blocks of dirt destroyed per run. Telling automation 64 in that case costs the
-     * feature and keeps the items; the player's own hands are unaffected, they go through the menu.
-     */
-    public static final boolean AUTOMATION_LIMITED = FabricLoader.getInstance().isModLoaded("lithium");
+    /** The mod list is closed before an entry point runs and never moves again, so this one is decided once. */
+    private static final boolean LITHIUM_PRESENT = FabricLoader.getInstance().isModLoaded("lithium");
 
     private static final List<Runnable> TIER_LISTENERS = new ArrayList<>();
     private static final Map<Identifier, CrateTier> TIERS = new HashMap<>();
@@ -47,6 +38,15 @@ public final class DeepCrateApi {
     private static final List<CrateModuleSlot> MODULE_SLOTS = new ArrayList<>();
 
     private DeepCrateApi() {}
+
+    /**
+     * Whether automation may go past a vanilla stack, which it may not while lithium is installed and
+     * {@code CrateConfig.limitAutomationWithLithium} is on. That field carries the measurement behind
+     * the rule, and reading it at the call is what leaves nothing to refresh after the file is read.
+     */
+    public static boolean automationLimited() {
+        return CrateConfig.limitAutomationWithLithium && LITHIUM_PRESENT;
+    }
 
     public static CrateTier registerTier(CrateTier crateTier) {
         CrateTier previous = TIERS.put(crateTier.id(), crateTier);
@@ -160,7 +160,7 @@ public final class DeepCrateApi {
     /** What one slot holds, given whatever sits in the module slot. */
     public static int capacityOf(ItemStack moduleStack) {
         CrateModule crateModule = moduleFor(moduleStack);
-        return crateModule == null ? BASE_CAPACITY : crateModule.capacity();
+        return crateModule == null ? CrateConfig.baseCapacity : crateModule.capacity();
     }
 
     /**
@@ -169,7 +169,7 @@ public final class DeepCrateApi {
      * followed between two tags.
      */
     public static int capacityAmong(Iterable<ItemStack> stacks) {
-        int capacity = BASE_CAPACITY;
+        int capacity = CrateConfig.baseCapacity;
         for (ItemStack itemStack : stacks) {
             capacity = Math.max(capacity, capacityOf(itemStack));
         }

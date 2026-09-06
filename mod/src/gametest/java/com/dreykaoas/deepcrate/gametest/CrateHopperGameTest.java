@@ -33,7 +33,7 @@ public class CrateHopperGameTest {
         // A hopper moves one item every eight ticks, so eight items is what fits in a test.
         hopperBlockEntity.setItem(0, new ItemStack(Items.DIRT, 8));
 
-        int expected = DeepCrateApi.AUTOMATION_LIMITED ? 64 : 72;
+        int expected = DeepCrateApi.automationLimited() ? 64 : 72;
         gameTestHelper.succeedWhen(() -> {
             DeepCrateBlockEntity crate = gameTestHelper.getBlockEntity(CRATE, DeepCrateBlockEntity.class);
             int inCrate = crate.storage().get(0).getCount();
@@ -66,7 +66,7 @@ public class CrateHopperGameTest {
         HopperBlockEntity hopperBlockEntity = gameTestHelper.getBlockEntity(ABOVE, HopperBlockEntity.class);
         hopperBlockEntity.setItem(0, new ItemStack(Items.DIRT, 4));
 
-        if (DeepCrateApi.AUTOMATION_LIMITED) {
+        if (DeepCrateApi.automationLimited()) {
             // With lithium the crate deliberately looks full at 64 a slot, so nothing should move and
             // nothing should vanish.
             gameTestHelper.runAtTickTime(80, () -> {

@@ -1,5 +1,7 @@
 package com.dreykaoas.deepcrate.api;
 
+import com.dreykaoas.deepcrate.config.domain.CrateConfig;
+
 /**
  * How a crate of {@code rows} rows is cut into pages.
  *
@@ -7,10 +9,11 @@ package com.dreykaoas.deepcrate.api;
  * pages of four, not one of six and one of two.
  */
 public record CrateLayout(int rowsPerPage, int pageCount) {
-    public static final int MAX_ROWS_PER_PAGE = 4;
-
     public static CrateLayout balanced(int rows) {
-        int pageCount = Math.max(1, (rows + MAX_ROWS_PER_PAGE - 1) / MAX_ROWS_PER_PAGE);
+        // Read once into a local: two reads of the same field in one expression leave a window where
+        // the second answers something the first did not.
+        int maxRowsPerPage = CrateConfig.maxRowsPerPage;
+        int pageCount = Math.max(1, (rows + maxRowsPerPage - 1) / maxRowsPerPage);
         int rowsPerPage = (rows + pageCount - 1) / pageCount;
         return new CrateLayout(rowsPerPage, pageCount);
     }

@@ -2,10 +2,10 @@ package com.dreykaoas.deepcrate.gametest.client;
 
 import com.dreykaoas.deepcrate.DeepCrate;
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
-import com.dreykaoas.deepcrate.api.module.RowModule;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.dreykaoas.deepcrate.client.screen.DeepCrateScreen;
 import com.dreykaoas.deepcrate.client.screen.SearchBox;
+import com.dreykaoas.deepcrate.config.domain.CrateConfig;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.CrateOpenData;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
@@ -108,7 +108,7 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
             onCrate(server, ECHO, echo -> {
                 // Rows and nothing beside them. A capacity module in the other cell would draw the tab,
                 // the six pages and the dots of the crate CrateLookClientGameTest already photographs.
-                echo.setRowModules(new ItemStack(RegistryInit.ROW_MODULE_ITEM, RowModule.STACK_LIMIT));
+                echo.setRowModules(new ItemStack(RegistryInit.ROW_MODULE_ITEM, CrateConfig.rowModuleStackLimit));
                 // Twenty-four rows now, thirty-six slots to a page. Filling the third page and the sixth
                 // leaves two, four and five empty, so one frame carries a button in both of its states.
                 echo.storage().set(74, new ItemStack(Items.COPPER_INGOT, 64));

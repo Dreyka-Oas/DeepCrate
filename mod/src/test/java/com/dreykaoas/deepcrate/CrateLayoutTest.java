@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.dreykaoas.deepcrate.api.CrateLayout;
+import com.dreykaoas.deepcrate.config.domain.CrateConfig;
 import org.junit.jupiter.api.Test;
 
 class CrateLayoutTest {
@@ -28,7 +29,7 @@ class CrateLayoutTest {
                 crateLayout.rowsPerPage() * crateLayout.pageCount() >= rows,
                 "rows " + rows + " left some slots unreachable: " + crateLayout
             );
-            assertTrue(crateLayout.rowsPerPage() <= CrateLayout.MAX_ROWS_PER_PAGE, "rows " + rows + " overflowed a page");
+            assertTrue(crateLayout.rowsPerPage() <= CrateConfig.maxRowsPerPage, "rows " + rows + " overflowed a page");
         }
     }
 

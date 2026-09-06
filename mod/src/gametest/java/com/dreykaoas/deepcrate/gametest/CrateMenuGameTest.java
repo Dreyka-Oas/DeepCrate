@@ -1,8 +1,8 @@
 package com.dreykaoas.deepcrate.gametest;
 
-import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.block.DeepCrateBlock;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
+import com.dreykaoas.deepcrate.config.domain.CrateConfig;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -28,7 +28,7 @@ public class CrateMenuGameTest {
     public void anEmptyCrateHoldsSixtyFourPerSlot(GameTestHelper gameTestHelper) {
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState());
 
-        assertEquals(gameTestHelper, DeepCrateApi.BASE_CAPACITY, deepCrateMenu.capacity(), "capacity with no module");
+        assertEquals(gameTestHelper, CrateConfig.baseCapacity, deepCrateMenu.capacity(), "capacity with no module");
         assertEquals(gameTestHelper, 27, deepCrateMenu.getContainer().getContainerSize(), "copper crate size");
         gameTestHelper.succeed();
     }

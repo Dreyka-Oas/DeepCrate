@@ -16,5 +16,10 @@
   "screen.deepcrate.sort.name": "Sort A to Z",
   "screen.deepcrate.sort.name_reversed": "Sort Z to A",
   "screen.deepcrate.sort.count": "Sort fullest first",
-  "screen.deepcrate.sort.count_reversed": "Sort emptiest first"
+  "screen.deepcrate.sort.count_reversed": "Sort emptiest first",
+  "deepcrate.notice.config_problems": "%s problem(s) in the structure of config/oas/deepcrate.json:",
+  "deepcrate.notice.unknown_option": "  '%s' matches no option.",
+  "deepcrate.notice.unknown_ambiguous": "  '%s': did you mean '%s'? Too ambiguous to repair on its own.",
+  "deepcrate.notice.duplicated": "  '%s' is written in two categories, only one copy is read.",
+  "deepcrate.notice.more_lines": "  and %s more, in latest.log."
 }
