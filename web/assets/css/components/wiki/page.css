@@ -4,7 +4,13 @@
   color: var(--muted);
   margin-bottom: var(--space-3);
 }
-.wiki-breadcrumb a { color: var(--primary-text); }
+/* Underlined, not just tinted: a link inside a run of text that colour alone
+   sets apart is unreadable for anyone who does not see that colour. */
+.wiki-breadcrumb a {
+  color: var(--primary-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
 /* Sections are told apart by the size of the display type and by the space
    above it, never by a rule drawn across the column. */

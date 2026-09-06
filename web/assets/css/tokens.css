@@ -58,6 +58,10 @@
   /* --on-fill inverts: dark mode fills are light (L 0.72) and take dark ink,
      light mode fills are dark (L 0.48) and take pale ink. */
   --on-fill:      light-dark(oklch(0.97 0.008 200), oklch(0.16 0.020 230));
+  /* --on-accent does not invert. The amethyst fill stays mid to dark in both
+     themes, so dark ink on it fails the contrast check either way. Its own
+     token rather than --on-fill, which is cut for the teal one. */
+  --on-accent:    oklch(0.97 0.008 300);
 
   /* light-dark() takes COLOURS only, never a box-shadow list, whose commas
      would break the parse. So the colours are themed and the shadow is

@@ -18,7 +18,11 @@
   text-align: right;
   font-family: var(--font-mono);
   font-size: 0.65rem;
-  opacity: 0.45;
+  /* Faint on purpose, but it answers a click and a keypress, so it has to stay
+     legible. 0.78 is the lowest value that clears the contrast threshold against both
+     backgrounds; below that axe is right to complain. */
+  color: var(--ink);
+  opacity: 0.78;
   cursor: default;
   user-select: none;
 }

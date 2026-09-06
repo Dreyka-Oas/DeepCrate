@@ -33,7 +33,7 @@
 particulier qu'il se garderait : chaque palier, module, cellule, ordre de tri et ligne d'infobulle
 passe par les mêmes appels que les vôtres.</p>
 
-<pre class="code"><span class="code__caption">fabric.mod.json</span><code>"entrypoints": {
+<pre class="code" tabindex="0"><span class="code__caption">fabric.mod.json</span><code>"entrypoints": {
   "deepcrate": ["com.example.slatecrate.SlateCrateAddon"],
   "client": ["com.example.slatecrate.SlateCrateAddonClient"]
 }</code></pre>
@@ -63,7 +63,7 @@ ne lise un registre.</p>
 </table>
 
 <h2>Un palier en trois lignes</h2>
-<pre class="code"><span class="code__caption">onDeepCrateInit()</span><code>DeepCrateApi.registerTier(new CrateTier(id("slate_crate"), 10, 9, block));
+<pre class="code" tabindex="0"><span class="code__caption">onDeepCrateInit()</span><code>DeepCrateApi.registerTier(new CrateTier(id("slate_crate"), 10, 9, block));
 DeepCrateApi.registerModule(new CrateModule(id("module_1024"), 1024, itemTag("module_1024")));
 DeepCrateApi.registerRowModule(new RowModule(id("module_triple_row"), 3, itemTag("module_triple_row")));</code></pre>
 

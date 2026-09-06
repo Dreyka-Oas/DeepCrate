@@ -43,7 +43,7 @@ html {
   50% { opacity: 0.4; }
 }
 
-/* Brand mark fill: the two stacked paths of the crate glyph, drawn in the nav
+/* Brand mark fill: the box, its lid line and the module plate, drawn in the nav
    wordmark and in the hero. Defined once, used at both sizes. */
 .brand-mark-back { fill: var(--primary-text); }
 .brand-mark-front { fill: var(--accent-text); opacity: 0.8; }
@@ -80,12 +80,18 @@ p { text-wrap: pretty; }
 .prose p, .prose ul, .prose ol { margin: 0 0 var(--space-3); color: var(--ink); }
 .prose li { margin-bottom: var(--space-2); }
 .prose strong { color: var(--ink); }
-.prose a { color: var(--primary-text); text-underline-offset: 3px; }
-.prose a:hover, .prose a:focus-visible { text-decoration: underline; }
+.prose a { color: var(--primary-text); text-decoration: underline; text-underline-offset: 3px; }
+.prose a:hover, .prose a:focus-visible { text-decoration-thickness: 2px; }
 
 a { color: inherit; text-decoration: none; }
-.link { color: var(--primary-text); text-underline-offset: 3px; }
-.link:hover, .link:focus-visible { text-decoration: underline; }
+/* Underlined at rest, not on hover: a link sitting inside a run of text and
+   told apart by colour alone disappears for anyone who does not see it. */
+.link {
+  color: var(--primary-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.link:hover, .link:focus-visible { text-decoration-thickness: 2px; }
 
 code {
   font-family: var(--font-mono);

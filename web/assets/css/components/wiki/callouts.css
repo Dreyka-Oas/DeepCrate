@@ -32,4 +32,4 @@
 .callout--loss .callout__badge,
 .callout--loss p,
 .callout--loss strong,
-.callout--loss code { color: var(--on-fill); }
+.callout--loss code { color: var(--on-accent); }
