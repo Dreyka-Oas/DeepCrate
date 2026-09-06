@@ -9,13 +9,13 @@
   // so nothing here has to be duplicated per language.
 
   // The crate glyph: a hollow box, the line of its lid, and the module plate
-  // low on the front. Paths filled by base.css rather than an <img>, so it
-  // repaints with the theme. Kept in one string because the hero pages carry
-  // the same shapes inline and the three have to stay identical.
+  // straddling it. Paths filled by base.css rather than an <img>, so it
+  // repaints with the theme. Kept in one string because the hero pages and the
+  // favicon carry the same shapes, and the three have to stay identical.
   var MARK = '<svg viewBox="0 0 24 24" aria-hidden="true">' +
     '<path class="brand-mark-back" fill-rule="evenodd" d="M2 4h20v16H2V4Zm2.6 2.6v10.8h14.8V6.6H4.6Z"/>' +
     '<path class="brand-mark-back" d="M2 9.4h20v2H2z"/>' +
-    '<path class="brand-mark-front" d="M9.4 13h5.2v3.6H9.4z"/></svg>';
+    '<path class="brand-mark-front" d="M10 8.6h4v3.6h-4z"/></svg>';
 
   var NAV = [
     ["/index.html", "navHome"],
