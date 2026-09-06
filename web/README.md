@@ -37,6 +37,16 @@ nav breakpoint and the guide padding were both wrong and both looked fine in the
 accessibility audit, which caught colour-only links, an unreachable code block and dark ink on a
 fill too dark to carry it.
 
+Centering is worth a grep before the browser pass, since a page held in the middle by `margin: auto`
+and a couple of `text-align: center` reads as a layout until the window narrows:
+
+    grep -rnE 'text-align:\s*center|margin(-inline)?:\s*(0|auto)|justify-content:\s*center|place-items:\s*center' assets lang
+
+Every hit gets read where it sits. Here they are a digit inside a step badge, the page gutter on
+`.container`, and the language gate, which is two links and has nothing to reflow. The real test is
+that the first mechanic band goes from two columns to one and that the nav and the hero mark change
+with the width, not that the middle column gets thinner.
+
     agent-browser --headed --session <name> open http://127.0.0.1:8123/lang/fr/
     agent-browser --headed --session <name> set viewport 390 844
     agent-browser --headed --session <name> a11y
