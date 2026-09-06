@@ -8,6 +8,11 @@
   gap: var(--space-6);
   padding-block: var(--space-5) var(--space-7);
   align-items: start;
+  /* The guide stops where reading stops. .container runs to 1720px because the
+     home page has pictures to fill it with; a guide page has a sidebar and a
+     column of prose capped at 68ch, and letting it stretch just parks 700px of
+     nothing to the right of every paragraph. Measured at 2560. */
+  max-width: 1240px;
 }
 
 .wiki-sidebar {

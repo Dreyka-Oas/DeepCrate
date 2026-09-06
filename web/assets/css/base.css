@@ -105,10 +105,15 @@ code {
   outline-offset: 2px;
 }
 
+/* A share of the viewport rather than one frozen number. Capped at 1180px the
+   page used 36% of a 3300px screen and stopped responding at exactly the width
+   with the most room to use. The reading measure is protected where it belongs,
+   on .prose and .mech__body, not by starving the whole layout.
+   Three terms: a fixed gutter so a phone keeps its 24px, a proportional one so
+   a wide screen keeps air, and the ceiling. */
 .container {
-  max-width: 1180px;
+  width: min(calc(100% - 2 * var(--space-4)), 94%, 1720px);
   margin-inline: auto;
-  padding-inline: var(--space-4);
 }
 
 /* Scroll reveal. Content is visible by default; fx/reveal.js adds
