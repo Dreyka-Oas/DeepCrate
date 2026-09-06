@@ -70,6 +70,9 @@
   border-color: var(--primary-text);
 }
 
-@media (max-width: 900px) {
+/* Three short links, so they hold far below the 900px the wiki sidebar needs.
+   Measured at 820px, where the old breakpoint left an empty bar and no way to
+   navigate on a tablet. */
+@media (max-width: 620px) {
   .site-nav__links { display: none; }
 }

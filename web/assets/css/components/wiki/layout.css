@@ -1,8 +1,12 @@
+/* padding-block, never the padding shorthand: this element is also the
+   .container, and a shorthand wipes its padding-inline. Below 1180px the
+   container has no auto margin left to hide that, and every guide page ends up
+   flush against the edge of the screen. */
 .wiki-layout {
   display: grid;
   grid-template-columns: 240px 1fr;
   gap: var(--space-6);
-  padding: var(--space-5) 0 var(--space-7);
+  padding-block: var(--space-5) var(--space-7);
   align-items: start;
 }
 
