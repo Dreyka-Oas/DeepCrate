@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings file, DeepCrate</title>
+<meta name="description" content="The five options in config/oas/deepcrate.json, their ranges, and which ones belong to the server.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/config.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/config.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/en/index.html">DeepCrate</a> / Settings file</p>
+<h1>Settings file</h1>
+<p class="wiki-lede">Everything is decided in <code>config/oas/deepcrate.json</code>, written on the
+first launch and rewritten on every one after, so an option added by an update shows up there by
+itself.</p>
+
+<table class="param-table reveal reveal--tight">
+<thead><tr><th>Option</th><th>What it decides</th><th>Default</th></tr></thead>
+<tbody>
+<tr>
+<td class="param-table__key">crate.baseCapacity</td>
+<td>what a slot holds with no capacity module, from 1 to 32,767</td>
+<td class="param-table__value">64</td>
+</tr>
+<tr>
+<td class="param-table__key">crate.limitAutomationWithLithium</td>
+<td>whether a crate answers 64 to automation while lithium is installed</td>
+<td class="param-table__value">true</td>
+</tr>
+<tr>
+<td class="param-table__key">crate.maxRowsPerPage</td>
+<td>rows on one page before the screen splits, from 1 to 6</td>
+<td class="param-table__value">4</td>
+</tr>
+<tr>
+<td class="param-table__key">crate.rowModuleStackLimit</td>
+<td>row modules one cell accepts, from 1 to 20</td>
+<td class="param-table__value">16</td>
+</tr>
+<tr>
+<td class="param-table__key">screen.abbreviateAbove</td>
+<td>the count past which a slot shows 2k instead of 2048</td>
+<td class="param-table__value">999</td>
+</tr>
+</tbody>
+</table>
+
+<h2>A value outside its range is pulled back in</h2>
+<p>Every option has a range, and a value outside it is pulled to the nearest bound. The corrected
+value is what stays on disk, so the file always says what the game is actually using.</p>
+
+<h2>Who reads what</h2>
+<p>The first four are read on the server and count for all of its clients. The fifth is read where
+the screen is drawn, so it belongs to whoever is looking: two players on the same server can carry
+two different abbreviation thresholds.</p>
+
+<h2>The oas folder</h2>
+<p>The file lives under <code>config/oas/</code> rather than at the root of the config folder. That
+is the author's namespace, so every mod by the same hand groups together instead of scattering.</p>
+
+<h2>Other mods' options</h2>
+<p>A mod plugging into DeepCrate writes its own options into this same file, under its own name, with
+its own bounds. Nothing separate to maintain, and a server owner still has one file to read. Both
+calls are on the <a href="/lang/en/wiki/addons.html">addon page</a>.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

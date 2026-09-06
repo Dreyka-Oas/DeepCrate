@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepCrate</title>
+<meta name="description" content="Six Minecraft crates, a slot that goes from 64 to 512, rows you buy with a module, and a screen that splits into pages.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/index.html">
+<link rel="alternate" hreflang="en" href="/lang/en/index.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<main class="container">
+
+<header class="hero">
+<div class="hero__content">
+<p class="hero__kicker">Minecraft mod, server and client</p>
+<h1 class="hero__title">Six crates, up to 512 a slot</h1>
+<p class="hero__lede">Each tier adds a row of nine. One module on the tab lifts every slot from 64 to
+512, and the screen splits into pages once the grid no longer fits.</p>
+<div class="hero__actions">
+<a class="btn btn--primary" href="/lang/en/wiki/installation.html">Install it</a>
+<a class="btn btn--ghost" href="/lang/en/wiki/crates.html">Read the guide</a>
+</div>
+</div>
+<svg class="hero__mark" viewBox="0 0 24 24" aria-hidden="true">
+<path class="brand-mark-back" fill-rule="evenodd" d="M2 4h20v16H2V4Zm2.6 2.6v10.8h14.8V6.6H4.6Z"/>
+<path class="brand-mark-back" d="M2 9.4h20v2H2z"/>
+<path class="brand-mark-front" d="M9.4 13h5.2v3.6H9.4z"/>
+</svg>
+</header>
+
+<figure class="shot reveal reveal--wide">
+<img src="/assets/img/hero.png" width="960" height="540" alt="An echo crate, a copper crate, a double iron crate and a vanilla chest standing on a stone platform.">
+<figcaption>An echo crate, a copper one, an iron pair, and a chest of the game to read them against.</figcaption>
+</figure>
+
+<section class="mech reveal">
+<div>
+<p class="mech__label">The crates</p>
+<h2>Copper to echo, six tiers</h2>
+<div class="mech__body">
+<p>They are ordered by how dangerous the material is to fetch, not by the usual iron, gold, diamond
+ladder. Each tier is the crate before it surrounded by eight of the new material.</p>
+<ul class="ladder">
+<li><span class="ladder__name">Copper</span><span class="ladder__bar" style="width:37.5%"></span><span class="ladder__slots">27</span></li>
+<li><span class="ladder__name">Iron</span><span class="ladder__bar" style="width:50%"></span><span class="ladder__slots">36</span></li>
+<li><span class="ladder__name">Amethyst</span><span class="ladder__bar" style="width:62.5%"></span><span class="ladder__slots">45</span></li>
+<li><span class="ladder__name">Prismarine</span><span class="ladder__bar" style="width:75%"></span><span class="ladder__slots">54</span></li>
+<li><span class="ladder__name">Breeze</span><span class="ladder__bar" style="width:87.5%"></span><span class="ladder__slots">63</span></li>
+<li><span class="ladder__name">Echo</span><span class="ladder__bar" style="width:100%"></span><span class="ladder__slots">72</span></li>
+</ul>
+<a class="mech__more" href="/lang/en/wiki/crates.html">The tiers in detail</a>
+</div>
+</div>
+<figure class="shot mech__shot">
+<img src="/assets/img/tiers.png" width="960" height="540" alt="The six crates lined up on a platform, copper through echo, with a vanilla chest at the end of the row.">
+<figcaption>The six, in order, with the chest of the game at the end for scale.</figcaption>
+</figure>
+</section>
+
+<section class="mech reveal">
+<div>
+<p class="mech__label">Capacity</p>
+<h2>A slot that holds 512</h2>
+<div class="mech__body">
+<p>What changes the capacity sits on the tab hanging off the left edge of the screen. The mod ships
+three modules, <strong>128, 256 and 512</strong>, and a crate takes the strongest offer rather than
+the sum: two 256 modules still give 256.</p>
+<p>Pull the module out, close the screen, and everything above the new capacity drops on the ground.
+Emptying a crate before taking its module back is the only safe order.</p>
+<a class="mech__more" href="/lang/en/wiki/capacity.html">What the module changes</a>
+</div>
+</div>
+<figure class="shot mech__shot">
+<img src="/assets/img/capacity.png" width="960" height="540" alt="A copper crate screen, the 512 module on the tab, one slot carrying 512 redstone dust.">
+<figcaption>The 512 module on the tab, and a slot carrying 512 redstone dust.</figcaption>
+</figure>
+</section>
+
+<section class="mech reveal">
+<div>
+<p class="mech__label">Rows</p>
+<h2>Sixteen modules, twenty-four rows</h2>
+<div class="mech__body">
+<p>A row module is a chest surrounded by planks, and each one adds nine slots to the crate holding
+it. The cell under the capacity one takes sixteen at once, so a copper crate can end up bigger than
+an echo one.</p>
+<p>Adding or taking one back reopens the screen, because a menu's slot list is fixed once it has been
+built. That happens at the start of the next tick, never inside the click.</p>
+<a class="mech__more" href="/lang/en/wiki/rows.html">How rows add up</a>
+</div>
+</div>
+<figure class="shot mech__shot">
+<img src="/assets/img/rows.png" width="960" height="540" alt="An echo crate whose tab carries sixteen row modules, with six page numbers down the right edge of the screen.">
+<figcaption>Sixteen row modules in the lower cell, and the crate is up to six pages.</figcaption>
+</figure>
+</section>
+
+<section class="mech reveal">
+<div>
+<p class="mech__label">Sorting</p>
+<h2>Two buttons above the corner</h2>
+<div class="mech__body">
+<p>One orders by name, the other by how full each pile is. Both gather identical stacks into one,
+which is where the free slots come from. Pressing again reverses it, and the drawing shows what the
+<strong>next</strong> press will do, not what the last one did.</p>
+<p>The order is worked out on the player's own machine. A server holds no language files, so it
+cannot know that this player reads Pierre where another reads Stone.</p>
+<a class="mech__more" href="/lang/en/wiki/screen.html">Sorting, search and pages</a>
+</div>
+</div>
+<figure class="shot mech__shot">
+<img src="/assets/img/sorting.png" width="960" height="540" alt="A copper crate sorted by name, the button tooltip reading Sort Z to A.">
+<figcaption>Sorted by name. The tooltip reads Z to A, which is what the next press will do.</figcaption>
+</figure>
+</section>
+
+<section class="mech reveal">
+<div>
+<p class="mech__label">Pages</p>
+<h2>When the grid no longer fits</h2>
+<div class="mech__body">
+<p>A page holds four rows at most. Past that the screen splits, and the pages share the rows evenly:
+six rows give two pages of three, not one full page and one nearly empty.</p>
+<p>The numbers stack down the right edge, with no scrollbar, and a dot marks the pages that carry
+something. The page number never reaches the server, so no slot index can be steered from
+outside.</p>
+<a class="mech__more" href="/lang/en/wiki/screen.html">How the screen splits</a>
+</div>
+</div>
+<figure class="shot mech__shot">
+<img src="/assets/img/pages.png" width="960" height="540" alt="An eight-row echo crate cut into two pages, the numbers 1 and 2 down the right edge of the screen.">
+<figcaption>Eight rows, two pages of four. The dot on the 1 says that page carries something.</figcaption>
+</figure>
+</section>
+
+<section class="mech reveal">
+<div>
+<p class="mech__label">Automation</p>
+<h2>A hopper fills all the way up</h2>
+<div class="mech__body">
+<p>Hoppers and pipes write into a slot up to the crate's capacity instead of stopping at 64. It is
+the one part of the mod that depends on what else is installed.</p>
+<p>With lithium, it is off. Lithium replaces the hopper wholesale and keeps its own copy of the
+target inventory: against a container answering more than 64 it takes the items out and never writes
+them in. Measured, not assumed. So while lithium is present a crate tells automation 64 a slot, which
+costs the feature and keeps the items.</p>
+<a class="mech__more" href="/lang/en/wiki/hoppers.html">Hoppers, pipes and lithium</a>
+</div>
+</div>
+<figure class="shot mech__shot">
+<img src="/assets/img/hopper.png" width="960" height="540" alt="An iron crate screen whose first slot carries 96 dirt blocks, the 512 module on the tab.">
+<figcaption>A hopper pushed past the 64: the slot carries 96, and it keeps going.</figcaption>
+</figure>
+</section>
+
+</main>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

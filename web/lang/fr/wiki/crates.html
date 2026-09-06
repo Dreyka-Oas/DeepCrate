@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les six coffres, DeepCrate</title>
+<meta name="description" content="Les six paliers de coffre, ce qui les fabrique, et ce qui se passe quand deux coffres du même palier se touchent.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/crates.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/crates.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/fr/index.html">DeepCrate</a> / Les six coffres</p>
+<h1>Les six coffres</h1>
+<p class="wiki-lede">Six paliers, chacun neuf cases de plus que le précédent, et chacun fabriqué en
+entourant le coffre d'avant du matériau qui donne son nom au suivant.</p>
+
+<figure class="shot">
+<img src="/assets/img/tiers.png" width="960" height="540" alt="Les six coffres alignés sur une plateforme, du cuivre à l'écho, avec un coffre du jeu au bout de la rangée.">
+<figcaption>Cuivre, fer, améthyste, prismarine, brise, écho, et le coffre du jeu au bout.</figcaption>
+</figure>
+
+<h2>Le tableau</h2>
+<table class="param-table reveal reveal--tight">
+<thead><tr><th>Coffre</th><th>Autour du précédent</th><th>Cases</th></tr></thead>
+<tbody>
+<tr><td class="param-table__key">Cuivre</td><td>lingot de cuivre, autour d'un coffre de cuivre</td><td class="param-table__value">27</td></tr>
+<tr><td class="param-table__key">Fer</td><td>lingot de fer</td><td class="param-table__value">36</td></tr>
+<tr><td class="param-table__key">Améthyste</td><td>éclat d'améthyste</td><td class="param-table__value">45</td></tr>
+<tr><td class="param-table__key">Prismarine</td><td>cristaux de prismarine</td><td class="param-table__value">54</td></tr>
+<tr><td class="param-table__key">Brise</td><td>bâton de brise</td><td class="param-table__value">63</td></tr>
+<tr><td class="param-table__key">Écho</td><td>fragment d'écho</td><td class="param-table__value">72</td></tr>
+</tbody>
+</table>
+
+<p>L'ordre suit la difficulté d'aller chercher le matériau, ce qui explique la place de la brise et
+de l'écho tout en haut : l'un se prend dans un donjon d'essai, l'autre dans une cité antique.</p>
+
+<h2>Deux coffres qui se marient</h2>
+<p>Deux coffres du même palier posés côte à côte n'ouvrent qu'un écran, comme les coffres du jeu. Les
+cases des deux moitiés se suivent sans coupure, le tri les traite comme une seule série, et les deux
+partagent un unique module : ce qui est posé sur la languette d'une moitié vaut pour la paire
+entière.</p>
+<p>Une paire de coffres d'écho fait donc 144 cases, et 432 avec les seize modules de rangée. Deux
+paliers différents côte à côte restent deux coffres séparés.</p>
+
+<h2>Ce qu'un coffre garde de son nom</h2>
+<p>Un coffre renommé sur une enclume garde ce nom une fois posé, et l'écran l'affiche en haut à
+gauche. Un nom plus large que la place disponible est coupé avant le numéro de page plutôt que
+dessiné par-dessus.</p>
+
+<h2>Casser un coffre</h2>
+<p>Un coffre cassé rend son contenu par terre, découpé en piles de 64 parce que c'est tout ce qu'une
+entité d'objet sait porter. Un coffre d'écho plein en rend beaucoup d'un coup, et rien de tout cela
+n'attend cinq minutes.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

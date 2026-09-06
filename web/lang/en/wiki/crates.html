@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The six crates, DeepCrate</title>
+<meta name="description" content="The six crate tiers, what makes each one, and what happens when two crates of the same tier touch.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/crates.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/crates.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/en/index.html">DeepCrate</a> / The six crates</p>
+<h1>The six crates</h1>
+<p class="wiki-lede">Six tiers, each nine slots deeper than the one before, and each made by
+surrounding that crate with the material the next one is named after.</p>
+
+<figure class="shot">
+<img src="/assets/img/tiers.png" width="960" height="540" alt="The six crates lined up on a platform, copper through echo, with a vanilla chest at the end of the row.">
+<figcaption>Copper, iron, amethyst, prismarine, breeze, echo, and the chest of the game at the end.</figcaption>
+</figure>
+
+<h2>The table</h2>
+<table class="param-table reveal reveal--tight">
+<thead><tr><th>Crate</th><th>Around the one before</th><th>Slots</th></tr></thead>
+<tbody>
+<tr><td class="param-table__key">Copper</td><td>copper ingot, around a copper chest</td><td class="param-table__value">27</td></tr>
+<tr><td class="param-table__key">Iron</td><td>iron ingot</td><td class="param-table__value">36</td></tr>
+<tr><td class="param-table__key">Amethyst</td><td>amethyst shard</td><td class="param-table__value">45</td></tr>
+<tr><td class="param-table__key">Prismarine</td><td>prismarine crystals</td><td class="param-table__value">54</td></tr>
+<tr><td class="param-table__key">Breeze</td><td>breeze rod</td><td class="param-table__value">63</td></tr>
+<tr><td class="param-table__key">Echo</td><td>echo shard</td><td class="param-table__value">72</td></tr>
+</tbody>
+</table>
+
+<p>The order follows how hard the material is to reach, which is what puts breeze and echo at the
+top: one comes out of a trial chamber, the other out of an ancient city.</p>
+
+<h2>Two crates that marry</h2>
+<p>Two crates of the same tier placed side by side open one screen, as chests of the game do. The
+slots of the two halves run on without a seam, sorting treats them as a single series, and the two
+share one module: whatever sits on one half's tab counts for the whole pair.</p>
+<p>A pair of echo crates therefore holds 144 slots, and 432 with sixteen row modules in. Two
+different tiers side by side stay two separate crates.</p>
+
+<h2>What a crate keeps of its name</h2>
+<p>A crate renamed on an anvil keeps that name once placed, and the screen prints it top left. A name
+wider than the room it has is cut short before the page number rather than drawn over it.</p>
+
+<h2>Breaking a crate</h2>
+<p>A broken crate hands its contents back on the ground, cut into stacks of 64, because that is all
+an item entity knows how to carry. A full echo crate returns a great many at once, and none of it
+waits five minutes for you.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

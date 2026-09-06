@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trémies et tuyaux, DeepCrate</title>
+<meta name="description" content="Le remplissage automatique au-delà de 64, ce que lithium en fait, et le réglage qui reprend la décision.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/hoppers.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/hoppers.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/fr/index.html">DeepCrate</a> / Trémies et tuyaux</p>
+<h1>Trémies et tuyaux</h1>
+
+<div class="callout">
+<p class="callout__badge">En un mot</p>
+<p>Sans lithium, une trémie remplit une case jusqu'à la capacité du coffre. Avec lithium, elle
+s'arrête à 64, parce que le contraire détruirait les objets. La main du joueur n'est concernée dans
+aucun des deux cas.</p>
+</div>
+
+<h2>Ce que le mod change à la trémie</h2>
+<p>Une trémie du jeu s'arrête à ce qu'une pile ordinaire accepte, donc 64, quelle que soit la
+capacité du conteneur visé. DeepCrate corrige ce point pour ses propres coffres, et c'est la seule
+partie du mod qui dépende de ce qui est installé à côté.</p>
+
+<figure class="shot">
+<img src="/assets/img/hopper.png" width="960" height="540" alt="L'écran d'un coffre de fer dont la première case porte 96 blocs de terre, module 512 sur la languette.">
+<figcaption>Une trémie a poussé de la terre par-dessus les 64 déjà en place. La case en porte 96.</figcaption>
+</figure>
+
+<h2>Pourquoi lithium l'éteint</h2>
+<p>Lithium remplace la trémie en entier et garde sa propre copie de l'inventaire visé. Contre un
+conteneur qui répond plus de 64, il sort les objets de la trémie et ne les écrit jamais dans le
+coffre : ils disparaissent.</p>
+<p>Le chiffre a été mesuré et non supposé, huit blocs de terre détruits par passage, avec ou sans le
+correctif. Le mod choisit donc de garder les objets et de perdre la fonction : tant que lithium est
+installé, un coffre annonce 64 par case à l'automatisation.</p>
+
+<h2>Reprendre la décision</h2>
+<p>Le propriétaire d'un serveur peut passer <code>limitAutomationWithLithium</code> à false dans
+<code>config/oas/deepcrate.json</code>. Le remplissage au-delà de 64 revient, et les objets se
+perdent, en connaissance de cause.</p>
+
+<h2>Une trémie contre une paire</h2>
+<p>Une trémie posée contre un coffre double n'atteint que la moitié qu'elle touche, comme avec un
+tonneau. Réunir les deux moitiés est pourtant ce que le jeu fait pour un coffre ordinaire, mais
+lithium recaste ce résultat et le serveur tombe au premier tick.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

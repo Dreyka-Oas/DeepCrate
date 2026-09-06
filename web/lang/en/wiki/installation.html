@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install, DeepCrate</title>
+<meta name="description" content="Putting DeepCrate on a client and on a server, and what belongs beside it.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/installation.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/installation.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/en/index.html">DeepCrate</a> / Install</p>
+<h1>Install</h1>
+<p class="wiki-lede">DeepCrate is required on the server and on every client. A player without it sees
+neither the crates nor their screen, and gets turned away at the door.</p>
+
+<ol class="steps">
+<li>Install the mod loader recommended on the mod's CurseForge or Modrinth page, for the Minecraft
+version shown there.</li>
+<li>Download DeepCrate and its companion library from either page, and drop both into the
+<code>mods</code> folder.</li>
+<li>On a server, do the same in its own <code>mods</code> folder, then restart it once so it writes
+its settings out.</li>
+<li>Start the game. <code>config/oas/deepcrate.json</code> appears on the first launch and is
+rewritten on every one after it.</li>
+</ol>
+
+<div class="hero__actions">
+<a class="btn btn--soon" href="#" aria-disabled="true">CurseForge (soon)</a>
+<a class="btn btn--soon" href="#" aria-disabled="true">Modrinth (soon)</a>
+</div>
+
+<h2>The versions are not written here</h2>
+<p>No compatibility table on this page, on purpose. Both shops show live which versions the file you
+are downloading accepts, and a frozen copy here would go wrong without anyone noticing.</p>
+
+<h2>What can sit beside it</h2>
+<p>The mod asks for nothing beyond the loader and its companion library. The usual optimisation mods
+run alongside it, with one exception: while lithium is installed a crate answers 64 a slot to
+automation, and hopper filling stops at that number. The <a href="/lang/en/wiki/hoppers.html">hopper
+page</a> covers why, and how to take the decision back.</p>
+
+<h2>Taking the mod out</h2>
+<p>A world saved with DeepCrate keeps its crates in the save file. Removing the mod makes the blocks
+and whatever they held disappear. Empty the crates first, or keep a copy of the world.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

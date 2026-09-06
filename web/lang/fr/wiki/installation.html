@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installation, DeepCrate</title>
+<meta name="description" content="Poser DeepCrate sur un client et sur un serveur, et ce qu'il faut installer à côté.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/installation.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/installation.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/fr/index.html">DeepCrate</a> / Installation</p>
+<h1>Installation</h1>
+<p class="wiki-lede">DeepCrate est demandé sur le serveur et sur chaque client. Un joueur sans le mod
+ne voit ni les coffres ni leur écran, et se fait renvoyer à la connexion.</p>
+
+<ol class="steps">
+<li>Installez le chargeur de mods recommandé sur la page CurseForge ou Modrinth du mod, dans la
+version de Minecraft qui y est affichée.</li>
+<li>Téléchargez le fichier de DeepCrate et sa bibliothèque compagnon depuis l'une des deux pages, et
+posez les deux dans le dossier <code>mods</code>.</li>
+<li>Sur un serveur, refaites la même chose dans son propre dossier <code>mods</code>, puis
+redémarrez-le une fois pour qu'il écrive ses réglages.</li>
+<li>Lancez le jeu. Le fichier <code>config/oas/deepcrate.json</code> apparaît au premier démarrage,
+et il est réécrit à chacun des suivants.</li>
+</ol>
+
+<div class="hero__actions">
+<a class="btn btn--soon" href="#" aria-disabled="true">CurseForge (bientôt)</a>
+<a class="btn btn--soon" href="#" aria-disabled="true">Modrinth (bientôt)</a>
+</div>
+
+<h2>Les versions ne sont pas écrites ici</h2>
+<p>Aucun tableau de compatibilité sur cette page, exprès. Les deux boutiques affichent en direct la
+liste des versions acceptées par le fichier que vous téléchargez, et une copie figée ici deviendrait
+fausse sans que personne ne le remarque.</p>
+
+<h2>Ce que vous pouvez mettre à côté</h2>
+<p>Le mod ne demande rien d'autre que le chargeur et sa bibliothèque compagnon. Les mods
+d'optimisation habituels passent sans rien casser, à une exception près : tant que lithium est
+installé, un coffre annonce 64 par case à l'automatisation et le remplissage par trémie s'arrête à ce
+chiffre. La <a href="/lang/fr/wiki/hoppers.html">page des trémies</a> détaille pourquoi et comment
+reprendre la décision.</p>
+
+<h2>Enlever le mod</h2>
+<p>Un monde sauvegardé avec DeepCrate garde ses coffres dans son fichier. Retirer le mod fait
+disparaître les blocs et ce qu'ils portaient. Videz les coffres avant, ou gardez une copie du monde.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

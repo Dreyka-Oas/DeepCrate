@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capacité, DeepCrate</title>
+<meta name="description" content="Le module de capacité, la languette qui le porte, et ce qui tombe par terre quand on le retire.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/capacity.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/capacity.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/fr/index.html">DeepCrate</a> / Capacité</p>
+<h1>Capacité</h1>
+<p class="wiki-lede">Une case tient 64. Ce qui change ce chiffre est posé sur la languette accrochée
+au bord gauche de l'écran, et vaut pour tout le coffre où qu'il soit posé.</p>
+
+<h2>La languette et ses cellules</h2>
+<p>La languette n'est pas une paire de cases figée, c'est une colonne. Le mod en livre deux : celle
+du haut prend un module de capacité, celle du dessous une pile de seize modules de rangée. Un autre
+mod peut en ajouter, et la languette grandit avec. Une cellule vide affiche une plaque grisée, pour
+qu'on voie ce qu'elle attend.</p>
+
+<div class="callout callout--loss">
+<p class="callout__badge">Ce que ça coûte</p>
+<p>Retirez le module, fermez l'écran, et tout ce qui dépasse la nouvelle capacité tombe par terre en
+un tick. Un coffre d'écho double plein qui perd son module 512 vide 1 008 piles d'un coup, et
+personne ne ramasse ça avant leur disparition. Videz le coffre avant de démonter.</p>
+</div>
+
+<h2>La meilleure offre, pas la somme</h2>
+<p>La cellule où l'objet est posé ne décide plus de ce qu'il fait. Un module de capacité soulève le
+coffre entier depuis n'importe quelle cellule, et le coffre retient la plus forte des offres : deux
+modules 256 donnent 256, un 256 à côté d'un 512 donne 512. Les rangées suivent la règle inverse et
+s'additionnent, ce qui est la seule différence entre les deux familles.</p>
+
+<figure class="shot">
+<img src="/assets/img/capacity.png" width="960" height="540" alt="L'écran d'un coffre de cuivre, module 512 sur la languette, une case portant 512 poudres de redstone.">
+<figcaption>Le module 512 en haut de la languette, la cellule de rangée vide en dessous.</figcaption>
+</figure>
+
+<h2>Pourquoi 512 et pas plus</h2>
+<p>Les trois modules livrés s'arrêtent à 512 par choix, pas par limite. Une case monte jusqu'à 32 767
+et un module venu d'un autre mod peut demander ce chiffre. Le plafond est celui du menu : la capacité
+courante rejoint le client dans un paquet qui écrit un entier court, et le fichier de sauvegarde est
+borné par le même nombre.</p>
+<p>Le compte d'une case voyage en entier de longueur variable, donc un grand nombre ne coûte rien sur
+le réseau. Ce qui contraint, c'est le format de sauvegarde du jeu, qui refuse tout compte au-dessus
+de 99 : un coffre écrit donc ses cases dans son propre format, l'objet d'un côté et son compte de
+l'autre.</p>
+
+<h2>Ce qu'une main peut porter</h2>
+<p>Rien de tout cela ne change ce qu'un joueur transporte. Une main, une pile de trémie et un objet
+tombé par terre restent à 64, donc prendre dans un coffre rend une pile ordinaire à la fois.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

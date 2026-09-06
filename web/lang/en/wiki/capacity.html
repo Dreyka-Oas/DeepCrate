@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capacity, DeepCrate</title>
+<meta name="description" content="The capacity module, the tab that carries it, and what drops on the floor when you take it back.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/capacity.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/capacity.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/en/index.html">DeepCrate</a> / Capacity</p>
+<h1>Capacity</h1>
+<p class="wiki-lede">A slot holds 64. What changes that number sits on the tab hanging off the left
+edge of the screen, and counts for the whole crate wherever it is put.</p>
+
+<h2>The tab and its cells</h2>
+<p>The tab is a column, not a fixed pair. The mod ships two cells: the top one takes a capacity
+module, the one under it a stack of sixteen row modules. Another mod can add its own and the tab
+grows with it. An empty cell shows a greyed plate, so it reads as what it is waiting for.</p>
+
+<div class="callout callout--loss">
+<p class="callout__badge">What it costs</p>
+<p>Pull the module out, close the screen, and everything above the new capacity drops on the ground
+in one tick. A full double echo crate losing its 512 module empties 1,008 stacks at once, and nobody
+picks that up before it despawns. Empty the crate before taking the module back.</p>
+</div>
+
+<h2>The strongest offer, not the sum</h2>
+<p>Which cell an item sits in no longer decides what it does. A capacity module raises the whole
+crate from any cell, and the crate takes the strongest offer: two 256 modules still give 256, a 256
+next to a 512 gives 512. Rows follow the opposite rule and add up, which is the one difference
+between the two families.</p>
+
+<figure class="shot">
+<img src="/assets/img/capacity.png" width="960" height="540" alt="A copper crate screen, the 512 module on the tab, one slot carrying 512 redstone dust.">
+<figcaption>The 512 module at the top of the tab, the empty row cell below it.</figcaption>
+</figure>
+
+<h2>Why 512 and no further</h2>
+<p>The three shipped modules stop at 512 by choice, not by capability. A slot goes up to 32,767 and a
+module from another mod may ask for that number. The ceiling belongs to the menu: the current
+capacity reaches the client through a packet that writes a short, and the save file is bounded by the
+same number.</p>
+<p>A slot's count travels as a variable-length integer, so a large number costs nothing on the wire.
+What shapes it is the game's own save format, which refuses any count above 99: a crate therefore
+writes its slots in a format of its own, the item on one side and its count on the other.</p>
+
+<h2>What a hand can carry</h2>
+<p>None of this changes what a player moves around. A hand, a hopper stack and a dropped item are
+still 64, so taking from a crate hands out one ordinary stack at a time.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

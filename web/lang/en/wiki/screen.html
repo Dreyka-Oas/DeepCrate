@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorting, search and pages, DeepCrate</title>
+<meta name="description" content="The two sort buttons, the search field, how the screen splits into pages, and the abbreviated counts.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/screen.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/screen.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/en/index.html">DeepCrate</a> / Sorting, search and pages</p>
+<h1>Sorting, search and pages</h1>
+<p class="wiki-lede">Three things live around the grid: two buttons above the top left corner, a
+search field next to the word Inventory, and a column of numbers down the right edge once the crate
+no longer fits on one page.</p>
+
+<h2>The two buttons</h2>
+<p>The first orders by name, the second by how full each pile is. Both gather identical stacks into
+one, up to whatever the module allows, and that is where the free slots after a sort come from.
+Pressing the same button again reverses it.</p>
+<p>The drawing announces what the next press will do, A over Z or Z over A, not what the last one
+did. A pair is sorted as one run of slots rather than one half at a time, so the letters do not start
+over at the seam. Modules stay in their own tab.</p>
+
+<figure class="shot">
+<img src="/assets/img/sorting.png" width="960" height="540" alt="A copper crate sorted by name, the button tooltip reading Sort Z to A.">
+<figcaption>After a sort by name, the tooltip already announces the other direction.</figcaption>
+</figure>
+
+<h2>Sorting is worked out on the player's machine</h2>
+<p>A server holds no language files: it cannot know that this player reads Pierre where their
+neighbour reads Stone, and sorting by a name nobody sees is not sorting. The order is therefore
+computed on the player's own machine and sent whole, as a list of items.</p>
+<p>What comes back is a rearrangement of what the crate already had, so a made-up list costs its
+sender a messy crate and nothing more.</p>
+
+<h2>The search</h2>
+<p>The field to the right of the word Inventory dims what does not match rather than hiding it: the
+slots stay where they are and only the ones that answer keep their brightness. Nothing moves, so
+clearing the search leaves the crate exactly as it was.</p>
+
+<h2 id="pages">The pages</h2>
+<p>A page holds four rows at most, and past that the screen splits. The pages share the rows evenly:
+six rows give two pages of three, not one full page and one nearly empty. The numbers stack down the
+right edge, in two columns when there are many, and a dot marks the ones carrying something.</p>
+<p>There is no scrollbar, and a shift-click reaches every slot, including the pages that are not
+open.</p>
+<p>Paging is a view, and the page number never reaches the server. No server-side slot index can
+therefore be steered from outside, which is the door duplicated items would come through.</p>
+
+<figure class="shot">
+<img src="/assets/img/pages.png" width="960" height="540" alt="An eight-row echo crate cut into two pages, the numbers 1 and 2 down the right edge of the screen.">
+<figcaption>Eight rows cut into two pages of four.</figcaption>
+</figure>
+
+<h2>Large counts</h2>
+<p>Past a certain count, a slot shows 2k rather than 2048, and 2M rather than 2,400,000. The
+threshold is a setting, <code>abbreviateAbove</code>, read where the screen is drawn: it belongs to
+whoever is looking, not to the server. The exact count stays readable in the slot's tooltip.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

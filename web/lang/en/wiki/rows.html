@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rows, DeepCrate</title>
+<meta name="description" content="The row module, the sixteen that fit in one cell, and why the screen reopens when you put one in.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/rows.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/rows.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/en/index.html">DeepCrate</a> / Rows</p>
+<h1>Rows</h1>
+
+<figure class="shot">
+<img src="/assets/img/rows.png" width="960" height="540" alt="An echo crate whose tab carries sixteen row modules, with six page numbers down the right edge of the screen.">
+<figcaption>Sixteen modules in the lower cell: twenty-four rows, six pages.</figcaption>
+</figure>
+
+<p class="wiki-lede">A row module is a chest surrounded by planks. Each one adds nine slots to the
+crate holding it, and the cell under the capacity one takes sixteen.</p>
+
+<h2>They add up</h2>
+<p>Rows are read from every cell and added together, the opposite of capacity modules where only the
+strongest offer counts. A cell another mod put there and filled with row modules extends the crate
+further, rather than replacing what the first one gave.</p>
+<p>A copper crate starts at 27 slots and reaches 171 with sixteen modules. An echo crate starts at 72
+and reaches 216. Put another way, a well-equipped copper crate ends up bigger than a bare echo
+one.</p>
+
+<h2>Why the screen reopens</h2>
+<p>A menu's slot list is fixed once it has been built, and nothing in the game knows how to add to a
+screen already open. Putting a module in or taking one back therefore closes the screen and reopens
+it at the size wanted.</p>
+<p>That happens at the start of the next tick, not inside the click. Without the delay, whatever the
+player was carrying at the moment of the click would end up on the floor.</p>
+
+<h2>On a pair</h2>
+<p>Both halves grow by the same number of rows, one module giving one row on each side, since the two
+are shown as a single screen. An echo pair therefore goes from 144 slots to 432.</p>
+
+<h2>Taking a module back</h2>
+<p>Same rule as capacity: whatever sat in the rows that are gone drops at the crate's feet. A crate is
+only cut back once the last screen on it closes, because shrinking it under someone else's open
+screen would leave their menu holding slots the crate no longer has.</p>
+
+<h2>The setting that caps them</h2>
+<p>How many modules a cell accepts is a setting, <code>rowModuleStackLimit</code>, sixteen by
+default. Lowering it never shrinks a crate already placed: the rows come from the stack that is
+actually there, and only a new insertion is refused.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

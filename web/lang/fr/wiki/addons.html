@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pour les autres mods, DeepCrate</title>
+<meta name="description" content="Les douze points par lesquels un autre mod ajoute un palier, un module, une cellule, un tri ou une ligne d'infobulle.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/wiki/addons.html">
+<link rel="alternate" hreflang="en" href="/lang/en/wiki/addons.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<div class="container wiki-layout">
+<dc-sidebar></dc-sidebar>
+<main class="wiki-content prose">
+
+<p class="wiki-breadcrumb"><a href="/lang/fr/index.html">DeepCrate</a> / Pour les autres mods</p>
+<h1>Pour les autres mods</h1>
+<p class="wiki-lede">Douze points sont ouverts, et rien de ce que le mod livre n'est un cas
+particulier qu'il se garderait : chaque palier, module, cellule, ordre de tri et ligne d'infobulle
+passe par les mêmes appels que les vôtres.</p>
+
+<pre class="code"><span class="code__caption">fabric.mod.json</span><code>"entrypoints": {
+  "deepcrate": ["com.example.slatecrate.SlateCrateAddon"],
+  "client": ["com.example.slatecrate.SlateCrateAddonClient"]
+}</code></pre>
+
+<p><code>DeepCrateAddon</code> a deux méthodes, qui sont deux passes du démarrage du mod.
+<code>onDeepCrateConfig()</code> tourne avant la lecture du fichier de réglages,
+<code>onDeepCrateInit()</code> une fois les six paliers livrés en place et avant que quoi que ce soit
+ne lise un registre.</p>
+
+<h2>Les douze points</h2>
+<table class="param-table reveal reveal--tight">
+<thead><tr><th>Point</th><th>Ce qu'il ajoute</th></tr></thead>
+<tbody>
+<tr><td class="param-table__key">registerTier</td><td>un coffre, avec son bloc, ses rangées et ses colonnes</td></tr>
+<tr><td class="param-table__key">registerModule</td><td>un module de capacité, pointé sur une étiquette d'objet</td></tr>
+<tr><td class="param-table__key">registerRowModule</td><td>un module qui achète des rangées plutôt que de la capacité</td></tr>
+<tr><td class="param-table__key">registerModuleSlot</td><td>une cellule sur la languette, qui grandit avec</td></tr>
+<tr><td class="param-table__key">onTierRegistered</td><td>un appel à chaque palier enregistré après le vôtre</td></tr>
+<tr><td class="param-table__key">CrateLayoutCallback</td><td>le dernier mot sur les rangées par page et le nombre de pages</td></tr>
+<tr><td class="param-table__key">CrateCapacityCallback</td><td>le dernier mot sur ce qu'une case tient, objet par objet</td></tr>
+<tr><td class="param-table__key">ConfigSchema.registerHolder</td><td>vos propres options, dans le même fichier de réglages</td></tr>
+<tr><td class="param-table__key">ConfigBounds.registerGroup</td><td>la plage dans laquelle chacune est ramenée</td></tr>
+<tr><td class="param-table__key">registerSortOrder</td><td>un bouton de tri, avec son icône et son comparateur</td></tr>
+<tr><td class="param-table__key">CrateScreenCallback</td><td>un widget sur l'écran du coffre</td></tr>
+<tr><td class="param-table__key">CrateTooltipCallback</td><td>une ligne dans l'infobulle d'une case de coffre</td></tr>
+</tbody>
+</table>
+
+<h2>Un palier en trois lignes</h2>
+<pre class="code"><span class="code__caption">onDeepCrateInit()</span><code>DeepCrateApi.registerTier(new CrateTier(id("slate_crate"), 10, 9, block));
+DeepCrateApi.registerModule(new CrateModule(id("module_1024"), 1024, itemTag("module_1024")));
+DeepCrateApi.registerRowModule(new RowModule(id("module_triple_row"), 3, itemTag("module_triple_row")));</code></pre>
+
+<p>Un module pointe sur une étiquette d'objet plutôt que sur un objet précis, donc ajouter votre
+objet à <code>deepcrate:module_512</code> en fait un module sans une ligne de code.</p>
+
+<h2>Ce qui reste fermé, et pourquoi</h2>
+<p>Un palier reste du Java. Il porte un bloc, les blocs entrent dans le registre pendant le
+chargement des mods, et ce registre est gelé bien avant la lecture du premier fichier de données : un
+coffre déclaré en JSON arriverait sans rien sur quoi tenir.</p>
+<p>L'évènement de mise en page a le dernier mot sur la pagination, mais pas sur le fait de cacher des
+rangées. Une mise en page dont les pages ne couvrent pas le coffre est refusée, la répartition
+équilibrée reprend la main, et la raison est écrite dans le journal.</p>
+
+<h2>Ce qui mord en premier</h2>
+<p>L'écran vous tend un <code>CrateScreenArea</code> : le coin du panneau, sa taille, de quoi ajouter
+un widget, et <code>keepClickable</code>. Déclarez par ce dernier tout rectangle dessiné au-delà du
+bord du panneau. Le jeu compte un clic hors d'un écran de conteneur comme un clic dans le monde, et
+en relâcher un là jette par terre ce que le joueur tient.</p>
+<p><code>onScreenInit</code> se déclenche à chaque mise en page, donc à chaque redimensionnement de
+la fenêtre, et l'écran jette ses widgets entre deux. Rajoutez le vôtre plutôt que d'en garder un
+d'un appel sur l'autre.</p>
+
+<p>Le mod complet, avec l'exemple d'addon en entier compilé contre cet arbre, est dans
+<a class="link" href="https://github.com/Dreyka-Oas/DeepCrate">le dépôt</a>.</p>
+
+</main>
+</div>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>
