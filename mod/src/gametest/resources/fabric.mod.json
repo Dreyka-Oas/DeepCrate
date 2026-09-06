@@ -6,18 +6,18 @@
   "environment": "*",
   "entrypoints": {
     "fabric-gametest": [
-      "com.dreykaoas.deepcrate.gametest.CrateMenuGameTest",
-      "com.dreykaoas.deepcrate.gametest.CrateRecipeGameTest",
-      "com.dreykaoas.deepcrate.gametest.CrateHopperGameTest",
-      "com.dreykaoas.deepcrate.gametest.CrateHopperCostGameTest",
-      "com.dreykaoas.deepcrate.gametest.CrateRowModuleGameTest",
-      "com.dreykaoas.deepcrate.gametest.CrateSortGameTest",
-      "com.dreykaoas.deepcrate.gametest.CrateModuleSlotGameTest",
-      "com.dreykaoas.deepcrate.gametest.CrateColumnsGameTest"
+      "oas.dreyka.deepcrate.gametest.CrateMenuGameTest",
+      "oas.dreyka.deepcrate.gametest.CrateRecipeGameTest",
+      "oas.dreyka.deepcrate.gametest.CrateHopperGameTest",
+      "oas.dreyka.deepcrate.gametest.CrateHopperCostGameTest",
+      "oas.dreyka.deepcrate.gametest.CrateRowModuleGameTest",
+      "oas.dreyka.deepcrate.gametest.CrateSortGameTest",
+      "oas.dreyka.deepcrate.gametest.CrateModuleSlotGameTest",
+      "oas.dreyka.deepcrate.gametest.CrateColumnsGameTest"
     ],
     "fabric-client-gametest": [
-      "com.dreykaoas.deepcrate.gametest.client.CrateLookClientGameTest",
-      "com.dreykaoas.deepcrate.gametest.client.CrateShowcaseClientGameTest"
+      "oas.dreyka.deepcrate.gametest.client.CrateLookClientGameTest",
+      "oas.dreyka.deepcrate.gametest.client.CrateShowcaseClientGameTest"
     ]
   },
   "depends": {

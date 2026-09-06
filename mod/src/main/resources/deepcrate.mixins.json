@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.dreykaoas.deepcrate.mixin",
+  "package": "oas.dreyka.deepcrate.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "HopperBlockEntityMixin"

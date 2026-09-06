@@ -16,10 +16,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.dreykaoas.deepcrate.DeepCrateMod"
+      "oas.dreyka.deepcrate.DeepCrateMod"
     ],
     "client": [
-      "com.dreykaoas.deepcrate.client.DeepCrateClient"
+      "oas.dreyka.deepcrate.client.DeepCrateClient"
     ]
   },
   "depends": {

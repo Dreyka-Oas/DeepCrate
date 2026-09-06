@@ -30,13 +30,13 @@ Avant de lancer un build ou un client, vérifier `free -h` ; sous 2 Go disponibl
 
 Fichiers créés :
 
-`mod/src/main/java/com/dreykaoas/deepcrate/api/CrateModuleSlot.java` décrit une sorte de case à module et rien d'autre.
-`mod/src/main/java/com/dreykaoas/deepcrate/api/CrateModules.java` porte les piles qu'un coffre garde dans ses cases, indexées par identifiant.
-`mod/src/main/java/com/dreykaoas/deepcrate/inventory/StoredModule.java` est la forme sauvegardée d'une de ces piles, comme `StoredSlot` l'est pour une case de coffre.
-`mod/src/main/java/com/dreykaoas/deepcrate/api/CrateCapacityCallback.java` est l'événement de contenance.
-`mod/src/main/java/com/dreykaoas/deepcrate/client/CrateSortOrder.java` et `CrateSortRule.java` décrivent un ordre de tri.
-`mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateClientApi.java` tient le registre des ordres et sait bâtir une liste d'objets à partir d'un ordre.
-`mod/src/main/java/com/dreykaoas/deepcrate/client/CrateScreenCallback.java`, `CrateScreenArea.java` et `CrateTooltipCallback.java` sont la greffe sur l'écran.
+`mod/src/main/java/oas/dreyka/deepcrate/api/CrateModuleSlot.java` décrit une sorte de case à module et rien d'autre.
+`mod/src/main/java/oas/dreyka/deepcrate/api/CrateModules.java` porte les piles qu'un coffre garde dans ses cases, indexées par identifiant.
+`mod/src/main/java/oas/dreyka/deepcrate/inventory/StoredModule.java` est la forme sauvegardée d'une de ces piles, comme `StoredSlot` l'est pour une case de coffre.
+`mod/src/main/java/oas/dreyka/deepcrate/api/CrateCapacityCallback.java` est l'événement de contenance.
+`mod/src/main/java/oas/dreyka/deepcrate/client/CrateSortOrder.java` et `CrateSortRule.java` décrivent un ordre de tri.
+`mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateClientApi.java` tient le registre des ordres et sait bâtir une liste d'objets à partir d'un ordre.
+`mod/src/main/java/oas/dreyka/deepcrate/client/CrateScreenCallback.java`, `CrateScreenArea.java` et `CrateTooltipCallback.java` sont la greffe sur l'écran.
 
 Fichiers supprimés : `inventory/RowModuleSlot.java` fondu dans `ModuleSlot`, `client/CrateSort.java` remplacé par le registre.
 
@@ -45,13 +45,13 @@ Fichiers supprimés : `inventory/RowModuleSlot.java` fondu dans `ModuleSlot`, `c
 ### Task 1: le registre des sortes de cases, et la table du coffre
 
 **Files:**
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/api/CrateModuleSlot.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/api/CrateModules.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/StoredModule.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/api/DeepCrateApi.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/init/RegistryInit.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java`
-- Test: `mod/src/test/java/com/dreykaoas/deepcrate/CrateModulesTest.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/api/CrateModuleSlot.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/api/CrateModules.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/inventory/StoredModule.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/api/DeepCrateApi.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/init/RegistryInit.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/block/DeepCrateBlockEntity.java`
+- Test: `mod/src/test/java/oas/dreyka/deepcrate/CrateModulesTest.java`
 
 **Interfaces:**
 - Produces: `CrateModuleSlot(Identifier id, int order, int stackLimit, Identifier emptyIcon, Predicate<ItemStack> filter)` avec `boolean accepts(ItemStack)` et le statique `Predicate<ItemStack> tagged(TagKey<Item>)`.
@@ -63,16 +63,16 @@ Fichiers supprimés : `inventory/RowModuleSlot.java` fondu dans `ModuleSlot`, `c
 
 - [ ] **Step 1: écrire le test qui échoue**
 
-Créer `mod/src/test/java/com/dreykaoas/deepcrate/CrateModulesTest.java` :
+Créer `mod/src/test/java/oas/dreyka/deepcrate/CrateModulesTest.java` :
 
 ```java
-package com.dreykaoas.deepcrate;
+package oas.dreyka.deepcrate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.dreykaoas.deepcrate.api.CrateModules;
+import oas.dreyka.deepcrate.api.CrateModules;
 import net.minecraft.SharedConstants;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.Bootstrap;
@@ -140,13 +140,13 @@ class CrateModulesTest {
 
 - [ ] **Step 2: lancer le test pour vérifier qu'il échoue**
 
-Run: `cd mod && ./gradlew test --tests 'com.dreykaoas.deepcrate.CrateModulesTest'`
-Expected: la compilation échoue, `package com.dreykaoas.deepcrate.api.CrateModules does not exist`.
+Run: `cd mod && ./gradlew test --tests 'oas.dreyka.deepcrate.CrateModulesTest'`
+Expected: la compilation échoue, `package oas.dreyka.deepcrate.api.CrateModules does not exist`.
 
 - [ ] **Step 3: écrire `CrateModules`**
 
 ```java
-package com.dreykaoas.deepcrate.api;
+package oas.dreyka.deepcrate.api;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -199,13 +199,13 @@ public final class CrateModules implements Iterable<ItemStack> {
 
 - [ ] **Step 4: lancer le test pour vérifier qu'il passe**
 
-Run: `cd mod && ./gradlew test --tests 'com.dreykaoas.deepcrate.CrateModulesTest'`
+Run: `cd mod && ./gradlew test --tests 'oas.dreyka.deepcrate.CrateModulesTest'`
 Expected: PASS, quatre tests.
 
 - [ ] **Step 5: écrire `CrateModuleSlot`**
 
 ```java
-package com.dreykaoas.deepcrate.api;
+package oas.dreyka.deepcrate.api;
 
 import java.util.function.Predicate;
 import net.minecraft.resources.Identifier;
@@ -253,9 +253,9 @@ public record CrateModuleSlot(Identifier id, int order, int stackLimit, Identifi
 - [ ] **Step 6: écrire `StoredModule`**
 
 ```java
-package com.dreykaoas.deepcrate.inventory;
+package oas.dreyka.deepcrate.inventory;
 
-import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import oas.dreyka.deepcrate.api.DeepCrateApi;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.Identifier;
@@ -376,7 +376,7 @@ Ajouter, après `ROW_MODULE_ITEM` :
     }
 ```
 
-Ajouter `import com.dreykaoas.deepcrate.api.CrateModuleSlot;`.
+Ajouter `import oas.dreyka.deepcrate.api.CrateModuleSlot;`.
 
 - [ ] **Step 9: remplacer les deux champs du coffre par la table**
 
@@ -453,7 +453,7 @@ Dans `alignStorageWithTier`, remplacer `DeepCrateApi.rowsOf(this.moduleHolder().
 
 Dans `alignCapacityWithHolder`, remplacer `DeepCrateApi.capacityOf(holder.module())` par `DeepCrateApi.capacityAmong(holder.modules)`.
 
-Ajouter les imports `com.dreykaoas.deepcrate.api.CrateModules` et `net.minecraft.resources.Identifier`.
+Ajouter les imports `oas.dreyka.deepcrate.api.CrateModules` et `net.minecraft.resources.Identifier`.
 
 - [ ] **Step 10: écrire et relire la table dans la sauvegarde**
 
@@ -509,13 +509,13 @@ Expected: PASS, 36 tests. Ils appellent encore `setModule` et `setRowModules`, q
 - [ ] **Step 12: commit**
 
 ```bash
-git add mod/src/main/java/com/dreykaoas/deepcrate/api/CrateModuleSlot.java \
-        mod/src/main/java/com/dreykaoas/deepcrate/api/CrateModules.java \
-        mod/src/main/java/com/dreykaoas/deepcrate/api/DeepCrateApi.java \
-        mod/src/main/java/com/dreykaoas/deepcrate/inventory/StoredModule.java \
-        mod/src/main/java/com/dreykaoas/deepcrate/init/RegistryInit.java \
-        mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java \
-        mod/src/test/java/com/dreykaoas/deepcrate/CrateModulesTest.java
+git add mod/src/main/java/oas/dreyka/deepcrate/api/CrateModuleSlot.java \
+        mod/src/main/java/oas/dreyka/deepcrate/api/CrateModules.java \
+        mod/src/main/java/oas/dreyka/deepcrate/api/DeepCrateApi.java \
+        mod/src/main/java/oas/dreyka/deepcrate/inventory/StoredModule.java \
+        mod/src/main/java/oas/dreyka/deepcrate/init/RegistryInit.java \
+        mod/src/main/java/oas/dreyka/deepcrate/block/DeepCrateBlockEntity.java \
+        mod/src/test/java/oas/dreyka/deepcrate/CrateModulesTest.java
 git commit -m "feat(api): module slots become a registry, and a crate keeps them in one table"
 ```
 
@@ -524,12 +524,12 @@ git commit -m "feat(api): module slots become a registry, and a crate keeps them
 ### Task 2: le menu et l'écran suivent le registre
 
 **Files:**
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/ModuleContainer.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/ModuleSlot.java`
-- Delete: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/RowModuleSlot.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/DeepCrateMenu.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java`
-- Test: `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateModuleSlotGameTest.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/ModuleContainer.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/ModuleSlot.java`
+- Delete: `mod/src/main/java/oas/dreyka/deepcrate/inventory/RowModuleSlot.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/DeepCrateMenu.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java`
+- Test: `mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateModuleSlotGameTest.java`
 - Modify: `mod/src/gametest/resources/fabric.mod.json`
 
 **Interfaces:**
@@ -539,16 +539,16 @@ git commit -m "feat(api): module slots become a registry, and a crate keeps them
 
 - [ ] **Step 1: écrire le gametest qui échoue**
 
-Créer `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateModuleSlotGameTest.java` :
+Créer `mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateModuleSlotGameTest.java` :
 
 ```java
-package com.dreykaoas.deepcrate.gametest;
+package oas.dreyka.deepcrate.gametest;
 
-import com.dreykaoas.deepcrate.api.CrateModuleSlot;
-import com.dreykaoas.deepcrate.api.DeepCrateApi;
-import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
-import com.dreykaoas.deepcrate.init.RegistryInit;
-import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.api.CrateModuleSlot;
+import oas.dreyka.deepcrate.api.DeepCrateApi;
+import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
+import oas.dreyka.deepcrate.init.RegistryInit;
+import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -645,7 +645,7 @@ public class CrateModuleSlotGameTest {
 }
 ```
 
-Ajouter la ligne `"com.dreykaoas.deepcrate.gametest.CrateModuleSlotGameTest"` dans le tableau `fabric-gametest` de `mod/src/gametest/resources/fabric.mod.json`. Sans elle la classe ne tourne pas et le vert ne veut rien dire.
+Ajouter la ligne `"oas.dreyka.deepcrate.gametest.CrateModuleSlotGameTest"` dans le tableau `fabric-gametest` de `mod/src/gametest/resources/fabric.mod.json`. Sans elle la classe ne tourne pas et le vert ne veut rien dire.
 
 - [ ] **Step 2: lancer le gametest pour vérifier qu'il échoue**
 
@@ -657,9 +657,9 @@ Expected: la compilation échoue, `cannot find symbol: method crateSlotStart()`.
 Remplacer tout `ModuleSlot.java` par :
 
 ```java
-package com.dreykaoas.deepcrate.inventory;
+package oas.dreyka.deepcrate.inventory;
 
-import com.dreykaoas.deepcrate.api.CrateModuleSlot;
+import oas.dreyka.deepcrate.api.CrateModuleSlot;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
@@ -695,7 +695,7 @@ public class ModuleSlot extends Slot {
 }
 ```
 
-Supprimer `mod/src/main/java/com/dreykaoas/deepcrate/inventory/RowModuleSlot.java`.
+Supprimer `mod/src/main/java/oas/dreyka/deepcrate/inventory/RowModuleSlot.java`.
 
 - [ ] **Step 4: faire lire le registre à `ModuleContainer`**
 
@@ -763,7 +763,7 @@ Remplacer les deux constantes et les méthodes qui les utilisent :
     }
 ```
 
-`removeItem` et `removeItemNoUpdate` restent tels quels. Les imports à ajouter : `com.dreykaoas.deepcrate.api.CrateModuleSlot`, `com.dreykaoas.deepcrate.api.DeepCrateApi`, `net.minecraft.resources.Identifier`, `org.jspecify.annotations.Nullable`. L'import `com.dreykaoas.deepcrate.api.RowModule` n'est plus utilisé et part.
+`removeItem` et `removeItemNoUpdate` restent tels quels. Les imports à ajouter : `oas.dreyka.deepcrate.api.CrateModuleSlot`, `oas.dreyka.deepcrate.api.DeepCrateApi`, `net.minecraft.resources.Identifier`, `org.jspecify.annotations.Nullable`. L'import `oas.dreyka.deepcrate.api.RowModule` n'est plus utilisé et part.
 
 - [ ] **Step 5: faire compter les cases au menu**
 
@@ -835,7 +835,7 @@ Remplacer `onModuleChanged` et `reopenIfRowCountChanged` pour qu'ils lisent tout
     }
 ```
 
-Dans le constructeur, remplacer la dernière lecture par `this.rowModuleCount = DeepCrateApi.rowsAmong(this.moduleStacks());`. Ajouter les imports `com.dreykaoas.deepcrate.api.CrateModuleSlot`. Les imports de `ModuleContainer` restent nécessaires.
+Dans le constructeur, remplacer la dernière lecture par `this.rowModuleCount = DeepCrateApi.rowsAmong(this.moduleStacks());`. Ajouter les imports `oas.dreyka.deepcrate.api.CrateModuleSlot`. Les imports de `ModuleContainer` restent nécessaires.
 
 - [ ] **Step 6: faire pousser la plaque de l'écran**
 
@@ -878,7 +878,7 @@ Remplacer `renderModuleTab` :
 
 Dans `isOverModuleTab`, remplacer `MODULE_TAB_HEIGHT` par `this.moduleTabHeight`.
 
-Ajouter l'import `com.dreykaoas.deepcrate.api.DeepCrateApi`.
+Ajouter l'import `oas.dreyka.deepcrate.api.DeepCrateApi`.
 
 - [ ] **Step 7: lancer les tests**
 
@@ -893,10 +893,10 @@ Expected: PASS. Ouvrir `mod/build/run/clientGameTest/screenshots/screen-before-s
 - [ ] **Step 9: commit**
 
 ```bash
-git add mod/src/main/java/com/dreykaoas/deepcrate/inventory/ \
-        mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java \
+git add mod/src/main/java/oas/dreyka/deepcrate/inventory/ \
+        mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java \
         mod/src/gametest/
-git rm mod/src/main/java/com/dreykaoas/deepcrate/inventory/RowModuleSlot.java
+git rm mod/src/main/java/oas/dreyka/deepcrate/inventory/RowModuleSlot.java
 git commit -m "feat(screen): the module tab grows one cell per registered kind"
 ```
 
@@ -905,17 +905,17 @@ git commit -m "feat(screen): the module tab grows one cell per registered kind"
 ### Task 3: le registre des ordres de tri
 
 **Files:**
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateSortOrder.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateSortRule.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateClientApi.java`
-- Delete: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateSort.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/SortButton.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateClient.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateSortOrder.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateSortRule.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateClientApi.java`
+- Delete: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateSort.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/SortButton.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateClient.java`
 - Create: `mod/src/main/resources/assets/deepcrate/textures/gui/sort/name.png`
 - Create: `mod/src/main/resources/assets/deepcrate/textures/gui/sort/count.png`
 - Delete: `mod/src/main/resources/assets/deepcrate/textures/gui/sort_icons.png`
-- Modify: `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateLookClientGameTest.java`
+- Modify: `mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateLookClientGameTest.java`
 
 **Interfaces:**
 - Produces: `CrateSortRule` avec `Comparator<Item> comparator(Map<Item, Long> totals, Collator collator)`.
@@ -950,7 +950,7 @@ Puis `git rm mod/src/main/resources/assets/deepcrate/textures/gui/sort_icons.png
 - [ ] **Step 2: écrire `CrateSortRule`**
 
 ```java
-package com.dreykaoas.deepcrate.client;
+package oas.dreyka.deepcrate.client;
 
 import java.text.Collator;
 import java.util.Comparator;
@@ -977,7 +977,7 @@ public interface CrateSortRule {
 - [ ] **Step 3: écrire `CrateSortOrder`**
 
 ```java
-package com.dreykaoas.deepcrate.client;
+package oas.dreyka.deepcrate.client;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -1001,7 +1001,7 @@ public record CrateSortOrder(Identifier id, int order, Identifier icon, CrateSor
 - [ ] **Step 4: écrire `DeepCrateClientApi`**
 
 ```java
-package com.dreykaoas.deepcrate.client;
+package oas.dreyka.deepcrate.client;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -1100,7 +1100,7 @@ Dans `DeepCrateClient.onInitializeClient`, avant les deux appels qui y sont déj
         );
 ```
 
-Supprimer `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateSort.java`.
+Supprimer `mod/src/main/java/oas/dreyka/deepcrate/client/CrateSort.java`.
 
 - [ ] **Step 6: faire porter un ordre au bouton**
 
@@ -1218,8 +1218,8 @@ Expected: PASS. Ouvrir `mod/build/run/clientGameTest/screenshots/screen-sorted-b
 - [ ] **Step 10: commit**
 
 ```bash
-git add mod/src/main/java/com/dreykaoas/deepcrate/client/ mod/src/main/resources/assets/deepcrate/textures/gui/
-git rm mod/src/main/java/com/dreykaoas/deepcrate/client/CrateSort.java \
+git add mod/src/main/java/oas/dreyka/deepcrate/client/ mod/src/main/resources/assets/deepcrate/textures/gui/
+git rm mod/src/main/java/oas/dreyka/deepcrate/client/CrateSort.java \
        mod/src/main/resources/assets/deepcrate/textures/gui/sort_icons.png
 git commit -m "feat(sort): orders become a registry, one button per registered order"
 ```
@@ -1229,15 +1229,15 @@ git commit -m "feat(sort): orders become a registry, one button per registered o
 ### Task 4: la largeur devient une propriété du palier
 
 **Files:**
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/api/CrateTier.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/CrateOpenData.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/DeepCrateMenu.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java`
-- Test: `mod/src/test/java/com/dreykaoas/deepcrate/CrateTierTest.java`
-- Test: `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateColumnsGameTest.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/api/CrateTier.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/CrateOpenData.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/DeepCrateMenu.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/block/DeepCrateBlockEntity.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java`
+- Test: `mod/src/test/java/oas/dreyka/deepcrate/CrateTierTest.java`
+- Test: `mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateColumnsGameTest.java`
 - Modify: `mod/src/gametest/resources/fabric.mod.json`
-- Modify: `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateLookClientGameTest.java`
+- Modify: `mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateLookClientGameTest.java`
 
 **Interfaces:**
 - Produces: `CrateTier(Identifier id, int rows, int columns, Block block)` avec le constructeur court `CrateTier(Identifier, int, Block)` qui donne neuf colonnes, et `CrateTier.DEFAULT_COLUMNS` remplaçant `CrateTier.COLUMNS`.
@@ -1247,15 +1247,15 @@ git commit -m "feat(sort): orders become a registry, one button per registered o
 
 - [ ] **Step 1: écrire le test JUnit qui échoue**
 
-Créer `mod/src/test/java/com/dreykaoas/deepcrate/CrateTierTest.java` :
+Créer `mod/src/test/java/oas/dreyka/deepcrate/CrateTierTest.java` :
 
 ```java
-package com.dreykaoas.deepcrate;
+package oas.dreyka.deepcrate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.dreykaoas.deepcrate.api.CrateTier;
+import oas.dreyka.deepcrate.api.CrateTier;
 import net.minecraft.SharedConstants;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.Bootstrap;
@@ -1296,13 +1296,13 @@ class CrateTierTest {
 
 - [ ] **Step 2: lancer le test pour vérifier qu'il échoue**
 
-Run: `cd mod && ./gradlew test --tests 'com.dreykaoas.deepcrate.CrateTierTest'`
+Run: `cd mod && ./gradlew test --tests 'oas.dreyka.deepcrate.CrateTierTest'`
 Expected: la compilation échoue, `cannot find symbol: DEFAULT_COLUMNS`.
 
 - [ ] **Step 3: ouvrir `CrateTier`**
 
 ```java
-package com.dreykaoas.deepcrate.api;
+package oas.dreyka.deepcrate.api;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
@@ -1341,7 +1341,7 @@ public record CrateTier(Identifier id, int rows, int columns, Block block) {
 
 - [ ] **Step 4: lancer le test pour vérifier qu'il passe**
 
-Run: `cd mod && ./gradlew test --tests 'com.dreykaoas.deepcrate.CrateTierTest'`
+Run: `cd mod && ./gradlew test --tests 'oas.dreyka.deepcrate.CrateTierTest'`
 Expected: PASS, trois tests.
 
 - [ ] **Step 5: faire voyager la largeur**
@@ -1443,15 +1443,15 @@ La bande du joueur pose un problème que la tuile ne règle pas : ses cases sont
 
 - [ ] **Step 8: écrire le gametest de largeur**
 
-Créer `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateColumnsGameTest.java` :
+Créer `mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateColumnsGameTest.java` :
 
 ```java
-package com.dreykaoas.deepcrate.gametest;
+package oas.dreyka.deepcrate.gametest;
 
-import com.dreykaoas.deepcrate.api.CrateTier;
-import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
-import com.dreykaoas.deepcrate.init.RegistryInit;
-import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.api.CrateTier;
+import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
+import oas.dreyka.deepcrate.init.RegistryInit;
+import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -1509,7 +1509,7 @@ public class CrateColumnsGameTest {
 }
 ```
 
-Ajouter `"com.dreykaoas.deepcrate.gametest.CrateColumnsGameTest"` dans le tableau `fabric-gametest`.
+Ajouter `"oas.dreyka.deepcrate.gametest.CrateColumnsGameTest"` dans le tableau `fabric-gametest`.
 
 - [ ] **Step 9: lancer les tests**
 
@@ -1548,7 +1548,7 @@ juste après `screen-before-sorting`, puis à la fin de `runTest`, une scène de
             context.setScreen(() -> null);
 ```
 
-Ajouter les imports `com.dreykaoas.deepcrate.inventory.CrateOpenData` et `com.dreykaoas.deepcrate.inventory.DeepCrateMenu`.
+Ajouter les imports `oas.dreyka.deepcrate.inventory.CrateOpenData` et `oas.dreyka.deepcrate.inventory.DeepCrateMenu`.
 
 Run: `cd mod && ./gradlew runClientGameTest`
 Expected: PASS. Comparer `screen-nine-columns.png` avec la capture d'avant le changement : les deux doivent être identiques. Regarder `screen-twelve-columns.png` et `screen-three-columns.png` : le cadre doit être fermé des deux côtés, la grille pleine, l'inventaire du joueur centré et entier.
@@ -1556,7 +1556,7 @@ Expected: PASS. Comparer `screen-nine-columns.png` avec la capture d'avant le ch
 - [ ] **Step 11: commit**
 
 ```bash
-git add mod/src/main/java/com/dreykaoas/deepcrate/ mod/src/test/ mod/src/gametest/
+git add mod/src/main/java/oas/dreyka/deepcrate/ mod/src/test/ mod/src/gametest/
 git commit -m "feat(api): a tier says how wide it is, and the panel is built to that width"
 ```
 
@@ -1565,11 +1565,11 @@ git commit -m "feat(api): a tier says how wide it is, and the panel is built to 
 ### Task 5: la contenance passe par un événement
 
 **Files:**
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/api/CrateCapacityCallback.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/CrateStorage.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/DeepCrateSlot.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java`
-- Test: `mod/src/test/java/com/dreykaoas/deepcrate/CrateStorageTest.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/api/CrateCapacityCallback.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/CrateStorage.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/DeepCrateSlot.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/block/DeepCrateBlockEntity.java`
+- Test: `mod/src/test/java/oas/dreyka/deepcrate/CrateStorageTest.java`
 
 **Interfaces:**
 - Produces: `CrateCapacityCallback.EVENT` de type `Event<CrateCapacityCallback>` avec `int capacity(@Nullable CrateTier tier, ItemStack itemStack, int proposed)`.
@@ -1631,7 +1631,7 @@ Ajouter à `CrateStorageTest` :
     }
 ```
 
-Ajouter les imports `com.dreykaoas.deepcrate.api.CrateCapacityCallback` et `static org.junit.jupiter.api.Assertions.assertFalse`.
+Ajouter les imports `oas.dreyka.deepcrate.api.CrateCapacityCallback` et `static org.junit.jupiter.api.Assertions.assertFalse`.
 
 Fabric's `Event` n'a pas de `unregister`. Le remplacer par une bascule que le test pose et retire lui-même : un champ statique `AtomicReference<CrateCapacityCallback>` dans la classe de test, inscrit une seule fois dans `@BeforeAll`, et que chaque test remplit puis vide dans son `finally`.
 
@@ -1655,13 +1655,13 @@ Chaque test pose `RULE.set(...)` et rend `RULE.set(null)` dans son `finally`.
 
 - [ ] **Step 2: lancer les tests pour vérifier qu'ils échouent**
 
-Run: `cd mod && ./gradlew test --tests 'com.dreykaoas.deepcrate.CrateStorageTest'`
-Expected: la compilation échoue, `package com.dreykaoas.deepcrate.api.CrateCapacityCallback does not exist`.
+Run: `cd mod && ./gradlew test --tests 'oas.dreyka.deepcrate.CrateStorageTest'`
+Expected: la compilation échoue, `package oas.dreyka.deepcrate.api.CrateCapacityCallback does not exist`.
 
 - [ ] **Step 3: écrire l'événement**
 
 ```java
-package com.dreykaoas.deepcrate.api;
+package oas.dreyka.deepcrate.api;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -1755,7 +1755,7 @@ Dans `insert`, refuser d'entrée :
 
 Dans `overflow`, ne cracher que ce qui dépasse une limite qui existe : la boucle utilise déjà `capacityFor`, qui ne descend pas sous un, donc une pile déjà rangée d'un objet refusé garde sa limite d'avant et ne sort pas. Vérifier en relisant que `overflow` appelle bien `capacityFor` et non `limitFor`.
 
-Ajouter les imports `com.dreykaoas.deepcrate.api.CrateCapacityCallback`, `com.dreykaoas.deepcrate.api.CrateTier`, `org.jspecify.annotations.Nullable`.
+Ajouter les imports `oas.dreyka.deepcrate.api.CrateCapacityCallback`, `oas.dreyka.deepcrate.api.CrateTier`, `org.jspecify.annotations.Nullable`.
 
 - [ ] **Step 5: faire refuser la case du menu**
 
@@ -1804,7 +1804,7 @@ Expected: PASS, 35 tests JUnit et 44 gametests.
 - [ ] **Step 8: commit**
 
 ```bash
-git add mod/src/main/java/com/dreykaoas/deepcrate/ mod/src/test/
+git add mod/src/main/java/oas/dreyka/deepcrate/ mod/src/test/
 git commit -m "feat(api): an event has the last word on what a slot holds, and on what a crate refuses"
 ```
 
@@ -1813,11 +1813,11 @@ git commit -m "feat(api): an event has the last word on what a slot holds, and o
 ### Task 6: la greffe sur l'écran
 
 **Files:**
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateScreenArea.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateScreenCallback.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateTooltipCallback.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java`
-- Modify: `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateLookClientGameTest.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateScreenArea.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateScreenCallback.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateTooltipCallback.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java`
+- Modify: `mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateLookClientGameTest.java`
 
 **Interfaces:**
 - Produces: `CrateScreenArea` avec `int left()`, `int top()`, `int width()`, `int height()`, `<T extends AbstractWidget> T addWidget(T)`, `void keepClickable(int x, int y, int width, int height)`.
@@ -1828,7 +1828,7 @@ git commit -m "feat(api): an event has the last word on what a slot holds, and o
 - [ ] **Step 1: écrire `CrateScreenArea`**
 
 ```java
-package com.dreykaoas.deepcrate.client;
+package oas.dreyka.deepcrate.client;
 
 import net.minecraft.client.gui.components.AbstractWidget;
 
@@ -1857,7 +1857,7 @@ public interface CrateScreenArea {
 - [ ] **Step 2: écrire les deux événements**
 
 ```java
-package com.dreykaoas.deepcrate.client;
+package oas.dreyka.deepcrate.client;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -1879,9 +1879,9 @@ public interface CrateScreenCallback {
 ```
 
 ```java
-package com.dreykaoas.deepcrate.client;
+package oas.dreyka.deepcrate.client;
 
-import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
 import java.util.List;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -2037,7 +2037,7 @@ Dans `CrateLookClientGameTest`, avant l'ouverture du coffre, inscrire un bouton 
 
 Après `screen-before-sorting`, ajouter `context.takeScreenshot("screen-with-an-addon-button");`.
 
-Ajouter les imports `com.dreykaoas.deepcrate.client.CrateScreenCallback` et `net.minecraft.client.gui.components.Button`.
+Ajouter les imports `oas.dreyka.deepcrate.client.CrateScreenCallback` et `net.minecraft.client.gui.components.Button`.
 
 - [ ] **Step 6: lancer les tests**
 
@@ -2050,7 +2050,7 @@ Expected: PASS. Sur `screen-with-an-addon-button.png`, un bouton portant un plus
 - [ ] **Step 7: commit**
 
 ```bash
-git add mod/src/main/java/com/dreykaoas/deepcrate/client/ mod/src/gametest/
+git add mod/src/main/java/oas/dreyka/deepcrate/client/ mod/src/gametest/
 git commit -m "feat(screen): a mod can hang a widget and a tooltip line on the crate screen"
 ```
 

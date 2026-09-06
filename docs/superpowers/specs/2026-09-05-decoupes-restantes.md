@@ -443,9 +443,9 @@ les pose dans `client/`, pas dans `client/screen/` :
 
 ```
 grep -n "Create: .*CrateScreen\|Create: .*CrateTooltip" docs/superpowers/plans/2026-09-05-deepcrate-audit.md
-920:- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateScreenArea.java`
-921:- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateScreenCallback.java`
-922:- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateTooltipCallback.java`
+920:- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateScreenArea.java`
+921:- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateScreenCallback.java`
+922:- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateTooltipCallback.java`
 ```
 
 `client/` ne porte aujourd'hui qu'un fichier, `DeepCrateClient.java`, et passe donc à 4. Le paquet de

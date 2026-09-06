@@ -34,17 +34,17 @@ Un renommage qui touche une clé de configuration, un identifiant NBT, un champ 
 
 Fichiers créés :
 
-`mod/src/main/java/com/dreykaoas/deepcrate/api/TagMatch.java` porte l'essai d'appartenance à une étiquette, aujourd'hui recopié trois fois.
-`mod/src/main/java/com/dreykaoas/deepcrate/api/Registries.java` porte l'inscription refusant les doublons, aujourd'hui recopiée quatre fois.
-`mod/src/main/java/com/dreykaoas/deepcrate/block/CrateDrops.java` porte le largage d'objets entiers, aujourd'hui recopié deux fois.
-`mod/src/main/java/com/dreykaoas/deepcrate/block/CrateModuleHolder.java` sort de `DeepCrateBlockEntity` tout ce qui touche aux cases et au partage d'une paire.
-`mod/src/main/java/com/dreykaoas/deepcrate/block/CrateLid.java` sort de `DeepCrateBlockEntity` le couvercle, les ouvreurs et le son.
-`mod/src/main/java/com/dreykaoas/deepcrate/block/CrateSave.java` sort de `DeepCrateBlockEntity` la lecture et l'écriture de la sauvegarde.
-`mod/src/main/java/com/dreykaoas/deepcrate/client/CratePanel.java` sort de `DeepCrateScreen` la peinture du panneau et ses constantes de texture.
-`mod/src/main/java/com/dreykaoas/deepcrate/client/CrateSearch.java` sort de `DeepCrateScreen` la recherche et le grisage.
-`mod/src/main/java/com/dreykaoas/deepcrate/inventory/CratePanelGeometry.java` sort de `DeepCrateMenu` les constantes de mise en page et les deux calculs de position.
-`mod/src/main/java/com/dreykaoas/deepcrate/client/CrateScreenArea.java`, `CrateScreenCallback.java` et `CrateTooltipCallback.java` sont la greffe sur l'écran, dont le code complet est écrit dans `docs/superpowers/plans/2026-09-03-modularite.md` à partir de la ligne 1813.
-`mod/src/main/java/com/dreykaoas/deepcrate/config/` porte la couche de réglages, sur le découpage de `LethalBreed`.
+`mod/src/main/java/oas/dreyka/deepcrate/api/TagMatch.java` porte l'essai d'appartenance à une étiquette, aujourd'hui recopié trois fois.
+`mod/src/main/java/oas/dreyka/deepcrate/api/Registries.java` porte l'inscription refusant les doublons, aujourd'hui recopiée quatre fois.
+`mod/src/main/java/oas/dreyka/deepcrate/block/CrateDrops.java` porte le largage d'objets entiers, aujourd'hui recopié deux fois.
+`mod/src/main/java/oas/dreyka/deepcrate/block/CrateModuleHolder.java` sort de `DeepCrateBlockEntity` tout ce qui touche aux cases et au partage d'une paire.
+`mod/src/main/java/oas/dreyka/deepcrate/block/CrateLid.java` sort de `DeepCrateBlockEntity` le couvercle, les ouvreurs et le son.
+`mod/src/main/java/oas/dreyka/deepcrate/block/CrateSave.java` sort de `DeepCrateBlockEntity` la lecture et l'écriture de la sauvegarde.
+`mod/src/main/java/oas/dreyka/deepcrate/client/CratePanel.java` sort de `DeepCrateScreen` la peinture du panneau et ses constantes de texture.
+`mod/src/main/java/oas/dreyka/deepcrate/client/CrateSearch.java` sort de `DeepCrateScreen` la recherche et le grisage.
+`mod/src/main/java/oas/dreyka/deepcrate/inventory/CratePanelGeometry.java` sort de `DeepCrateMenu` les constantes de mise en page et les deux calculs de position.
+`mod/src/main/java/oas/dreyka/deepcrate/client/CrateScreenArea.java`, `CrateScreenCallback.java` et `CrateTooltipCallback.java` sont la greffe sur l'écran, dont le code complet est écrit dans `docs/superpowers/plans/2026-09-03-modularite.md` à partir de la ligne 1813.
+`mod/src/main/java/oas/dreyka/deepcrate/config/` porte la couche de réglages, sur le découpage de `LethalBreed`.
 `mod/src/main/resources/assets/deepcrate/icon.png`, 128 par 128.
 `store/curseforge.md` et `store/modrinth.md`.
 `.gitattributes` à la racine du produit.
@@ -58,9 +58,9 @@ Fichiers modifiés en profondeur : `DeepCrateBlockEntity.java` passe de 502 à m
 Le bouton de page qui porte un point vert est écrit, testé par la capture, et il n'est ni commité ni suivi. `DeepCrateScreen.java` est modifié et référence `PageButton`, donc un retour en arrière sur le seul fichier suivi casserait la compilation. Rien d'autre ne peut commencer avant que ça parte.
 
 **Files:**
-- Add: `mod/src/main/java/com/dreykaoas/deepcrate/client/PageButton.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java`
-- Modify: `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateLookClientGameTest.java`
+- Add: `mod/src/main/java/oas/dreyka/deepcrate/client/PageButton.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java`
+- Modify: `mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateLookClientGameTest.java`
 - Modify: dix-huit fichiers sous `mod/src/main/resources/assets/deepcrate/textures/entity/chest/`
 
 **Interfaces:**
@@ -93,10 +93,10 @@ cd /run/media/dreykaoas/O.A.S/projects/mods/DeepCrate
 git add mod/src/main/resources/assets/deepcrate/textures/entity/chest/
 git commit -m "fix(textures): the material now reads the same on all six crates"
 
-git add mod/src/main/java/com/dreykaoas/deepcrate/client/PageButton.java mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java
+git add mod/src/main/java/oas/dreyka/deepcrate/client/PageButton.java mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java
 git commit -m "feat(screen): a page button carries a dot while its page holds something"
 
-git add mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateLookClientGameTest.java
+git add mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateLookClientGameTest.java
 git commit -m "test(client): fill two far pages so one shot carries a button in both states"
 ```
 
@@ -117,15 +117,15 @@ Attendu : sortie vide.
 Deux constantes déclarées et jamais lues, un import jamais utilisé, un accesseur sans appelant, une javadoc posée sur la mauvaise méthode, trois noms pleinement qualifiés écrits en ligne là où tous les fichiers voisins importent, deux chaînes `"deepcrate"` écrites en dur là où `RegistryInit.id` existe, et deux lignes vides de trop.
 
 **Files:**
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java:48-49`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java:45`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/ModuleSlot.java:18-20`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/DeepCrateMenu.java:392-398`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/init/CreativeTabInit.java:26,32`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/api/DeepCrateApi.java:36`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/net/CrateSortPayload.java:30`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/CrateStorage.java:270-271`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/mixin/HopperBlockEntityMixin.java:75`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java:48-49`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/block/DeepCrateBlockEntity.java:45`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/ModuleSlot.java:18-20`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/DeepCrateMenu.java:392-398`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/init/CreativeTabInit.java:26,32`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/api/DeepCrateApi.java:36`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/net/CrateSortPayload.java:30`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/CrateStorage.java:270-271`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/mixin/HopperBlockEntityMixin.java:75`
 
 **Interfaces:**
 - Consumes: `RegistryInit.id(String)` de la tâche zéro, qui existe déjà.
@@ -154,7 +154,7 @@ Attendu : les deux déclarations et rien d'autre. Si une lecture apparaît, ne p
 Dans `DeepCrateBlockEntity.java`, supprimer la ligne 45, `import org.jspecify.annotations.Nullable;`. Rien dans le fichier ne porte cette annotation. Vérifier avant de couper :
 
 ```bash
-grep -n 'Nullable' mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java
+grep -n 'Nullable' mod/src/main/java/oas/dreyka/deepcrate/block/DeepCrateBlockEntity.java
 ```
 
 Attendu : la seule ligne d'import. Le compilateur ne le signale pas, il n'y a pas de `-Xlint` dans le build.
@@ -234,7 +234,7 @@ par :
     private static final Identifier MODULE_TAB = RegistryInit.id("textures/gui/module_tab.png");
 ```
 
-et ajouter `import com.dreykaoas.deepcrate.init.RegistryInit;`. Faire de même dans `CrateSortPayload.java` pour `Identifier.fromNamespaceAndPath("deepcrate", "sort")`, qui devient `RegistryInit.id("sort")`.
+et ajouter `import oas.dreyka.deepcrate.init.RegistryInit;`. Faire de même dans `CrateSortPayload.java` pour `Identifier.fromNamespaceAndPath("deepcrate", "sort")`, qui devient `RegistryInit.id("sort")`.
 
 Le fichier ne change pas de valeur : `RegistryInit.id` construit exactement le même identifiant à partir de `DeepCrate.MOD_ID`. L'identifiant réseau `deepcrate:sort` reste le même octet pour octet, donc rien ne casse entre un client et un serveur de versions différentes.
 
@@ -268,17 +268,17 @@ Le gabarit demande de fusionner avant de découper : une découpe faite d'abord 
 Un quatrième existe et n'est pas traité ici : `isOverSortButtons` et `isOverPageButtons`, dans `DeepCrateScreen.java:197-215`, parcourent chacune leur liste de boutons pour la même réponse. La tâche 8 les rassemble avec la troisième zone dans une seule liste de `CrateScreenArea`, ce qui les fait disparaître. Les fusionner ici les ferait fusionner deux fois.
 
 **Files:**
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/api/TagMatch.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/api/Registries.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/block/CrateDrops.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/api/CrateModule.java:22-34`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/api/RowModule.java:25-36`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/api/CrateModuleSlot.java:33-42`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/api/DeepCrateApi.java:64-107`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateClientApi.java:25-35`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java:386-392`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/DeepCrateMenu.java:363-372`
-- Test: `mod/src/test/java/com/dreykaoas/deepcrate/CrateModulesTest.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/api/TagMatch.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/api/Registries.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/block/CrateDrops.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/api/CrateModule.java:22-34`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/api/RowModule.java:25-36`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/api/CrateModuleSlot.java:33-42`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/api/DeepCrateApi.java:64-107`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateClientApi.java:25-35`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/block/DeepCrateBlockEntity.java:386-392`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/DeepCrateMenu.java:363-372`
+- Test: `mod/src/test/java/oas/dreyka/deepcrate/CrateModulesTest.java`
 
 **Interfaces:**
 - Produces: `TagMatch.matches(ItemStack, TagKey<Item>)` rendant un `boolean`. `Registries.addUnique(List<T>, T, Function<T, Identifier>, String kind)` rendant le `T` passé. `CrateDrops.dropWhole(Level, BlockPos, double yOffset, ItemStack)` sans retour.
@@ -286,7 +286,7 @@ Un quatrième existe et n'est pas traité ici : `isOverSortButtons` et `isOverPa
 
 - [ ] **Step 1: le test qui échoue sur TagMatch**
 
-Ajouter dans `mod/src/test/java/com/dreykaoas/deepcrate/CrateModulesTest.java` :
+Ajouter dans `mod/src/test/java/oas/dreyka/deepcrate/CrateModulesTest.java` :
 
 ```java
     @Test
@@ -308,7 +308,7 @@ Attendu : échec de compilation, `TagMatch` n'existe pas.
 - [ ] **Step 3: écrire TagMatch**
 
 ```java
-package com.dreykaoas.deepcrate.api;
+package oas.dreyka.deepcrate.api;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -376,7 +376,7 @@ git commit -m "refactor(api): one place answers whether a stack carries a tag, i
 Quatre inscriptions font la même boucle de recherche de doublon avec un mot différent dans le message. Une seule suffit.
 
 ```java
-package com.dreykaoas.deepcrate.api;
+package oas.dreyka.deepcrate.api;
 
 import java.util.List;
 import java.util.function.Function;
@@ -446,7 +446,7 @@ Dans `DeepCrateClientApi.java` :
     }
 ```
 
-avec `import com.dreykaoas.deepcrate.api.Registries;`.
+avec `import oas.dreyka.deepcrate.api.Registries;`.
 
 Les messages d'exception gardent leur texte mot pour mot. Un gametest existant peut les lire.
 
@@ -462,7 +462,7 @@ cd .. && git add mod/src && git commit -m "refactor(api): one registration helpe
 Les deux largages ne diffèrent que par la hauteur, un demi-bloc contre un bloc entier.
 
 ```java
-package com.dreykaoas.deepcrate.block;
+package oas.dreyka.deepcrate.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -513,15 +513,15 @@ Six fichiers de `main/java` dépassent 150 lignes, et le plus gros en fait 502. 
 C'est une refactorisation pure. Le comportement observable ne change pas et la suite complète tourne après chaque déplacement, pas seulement à la fin.
 
 **Files:**
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/block/CrateModuleHolder.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/block/CrateLid.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/block/CrateSave.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CratePanel.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateSearch.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/CratePanelGeometry.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/inventory/DeepCrateMenu.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/block/CrateModuleHolder.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/block/CrateLid.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/block/CrateSave.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CratePanel.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateSearch.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/inventory/CratePanelGeometry.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/block/DeepCrateBlockEntity.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/inventory/DeepCrateMenu.java`
 
 **Interfaces:**
 - Produces: `CratePanelGeometry.PANEL_BORDER`, `CELL`, `MIN_PANEL_WIDTH`, `COLUMNS_OF_A_PLAYER`, `GRID_LEFT`, `GRID_TOP`, `MODULE_X`, `MODULE_Y`, `MODULE_SPACING`, plus `panelWidth(int columns)` et `gridLeft(int panelWidth, int cells)`. `DeepCrateMenu` garde des délégations vers ces noms, parce que `DeepCrateScreen` et les gametests les lisent sous `DeepCrateMenu.*`.
@@ -628,7 +628,7 @@ Attendu : aucun fichier de `main/java` au-dessus de 150 lignes. Si un reste au-d
 `api/`, `client/` et `inventory/` étaient déjà à 10, 11 et 11 fichiers avant cette tâche, et elle en ajoute. Compter :
 
 ```bash
-cd mod/src/main/java/com/dreykaoas/deepcrate && for d in */; do echo "$(ls "$d" | wc -l)  $d"; done
+cd mod/src/main/java/oas/dreyka/deepcrate && for d in */; do echo "$(ls "$d" | wc -l)  $d"; done
 ```
 
 Un dossier au-dessus de huit se sous-découpe par domaine, pas par lettre : `client/screen/` pour l'écran et ses morceaux, `client/render/` pour le renderer et les matériaux, `client/sort/` pour le registre d'ordres et ses boutons. Un commit par sous-découpe, la suite relancée à chaque fois, parce qu'un déplacement de paquet touche tous les imports.
@@ -662,7 +662,7 @@ Dans `fabric.mod.json`, après la ligne `license` :
 ```json
   "contact": {
     "homepage": "https://deepcrate.pages.dev",
-    "issues": "https://github.com/dreykaoas/DeepCrate/issues"
+    "issues": "https://github.oas/dreyka/DeepCrate/issues"
   },
   "icon": "assets/deepcrate/icon.png",
 ```
@@ -761,20 +761,20 @@ Aucun fichier de réglages n'existe, et aucun paquet `config` non plus. Six nomb
 Le découpage est celui de `reference/config.md` et de `LethalBreed`, qui en donne un exemple complet en 42 fichiers. DeepCrate a moins d'options, donc moins de fichiers, mais le même chemin de lecture et d'écriture.
 
 **Files:**
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/config/DeepCrateConfig.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/config/ConfigAccess.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/config/ConfigBounds.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/config/ConfigBoundsTable.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/config/domain/CrateConfig.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/config/domain/ScreenConfig.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/config/schema/ConfigSchema.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/config/io/ConfigLoader.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/config/io/ConfigWriter.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/DeepCrateMod.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/api/DeepCrateApi.java:18,36`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/api/CrateLayout.java:10`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java:77`
-- Test: `mod/src/test/java/com/dreykaoas/deepcrate/config/ConfigLoaderTest.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/config/DeepCrateConfig.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/config/ConfigAccess.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/config/ConfigBounds.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/config/ConfigBoundsTable.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/config/domain/CrateConfig.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/config/domain/ScreenConfig.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/config/schema/ConfigSchema.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/config/io/ConfigLoader.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/config/io/ConfigWriter.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/DeepCrateMod.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/api/DeepCrateApi.java:18,36`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/api/CrateLayout.java:10`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java:77`
+- Test: `mod/src/test/java/oas/dreyka/deepcrate/config/ConfigLoaderTest.java`
 
 **Interfaces:**
 - Produces: `DeepCrateConfig.load(Path gameDir)`, appelée en premier dans `onInitialize`. `CrateConfig.baseCapacity`, `CrateConfig.limitAutomationWithLithium`, `CrateConfig.maxRowsPerPage`, `ScreenConfig.abbreviateAbove`.
@@ -785,7 +785,7 @@ Le découpage est celui de `reference/config.md` et de `LethalBreed`, qui en don
 Champs publics statiques non finaux, un porteur par domaine. Le schéma est l'énumération réflexive de ces champs dans l'ordre de déclaration, donc ajouter une option est ajouter un champ, sans code de sérialisation ni deuxième liste à oublier.
 
 ```java
-package com.dreykaoas.deepcrate.config.domain;
+package oas.dreyka.deepcrate.config.domain;
 
 /** What a crate holds and how automation reaches it. */
 public final class CrateConfig {
@@ -808,7 +808,7 @@ public final class CrateConfig {
 ```
 
 ```java
-package com.dreykaoas.deepcrate.config.domain;
+package oas.dreyka.deepcrate.config.domain;
 
 /** What the crate screen draws. */
 public final class ScreenConfig {
@@ -822,11 +822,11 @@ public final class ScreenConfig {
 - [ ] **Step 2: le test qui échoue sur la lecture**
 
 ```java
-package com.dreykaoas.deepcrate.config;
+package oas.dreyka.deepcrate.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.dreykaoas.deepcrate.config.domain.CrateConfig;
+import oas.dreyka.deepcrate.config.domain.CrateConfig;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -917,11 +917,11 @@ cd .. && git add mod/src && git commit -m "feat(config): four numbers a server o
 C'est la tâche 6 du plan du 3 septembre, à peine commencée puis remise à zéro pour ne pas laisser du code à moitié écrit. Son code complet est déjà écrit dans `docs/superpowers/plans/2026-09-03-modularite.md` à partir de la ligne 1813. Le lire là-bas et le suivre.
 
 **Files:**
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateScreenArea.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateScreenCallback.java`
-- Create: `mod/src/main/java/com/dreykaoas/deepcrate/client/CrateTooltipCallback.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateScreen.java`
-- Test: `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateLookClientGameTest.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateScreenArea.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateScreenCallback.java`
+- Create: `mod/src/main/java/oas/dreyka/deepcrate/client/CrateTooltipCallback.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateScreen.java`
+- Test: `mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateLookClientGameTest.java`
 
 **Interfaces:**
 - Consumes: `CrateSearch` et `CratePanel` de la tâche 4, puisque `DeepCrateScreen` a changé de forme depuis que ce plan a été écrit. Relire les trois méthodes `isOver*` dans leur état d'après la tâche 4 avant de les rassembler.
@@ -985,7 +985,7 @@ En anglais, puisque le README fait face aux joueurs et aux deux boutiques. Liste
 Vérifier la liste contre le code plutôt que contre cette page :
 
 ```bash
-grep -rn 'public static .*register\|Event<' mod/src/main/java/com/dreykaoas/deepcrate/api mod/src/main/java/com/dreykaoas/deepcrate/client/DeepCrateClientApi.java --include='*.java' | grep -v ' \*'
+grep -rn 'public static .*register\|Event<' mod/src/main/java/oas/dreyka/deepcrate/api mod/src/main/java/oas/dreyka/deepcrate/client/DeepCrateClientApi.java --include='*.java' | grep -v ' \*'
 ```
 
 - [ ] **Step 2: corriger la section "Capacity"**
@@ -1029,16 +1029,16 @@ git commit -m "docs: the readme names all eight extension points, not the three 
 
 Ajoutée le 5 septembre après que le gabarit a gagné un huitième contrôle, la performance mesurée. Le chiffre est mesuré, pas supposé, et il vient d'un gametest jeté après lecture dont la sortie brute est dans `.superpowers/sdd/perf-report.md`.
 
-`storage()`, [DeepCrateBlockEntity.java:100](../../../mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java), ressemble à un accesseur et n'en est pas un : chaque appel relance `alignStorageWithTier()` et `alignCapacityWithHolder()`, qui appellent chacun `moduleHolder()`, lequel fait un `getBlockEntity` sur la position voisine quand le coffre est apparié. La boucle du mixin appelle `getItem(i)` puis `getMaxStackSize(itemStack)` par emplacement, et les deux passent par `storage()`, donc quatre `moduleHolder()` par emplacement.
+`storage()`, [DeepCrateBlockEntity.java:100](../../../mod/src/main/java/oas/dreyka/deepcrate/block/DeepCrateBlockEntity.java), ressemble à un accesseur et n'en est pas un : chaque appel relance `alignStorageWithTier()` et `alignCapacityWithHolder()`, qui appellent chacun `moduleHolder()`, lequel fait un `getBlockEntity` sur la position voisine quand le coffre est apparié. La boucle du mixin appelle `getItem(i)` puis `getMaxStackSize(itemStack)` par emplacement, et les deux passent par `storage()`, donc quatre `moduleHolder()` par emplacement.
 
 Mesuré sur 5000 parcours de 216 emplacements après 500 tours de chauffe : 99,85 ns par emplacement sur un coffre simple, 286,02 ns sur un apparié, un facteur 2,86. Une trémie contre un demi coffre echo plein coûte 62 µs par tick, et cent trémies contre cent grands coffres tournent autour de 6 ms sur les 50 ms du tick.
 
 Rien n'est alloué dans cette boucle. `cratesFor` et `containerFor` allouent, mais leurs appelants sont l'ouverture d'écran, le comparateur et le changement de module.
 
 **Files:**
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/block/CrateModuleHolder.java`
-- Modify: `mod/src/main/java/com/dreykaoas/deepcrate/block/DeepCrateBlockEntity.java`
-- Test: `mod/src/gametest/java/com/dreykaoas/deepcrate/gametest/CrateHopperGameTest.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/block/CrateModuleHolder.java`
+- Modify: `mod/src/main/java/oas/dreyka/deepcrate/block/DeepCrateBlockEntity.java`
+- Test: `mod/src/gametest/java/oas/dreyka/deepcrate/gametest/CrateHopperGameTest.java`
 
 **Interfaces:**
 - Consumes: `CrateModuleHolder` de la tâche 4, qui porte alors `moduleHolder()` et `alignCapacityWithHolder()`.
