@@ -28,6 +28,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
 
 /**
  * One picture per case that changes what is drawn.
@@ -48,6 +49,8 @@ import net.minecraft.world.item.Items;
 public class CrateShowcaseClientGameTest implements FabricClientGameTest {
     private static final BlockPos COPPER = new BlockPos(-2, 200, 24);
     private static final BlockPos ECHO = new BlockPos(2, 200, 24);
+    private static final BlockPos IRON = new BlockPos(6, 200, 24);
+    private static final BlockPos HOPPER = new BlockPos(6, 201, 24);
     /** Wider than the room the title has, which is what makes it stop before the page number. */
     private static final String ANVIL_NAME = "Everything the north quarry sent back";
     /** Any number: a menu built here never reaches the server, so nothing ever answers on it. */
@@ -139,6 +142,8 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
             // stopped being registered.
             hover(context, Items.LAPIS_LAZULI, "13-the-real-count-under-an-abbreviated-one");
 
+            showHopper(context, server);
+
             context.setScreen(() -> null);
             context.waitTicks(10);
         }
@@ -215,6 +220,32 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
         });
         open(context, server, COPPER);
         context.takeScreenshot(shot);
+    }
+
+    /**
+     * A hopper writing into a cell that already holds a full vanilla stack, which is the whole of what
+     * the patched hopper changes: untouched, the transfer stops at 64 and the hopper keeps the rest.
+     *
+     * Its own crate rather than one of the two above: the copper one wears an anvil name by this point
+     * and the echo one is twenty-four rows deep, and neither reads as the plain case being shown.
+     */
+    private static void showHopper(ClientGameTestContext context, TestServerContext server) {
+        server.runCommand("setblock 6 200 24 deepcrate:iron_crate[facing=south,type=single]");
+        server.runCommand("setblock 6 201 24 minecraft:hopper[facing=down]");
+        onCrate(server, IRON, iron -> {
+            iron.setModule(new ItemStack(RegistryInit.MODULE_ITEMS.get(2)));
+            iron.storage().set(0, new ItemStack(Items.DIRT, 64));
+        });
+        server.runOnServer(minecraftServer -> {
+            if (minecraftServer.overworld().getBlockEntity(HOPPER) instanceof HopperBlockEntity hopperBlockEntity) {
+                hopperBlockEntity.setItem(0, new ItemStack(Items.DIRT, 64));
+            }
+        });
+
+        // One item every eight ticks: this is the transfer running, not a pause for the renderer.
+        context.waitTicks(220);
+        open(context, server, IRON);
+        context.takeScreenshot("14-a-hopper-filling-a-cell-past-64");
     }
 
     private static void onCrate(TestServerContext server, BlockPos blockPos, Consumer<DeepCrateBlockEntity> action) {
