@@ -261,13 +261,13 @@
        reports.css dans components.css, et le fichier lui-même. -->
   <section class="home-reports">
     <div class="home-reports__inner">
-      <div class="home-tag reveal reveal--wide">Signaler, suggérer, voter</div>
-      <h2 class="home-manifesto reveal reveal--wide">Un coffre qui se vide par terre est un <span class="glow">rapport</span>, pas une fatalité.</h2>
-      <p class="home-index__lead reveal">Le canal de retours n'a pas de compte à créer. Une phrase, le numéro de version, et ce que le coffre a fait au lieu de ce qu'il devait faire.</p>
-      <!-- Absolute URL to the hub, not a relative path: this page is served
-           both from deepcrate.pages.dev (at the root, no Worker) and from
-           /deepcrate/ on the Worker. Only an absolute one is right in both. -->
-      <p class="home-reports__cta reveal"><a class="home-btn home-btn--fill" href="https://feedback-hub.persodreykaoas.workers.dev/?project=deepcrate#rapports" rel="noopener"><span>Déposer un rapport</span></a></p>
+      <div class="home-tag reveal reveal--wide">Signaler un défaut</div>
+      <h2 class="home-manifesto reveal reveal--wide">Un coffre qui se vide par terre est un <span class="glow">ticket</span>, pas une fatalité.</h2>
+      <p class="home-index__lead reveal">Les défauts connus sont listés là, ouverts et fermés, donc commencez par regarder si le vôtre y est déjà. Sinon, une phrase, le numéro de version, et ce que le coffre a fait au lieu de ce qu'il devait faire.</p>
+      <!-- The issue list itself, not a contact form: somebody hitting a bug
+           has to land where the known ones are listed. The same address is on
+           wiki/api.html, and the two say the same thing or neither is believed. -->
+      <p class="home-reports__cta reveal"><a class="home-btn home-btn--fill" href="https://github.com/Dreyka-Oas/DeepCrate/issues" rel="noopener"><span>Les tickets du dépôt</span></a></p>
     </div>
   </section>
 

@@ -259,13 +259,13 @@
        reports.css in components.css, and the file itself. -->
   <section class="home-reports">
     <div class="home-reports__inner">
-      <div class="home-tag reveal reveal--wide">Report, suggest, vote</div>
-      <h2 class="home-manifesto reveal reveal--wide">A crate emptying itself on the floor is a <span class="glow">report</span>, not a fact of life.</h2>
-      <p class="home-index__lead reveal">The feedback channel has no account to create. One sentence, the version number, and what the crate did instead of what it was meant to do.</p>
-      <!-- Absolute URL to the hub, not a relative path: this page is served
-           both from deepcrate.pages.dev (at the root, no Worker) and from
-           /deepcrate/ on the Worker. Only an absolute one is right in both. -->
-      <p class="home-reports__cta reveal"><a class="home-btn home-btn--fill" href="https://feedback-hub.persodreykaoas.workers.dev/?project=deepcrate#rapports" rel="noopener"><span>File a report</span></a></p>
+      <div class="home-tag reveal reveal--wide">Report a defect</div>
+      <h2 class="home-manifesto reveal reveal--wide">A crate emptying itself on the floor is an <span class="glow">issue</span>, not a fact of life.</h2>
+      <p class="home-index__lead reveal">The known defects are listed there, open and closed, so start by checking whether yours is already among them. If it is not: one sentence, the version number, and what the crate did instead of what it was meant to do.</p>
+      <!-- The issue list itself, not a contact form: somebody hitting a bug
+           has to land where the known ones are listed. The same address is on
+           wiki/api.html, and the two say the same thing or neither is believed. -->
+      <p class="home-reports__cta reveal"><a class="home-btn home-btn--fill" href="https://github.com/Dreyka-Oas/DeepCrate/issues" rel="noopener"><span>The repository issues</span></a></p>
     </div>
   </section>
 
