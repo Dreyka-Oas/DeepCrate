@@ -110,9 +110,16 @@ entity and crashes the server on the first tick.
 
 ## Settings
 
-`config/oas/deepcrate.json`, written on first launch and rewritten at every one after, so an option
-added by an update shows up there by itself. A value outside its range is pulled back in and the
-corrected value is what stays on disk.
+`/deepcrateconfig` opens them in game, and that is the way in. The screen has a search box across the
+top, the categories down the left and one row per option on the right, each with a reset back to its
+default. Every change leaves as it happens, so there is no save button and nothing to lose by pressing
+Escape. It asks for permission level 2, the same one a gamemaster command asks for, and the packet
+carrying a change checks that permission again on its own: gating the command alone would hand the
+file to anybody able to send a packet.
+
+Behind it, `config/oas/deepcrate.json`, written on first launch and rewritten at every one after, so
+an option added by an update shows up there by itself. A value outside its range is pulled back in
+and the corrected value is what stays on disk, whether it came from the screen or from a text editor.
 
 | Option | Default | Range | What it decides |
 |---|---|---|---|

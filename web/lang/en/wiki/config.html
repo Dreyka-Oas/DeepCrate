@@ -59,6 +59,23 @@
       </tbody>
     </table>
 
+    <h2 class="reveal reveal--wide">Changing them without leaving the game</h2>
+    <p class="reveal"><code class="mono">/deepcrateconfig</code> opens the settings screen: a search
+      box across the top, the categories down the left, one row per option on the right, each with a
+      control putting it back to its default. The search spans every category, because somebody
+      hunting an option by name does not know which category it was filed under.</p>
+    <p class="reveal">Nothing is saved by hand. Every toggle, every value typed and every reset leaves
+      as it happens, and closing with Escape loses nothing. What reaches the server crosses the same
+      range the file crosses, so an absurd value comes back corrected on the screen of whoever typed
+      it.</p>
+
+    <div class="callout callout--danger reveal">
+      <p><strong>Operators only, on both sides.</strong> The command asks for permission level 2, and
+        the packet carrying a change asks for it again before writing anything. Keeping only the
+        command would be the defect that looks correct: a client sends the packet without ever typing
+        the command.</p>
+    </div>
+
     <h2 class="reveal reveal--wide">A value out of range is pulled back in</h2>
     <p class="reveal">Every option has a range, and a value outside it is pulled to the nearest bound.
       It is the corrected value that stays on disk, so the file always says what the game actually

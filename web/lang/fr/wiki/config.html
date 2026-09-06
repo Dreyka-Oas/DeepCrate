@@ -59,6 +59,23 @@
       </tbody>
     </table>
 
+    <h2 class="reveal reveal--wide">Les changer sans quitter la partie</h2>
+    <p class="reveal"><code class="mono">/deepcrateconfig</code> ouvre l'écran des réglages : un champ
+      de recherche en haut, les catégories à gauche, une ligne par option à droite, chacune avec un
+      bouton qui la remet à sa valeur d'origine. La recherche traverse les catégories, parce que celui
+      qui cherche une option par son nom ne sait pas sous laquelle elle a été rangée.</p>
+    <p class="reveal">Rien ne s'enregistre à la main. Chaque bascule, chaque valeur tapée et chaque
+      remise à zéro part au moment où elle se fait, et fermer par Échap ne perd rien. Ce qui arrive au
+      serveur repasse par la même plage que le fichier, donc une valeur aberrante revient corrigée sur
+      l'écran de celui qui l'a tapée.</p>
+
+    <div class="callout callout--danger reveal">
+      <p><strong>Réservé aux opérateurs, des deux côtés.</strong> La commande demande le niveau de
+        permission 2, et le paquet qui porte un changement redemande le même avant d'écrire quoi que ce
+        soit. Ne garder que la commande serait le défaut qui a l'air correct : un client envoie le
+        paquet sans jamais taper la commande.</p>
+    </div>
+
     <h2 class="reveal reveal--wide">Une valeur hors bornes est ramenée dedans</h2>
     <p class="reveal">Chaque option a une plage, et une valeur en dehors est ramenée à la borne la
       plus proche. C'est la valeur corrigée qui reste sur le disque, donc le fichier dit toujours ce

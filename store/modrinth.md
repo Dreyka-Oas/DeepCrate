@@ -131,6 +131,16 @@ including the pages you are not looking at.
 The page you are on never reaches the server, which is what keeps a slot index from being steered from
 outside.
 
+## Settings, without leaving the game
+
+`/deepcrateconfig` opens them: a search box across the top, the categories down the left, one row per
+option on the right, each with a reset back to its default. Every change leaves as it happens, so
+there is no save button and nothing to lose by pressing Escape.
+
+It asks for permission level 2, the same one a gamemaster command asks for, and the packet carrying a
+change checks that permission again on its own. Everything still lands in
+`config/oas/deepcrate.json`, so a text editor and the screen say the same thing.
+
 ## For other mods
 
 Register a crate tier, register a capacity module, or take over the slot and page counts. Declare your
