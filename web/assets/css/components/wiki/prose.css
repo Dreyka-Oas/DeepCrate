@@ -29,3 +29,42 @@
   padding: 0.06em 0.4em;
   color: var(--ink);
 }
+
+/* The block form of the pill above, for the one page whose reader is a
+   developer: an addon author deciding whether to bother needs something that
+   compiles, and a paragraph describing an API is not that. It lives here rather
+   than in a file of its own because the wiki folder is at its eight-file
+   ceiling, and because the inline code it grows out of is already on this page.
+
+   What has to survive: the block scrolls sideways rather than wrapping, since a
+   wrapped Java line reads as two statements, and it stays reachable from the
+   keyboard because a scrollable region answering only a mouse fails an audit. */
+.code {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--ink);
+  overflow-x: auto;
+}
+.code code {
+  /* The inline pill's own padding and background would draw a second box inside
+     this one. */
+  padding: 0;
+  background: none;
+  border: 0;
+  white-space: pre;
+}
+.code__caption {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-stamp);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}

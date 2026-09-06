@@ -74,6 +74,37 @@
       precise item, so adding yours to <code class="mono">deepcrate:module_512</code> makes it a
       module without a line of code.</p>
 
+    <h2 class="reveal reveal--wide">A whole addon</h2>
+    <p class="reveal">Here is everything it takes to add a crate and a capacity module, with no mixin
+      and nothing to ask for. The entry point is declared in your own
+      <code class="mono">fabric.mod.json</code>:</p>
+
+    <pre class="code reveal" tabindex="0"><span class="code__caption">fabric.mod.json</span><code>"entrypoints": {
+  "deepcrate": ["com.example.slatecrate.SlateCrateAddon"]
+}</code></pre>
+
+    <p class="reveal">Then the class itself. <code class="mono">onDeepCrateInit()</code> runs once the
+      six shipped tiers are in place, before anything reads a registry:</p>
+
+    <pre class="code reveal" tabindex="0"><span class="code__caption">SlateCrateAddon.java</span><code>public final class SlateCrateAddon implements DeepCrateAddon {
+    private static final String NAMESPACE = "slatecrate";
+
+    @Override
+    public void onDeepCrateInit() {
+        Identifier crate = Identifier.fromNamespaceAndPath(NAMESPACE, "slate_crate");
+        DeepCrateApi.registerTier(new CrateTier(crate, 10, SlateCrateBlocks.SLATE_CRATE));
+
+        Identifier module = Identifier.fromNamespaceAndPath(NAMESPACE, "module_1024");
+        DeepCrateApi.registerModule(new CrateModule(module, 1024, TagKey.create(Registries.ITEM, module)));
+    }
+}</code></pre>
+
+    <p class="reveal">Ten rows of nine slots, and a module lifting every slot to 1024. The module
+      points at an item tag carrying its own name, so any item added to
+      <code class="mono">slatecrate:module_1024</code> becomes that module with nothing more written.
+      Adding yours to <code class="mono">deepcrate:module_512</code> works the same way, and then asks
+      for no Java at all.</p>
+
     <h2 class="reveal reveal--wide">What stays closed, and why</h2>
     <p class="reveal">A tier stays Java. It carries a block, blocks enter the registry during mod
       loading, and that registry is frozen well before the first data file is read: a crate declared
@@ -95,6 +126,11 @@
       the same address as the button at the foot of the home page. An entry point that moved without
       being announced is declared there like anything else, and the defects already known sit there
       open or closed in plain sight rather than in somebody's inbox.</p>
+
+    <figure class="shot reveal">
+      <img src="/assets/img/addon.png" width="960" height="540" alt="A copper crate screen with a small button an addon hung at the bottom right, past the edge of the panel.">
+      <figcaption>The button at the bottom right comes from an addon, hung through CrateScreenCallback.</figcaption>
+    </figure>
 
     <h2 class="reveal reveal--wide">The licence, for whoever reuses the code</h2>
     <p class="reveal">The mod is not open source. Playing it and passing it on unmodified is free,

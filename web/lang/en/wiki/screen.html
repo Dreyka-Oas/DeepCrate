@@ -60,6 +60,11 @@
       <figcaption>After a sort by name, the tooltip already announces the other direction.</figcaption>
     </figure>
 
+    <figure class="shot reveal">
+      <img src="/assets/img/sorting-count.png" width="960" height="540" alt="A copper crate ordered by contents, the largest stacks first.">
+      <figcaption>The second button orders by what each stack holds, largest first.</figcaption>
+    </figure>
+
     <h2 class="reveal reveal--wide">Sorting is computed on the player's machine</h2>
     <p class="reveal">A server has no language files: it cannot know that this player reads Pierre
       where their neighbour reads Stone, and sorting on a name nobody sees is not sorting. The
@@ -72,6 +77,11 @@
       than hiding it: the slots stay where they are, and only the ones that answer keep their
       brightness. Nothing is moved, so clearing the search leaves the crate exactly as it was.</p>
 
+    <figure class="shot reveal">
+      <img src="/assets/img/search.png" width="960" height="540" alt="A search for diamond: the two diamond stacks keep their brightness, the other slots are dimmed.">
+      <figcaption>The word searched leaves two slots lit and dims the rest, moving nothing.</figcaption>
+    </figure>
+
     <h2 class="reveal reveal--wide">The pages</h2>
     <p class="reveal">A page carries four rows at most, and past that the screen splits. Pages share
       the rows evenly: six rows give two pages of three, not one full and one nearly empty. The
@@ -81,6 +91,11 @@
     <figure class="shot reveal">
       <img src="/assets/img/pages.png" width="960" height="540" alt="An eight-row echo crate split into two pages, the numbers 1 and 2 down the right of the screen.">
       <figcaption>Eight rows split into two pages of four.</figcaption>
+    </figure>
+
+    <figure class="shot reveal">
+      <img src="/assets/img/pages-columns.png" width="960" height="540" alt="A twenty-four row echo crate, six page numbers stacked in two columns down the right edge.">
+      <figcaption>Past four pages, the numbers move onto two columns.</figcaption>
     </figure>
   </main>
 </div>

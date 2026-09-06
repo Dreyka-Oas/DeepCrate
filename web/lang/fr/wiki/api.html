@@ -74,6 +74,37 @@
       étiquette d'objet plutôt que sur un objet précis, donc ajouter le vôtre à
       <code class="mono">deepcrate:module_512</code> en fait un module sans une ligne de code.</p>
 
+    <h2 class="reveal reveal--wide">Un addon en entier</h2>
+    <p class="reveal">Voici tout ce qu'il faut pour ajouter un coffre et un module de capacité, sans
+      mixin et sans rien demander. Le point d'entrée se déclare dans votre propre
+      <code class="mono">fabric.mod.json</code> :</p>
+
+    <pre class="code reveal" tabindex="0"><span class="code__caption">fabric.mod.json</span><code>"entrypoints": {
+  "deepcrate": ["com.example.slatecrate.SlateCrateAddon"]
+}</code></pre>
+
+    <p class="reveal">Puis la classe elle-même. <code class="mono">onDeepCrateInit()</code> tourne une
+      fois les six paliers livrés en place, avant que quoi que ce soit ne lise un registre :</p>
+
+    <pre class="code reveal" tabindex="0"><span class="code__caption">SlateCrateAddon.java</span><code>public final class SlateCrateAddon implements DeepCrateAddon {
+    private static final String NAMESPACE = "slatecrate";
+
+    @Override
+    public void onDeepCrateInit() {
+        Identifier crate = Identifier.fromNamespaceAndPath(NAMESPACE, "slate_crate");
+        DeepCrateApi.registerTier(new CrateTier(crate, 10, SlateCrateBlocks.SLATE_CRATE));
+
+        Identifier module = Identifier.fromNamespaceAndPath(NAMESPACE, "module_1024");
+        DeepCrateApi.registerModule(new CrateModule(module, 1024, TagKey.create(Registries.ITEM, module)));
+    }
+}</code></pre>
+
+    <p class="reveal">Dix rangées de neuf cases, et un module qui monte chaque case à 1024. Le module
+      pointe sur une étiquette d'objet portant son propre nom, donc n'importe quel objet ajouté à
+      <code class="mono">slatecrate:module_1024</code> devient ce module sans une ligne de plus. Ajouter
+      le vôtre à <code class="mono">deepcrate:module_512</code> marche pareil, et ne demande alors
+      aucun Java du tout.</p>
+
     <h2 class="reveal reveal--wide">Ce qui reste fermé, et pourquoi</h2>
     <p class="reveal">Un palier reste du Java. Il porte un bloc, les blocs entrent dans le registre
       pendant le chargement des mods, et ce registre est gelé bien avant la lecture du premier
@@ -95,6 +126,11 @@
       la même adresse que le bouton en bas de l'accueil. Un point d'entrée qui a bougé sans être
       annoncé s'y déclare comme le reste, et les défauts déjà connus y sont ouverts ou fermés à la
       vue de tous plutôt que dans une boîte de réception.</p>
+
+    <figure class="shot reveal">
+      <img src="/assets/img/addon.png" width="960" height="540" alt="L'écran d'un coffre de cuivre avec un petit bouton posé par un addon en bas à droite, au-delà du bord du panneau.">
+      <figcaption>Le bouton en bas à droite vient d'un addon, posé par CrateScreenCallback.</figcaption>
+    </figure>
 
     <h2 class="reveal reveal--wide">La licence, pour qui reprend le code</h2>
     <p class="reveal">Le mod n'est pas sous licence libre. Le jouer et le partager tel quel est
