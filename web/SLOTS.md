@@ -32,7 +32,7 @@ Five places, and a search for the old name has to come back empty before a site 
 | The big two-part wordmark | `lang/fr/index.html` and `lang/en/index.html` |
 | Page titles and meta descriptions | every `.html` file, both trees |
 | The glyph | `assets/favicon.svg` and the constant in `site-chrome.js` |
-| The feedback link | the closing section of both `index.html` files |
+| The repository owner and name | the closing section of both `index.html` files, and `wiki/api.html` |
 
 The custom elements are called `site-nav`, `site-sidebar`, `site-footer` and `site-ledger`. They are
 deliberately neutral, so nothing has to be renamed. If you rename them anyway, the tag, the
@@ -54,6 +54,12 @@ fenced in both `index.html` files by a comment saying what it shows and what to 
 | Statement | A timeline whose last step tips over | `statement.css` | yes |
 | Wiki index | The way into the wiki | `index.css` | yes |
 | Closing call | One last action before the footer | `reports.css` | yes |
+
+The closing call is the one band whose destination is not yours to pick. If you keep it, its button
+goes to `https://github.com/(owner)/(Mod)/issues`, the mod's GitHub Issues page, because that is the
+place where bugs are listed and a reader looking for a known problem has to land on the list itself.
+Not a contact form, not a third-party feedback service, not a chat room. The same address appears in
+`wiki/api.html`, and the two say the same thing or neither is believed.
 
 Deleting a band means three things, and skipping the third is what people get wrong: the markup in
 **both** `index.html` files, the stylesheet, and its `@import` line in `assets/css/components.css`.
