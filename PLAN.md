@@ -76,6 +76,19 @@ fichiers, les deux listes de points d'entrée, le paquet des mixins et `maven_gr
 ressources reste `deepcrate`, donc aucun identifiant écrit dans une sauvegarde ne bouge. C'était la
 dernière fenêtre : après une publication, le même renommage coûte une recompilation à chaque addon.
 
+## Le site
+
+`web/` ne tenait qu'un README pendant que le mod avait déjà toutes ses mécaniques. Il porte
+maintenant une page d'accueil, huit pages de guide, les deux arbres de langue au complet, et six
+vérifications sous `node` sans rien à installer. Les sept images viennent de `runClientGameTest` :
+une mécanique que personne n'a vue tourner n'a pas de bande sur l'accueil.
+
+Le test client a gagné une prise pour la trémie, qui n'en avait aucune. Une case à 96 sur un coffre
+de fer, ce que le plafond du jeu aurait refusé.
+
+Le déploiement attend une décision : aucun projet Cloudflare Pages nommé `deepcrate` n'existe, et en
+créer un ne se devine pas.
+
 ## Ce qui reste
 
 Rien du plan de l'audit. Ce qui traîne est dans `DEFAUTS-CONNUS.md`. Une de ces lignes ne regarde pas

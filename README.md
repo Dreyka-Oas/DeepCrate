@@ -363,5 +363,6 @@ inside an invisible sway session, for the cases those shots do not cover.
 
 ## Layout
 
-`mod/` holds the mod, `web/` is reserved for a showcase page. The design notes are in
-`docs/superpowers/`.
+`mod/` holds the mod. `web/` holds the site, static with no build step, two hand-written language
+trees and its own checks under `web/tools/`; its pictures come out of `runClientGameTest`. The
+design notes are in `docs/superpowers/`.
