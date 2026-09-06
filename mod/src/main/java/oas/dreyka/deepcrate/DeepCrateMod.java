@@ -2,9 +2,12 @@ package oas.dreyka.deepcrate;
 
 import oas.dreyka.deepcrate.config.DeepCrateConfig;
 import oas.dreyka.deepcrate.init.AddonInit;
+import oas.dreyka.deepcrate.init.CommandInit;
 import oas.dreyka.deepcrate.init.ConfigNotice;
 import oas.dreyka.deepcrate.init.CreativeTabInit;
 import oas.dreyka.deepcrate.init.RegistryInit;
+import oas.dreyka.deepcrate.net.ConfigSetPayload;
+import oas.dreyka.deepcrate.net.ConfigSyncPayload;
 import oas.dreyka.deepcrate.net.CrateSortPayload;
 import net.fabricmc.api.ModInitializer;
 
@@ -29,6 +32,9 @@ public final class DeepCrateMod implements ModInitializer {
         AddonInit.register();
         CreativeTabInit.register();
         CrateSortPayload.register();
+        ConfigSyncPayload.register();
+        ConfigSetPayload.register();
+        CommandInit.register();
         ConfigNotice.register();
     }
 }

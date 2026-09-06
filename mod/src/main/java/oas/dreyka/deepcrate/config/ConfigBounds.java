@@ -2,6 +2,7 @@ package oas.dreyka.deepcrate.config;
 
 import oas.dreyka.deepcrate.config.ConfigBoundsTable.Range;
 import java.util.function.Consumer;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Pulling a value written by hand back into the range the code can survive.
@@ -43,6 +44,17 @@ public final class ConfigBounds {
         }
 
         return value;
+    }
+
+    /**
+     * The range an option is clamped to, or null for a boolean and for anything nothing bounds.
+     *
+     * Handed out as a {@link ConfigRange} rather than the table's own record: the table stays
+     * package-private, and this class is the one door into it for reading as well as for clamping.
+     */
+    public static @Nullable ConfigRange rangeOf(String name) {
+        Range range = ConfigBoundsTable.get(name);
+        return range == null ? null : new ConfigRange(range.min(), range.max());
     }
 
     /**

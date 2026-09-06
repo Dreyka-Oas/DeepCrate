@@ -13,6 +13,9 @@ public final class DeepCrateConfig {
     private DeepCrateConfig() {}
 
     public static void load() {
+        // Before the file is touched: right now the fields still hold their Java initialisers, and
+        // those are the values the reset control puts back once the file has overwritten them.
+        ConfigRuntime.captureDefaults();
         ConfigIo.load();
     }
 }

@@ -26,6 +26,22 @@ public final class ConfigIo {
     }
 
     /**
+     * The live options back onto disk, for an edit made in game rather than in a text editor.
+     *
+     * The writer is synchronised and writes through a temporary file, so a save landing while another
+     * one is in flight waits its turn instead of producing a half file. A path that cannot even be
+     * resolved is the caller's business no more than a failed write is: the value is already applied
+     * in memory, and throwing here would take down the command or the packet handler that asked.
+     */
+    public static void save() {
+        try {
+            ConfigWriter.save(file());
+        } catch (RuntimeException noPath) {
+            DeepCrate.LOGGER.warn("[DeepCrate] settings could not be saved: {}", noPath.toString());
+        }
+    }
+
+    /**
      * What the last read made of the file, or nothing when it has not happened yet.
      *
      * Read by the operator notice, because a log line on its own is close to worthless: a solo player

@@ -2,14 +2,17 @@ package oas.dreyka.deepcrate.client;
 
 import oas.dreyka.deepcrate.client.render.DeepCrateRenderer;
 import oas.dreyka.deepcrate.client.screen.DeepCrateScreen;
+import oas.dreyka.deepcrate.client.screen.config.ConfigScreen;
 import oas.dreyka.deepcrate.client.screen.hook.CrateTooltipCallback;
 import oas.dreyka.deepcrate.client.sort.CrateSortOrder;
 import oas.dreyka.deepcrate.client.sort.DeepCrateClientApi;
 import oas.dreyka.deepcrate.config.domain.ScreenConfig;
 import oas.dreyka.deepcrate.init.RegistryInit;
 import oas.dreyka.deepcrate.inventory.slot.DeepCrateSlot;
+import oas.dreyka.deepcrate.net.ConfigSyncPayload;
 import java.util.Comparator;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.network.chat.Component;
@@ -20,8 +23,26 @@ public final class DeepCrateClient implements ClientModInitializer {
     public void onInitializeClient() {
         registerShippedSortOrders();
         registerShippedTooltipLine();
+        registerConfigSync();
         MenuScreens.register(RegistryInit.MENU, DeepCrateScreen::new);
         BlockEntityRendererRegistry.register(RegistryInit.BLOCK_ENTITY, DeepCrateRenderer::new);
+    }
+
+    /**
+     * The settings screen is opened by the packet rather than by the command, because everything it
+     * shows comes from the server's own snapshot and there is nothing to draw before that arrives.
+     * A snapshot landing while the screen is already open is the answer to something typed into it,
+     * a clamped value most of the time, so it goes to the screen already there instead of opening a
+     * second one over it.
+     */
+    private static void registerConfigSync() {
+        ClientPlayNetworking.registerGlobalReceiver(ConfigSyncPayload.TYPE, (payload, context) -> context.client().execute(() -> {
+            if (context.client().screen instanceof ConfigScreen configScreen) {
+                configScreen.applySnapshot(payload.options());
+            } else {
+                context.client().setScreen(new ConfigScreen(payload.options()));
+            }
+        }));
     }
 
     /**
