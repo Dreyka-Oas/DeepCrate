@@ -12,8 +12,14 @@
   display: block;
   width: 100%;
   height: auto;
+  /* The interface is drawn at four times its own scale in these frames, so
+     nothing may smooth it back into mush. */
   image-rendering: pixelated;
 }
+
+/* A world view carries no interface, and scaling one by a fraction with
+   pixelated drops rows of pixels unevenly. These get the smooth path. */
+.shot--world img { image-rendering: auto; }
 .shot figcaption {
   padding: var(--space-2) var(--space-3);
   border-top: 1px solid var(--border);

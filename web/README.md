@@ -72,6 +72,14 @@ Pushing to GitHub does not put the site online. The deploy command is what does.
     assets/img          frames taken by the mod's own client test
     tools               the checks, dependency-free
 
-Every picture under `assets/img/` comes out of `./gradlew runClientGameTest` in `../mod/`, halved
-with a box filter so the interface stays crisp. Nothing here is drawn by hand or staged: a picture
-that is not the mod running has no place on the page.
+Every picture under `assets/img/` comes out of `./gradlew runClientGameTest` in `../mod/`. Those
+carrying interface are halved with a box filter, an exact half of a four-times scale, so the text
+lands back on whole pixels, and they render with `image-rendering: pixelated`.
+
+The two world views carry no interface and take `.shot--world`, which renders them smooth: scaling
+one by a fraction with `pixelated` drops rows of pixels unevenly. `hero.png` is the only one kept at
+its native 1920, because it is the only figure that draws full width, up to 1720, where a half-size
+source would upscale visibly. The rest never exceed the column they sit in.
+
+Nothing here is drawn by hand or staged: a picture that is not the mod running has no place on the
+page.
