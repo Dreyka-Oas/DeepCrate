@@ -102,9 +102,29 @@ A hopper against a double crate reaches the half it touches, as it does with a b
 two halves there is what vanilla does for chests, but lithium casts that result back to a block
 entity and crashes the server on the first tick.
 
+## Settings
+
+`config/oas/deepcrate.json`, written on first launch and rewritten at every one after, so an option
+added by an update shows up there by itself. A value outside its range is pulled back in and the
+corrected value is what stays on disk.
+
+| Option | Default | Range | What it decides |
+|---|---|---|---|
+| `crate.baseCapacity` | 64 | 1 to 32767 | what a slot holds with no capacity module in the crate |
+| `crate.limitAutomationWithLithium` | true | true or false | whether a crate answers 64 to automation while lithium is installed |
+| `crate.maxRowsPerPage` | 4 | 1 to 6 | rows on one page before the screen splits the crate |
+| `crate.rowModuleStackLimit` | 16 | 1 to 20 | row modules one crate takes, which is also the item's stack limit |
+| `screen.abbreviateAbove` | 999 | 999 to 2147483647 | the count past which a slot shows 2k instead of 2048 |
+
+The first four are read on the server and reach every client of it. The fifth is read where the
+screen is drawn, so it belongs to whoever is looking. Lowering `rowModuleStackLimit` never shrinks a
+crate already placed: the rows come from the stack that is actually there, and only a new insertion is
+refused.
+
 ## For other mods
 
-Three things, because the ask named three. Add a module, add a tier, change the slot and page counts.
+One entry point, one `register` call and a lang key. Declare your class under `"deepcrate"` in the
+`entrypoints` block of your `fabric.mod.json` and implement `DeepCrateAddon`:
 
 ```java
 public class MyAddon implements DeepCrateAddon {
@@ -117,9 +137,58 @@ public class MyAddon implements DeepCrateAddon {
 }
 ```
 
-Declare the class under `"deepcrate"` in the `entrypoints` block of your `fabric.mod.json`. A module
-points at an item tag rather than at one item, so adding your item to `deepcrate:module_512` is
-enough to make it a module, with no code at all.
+Eleven things are reachable from outside, and nothing here is a special case the mod keeps for
+itself: every shipped tier, module, sort order and tooltip line goes through the same calls.
+
+| Point | Where | What it adds |
+|---|---|---|
+| `DeepCrateApi.registerTier` | `onDeepCrateInit` | a crate, with its block, its columns and its own rows |
+| `DeepCrateApi.registerModule` | `onDeepCrateInit` | a capacity module, pointed at an item tag |
+| `DeepCrateApi.registerRowModule` | `onDeepCrateInit` | a module that buys rows rather than capacity |
+| `DeepCrateApi.registerModuleSlot` | `onDeepCrateInit` | a cell on the module tab, which grows with it |
+| `CrateLayoutCallback.EVENT` | `onDeepCrateInit` | the last word on a crate's columns and rows per page |
+| `CrateCapacityCallback.EVENT` | `onDeepCrateInit` | the last word on what a slot holds |
+| `ConfigSchema.registerHolder` | `onDeepCrateConfig` | your own options, in the same settings file |
+| `ConfigBounds.registerGroup` | `onDeepCrateConfig` | the range each of them is clamped to |
+| `DeepCrateClientApi.registerSortOrder` | client init | a sort button, with its icon and its comparator |
+| `CrateScreenCallback.EVENT` | client init | a widget on the crate screen |
+| `CrateTooltipCallback.EVENT` | client init | a line in the tooltip of a crate slot |
+
+A module points at an item tag rather than at one item, so adding your item to `deepcrate:module_512`
+is enough to make it a module, with no code at all.
+
+The screen hands you a `CrateScreenArea`: the panel's corner, its size, a way to add a widget, and
+`keepClickable`. Name any rectangle you draw past the edge of the panel through that last one. The
+game counts a click outside a container screen as a click into the world, and releasing one there
+throws on the ground whatever the player is carrying. The two shipped buttons and the module tab are
+named the same way.
+
+`onScreenInit` fires again on every layout, which includes every window resize, and the screen throws
+its widgets away between two of those. Add yours again rather than keeping one across calls.
+
+Four public constants are gone, because each of them is now a setting an admin decides:
+`DeepCrateApi.BASE_CAPACITY` and `CrateLayout.MAX_ROWS_PER_PAGE` and `RowModule.STACK_LIMIT` read as
+`CrateConfig.baseCapacity`, `CrateConfig.maxRowsPerPage` and `CrateConfig.rowModuleStackLimit`, and
+`DeepCrateApi.AUTOMATION_LIMITED` as `DeepCrateApi.automationLimited()`. Keeping the first three
+deprecated would have been worse than removing them: `javac` copies the value of a compile-time
+constant into your class file, so an addon built against them would carry 64, 4 and 16 for good and
+compute capacities the server does not have. `DeepCrateApi.MAX_CAPACITY` stays, because a packet
+writing a short is not going to change.
+
+Your own options go on a holder class of your own, registered from `onDeepCrateConfig()`, which
+`DeepCrateAddon` gives you beside `onDeepCrateInit()`:
+
+```java
+    @Override
+    public void onDeepCrateConfig() {
+        ConfigSchema.registerHolder(MyAddonConfig.class, "myaddon");
+        ConfigBounds.registerGroup(MyAddonBounds::register);
+    }
+```
+
+That pass runs before the settings file is read, which is before any registry is filled. Touch
+nothing outside the config package from it: reaching `RegistryInit` there runs its class initialiser
+ahead of the read and freezes `rowModuleStackLimit` at its default.
 
 ## Build and test
 

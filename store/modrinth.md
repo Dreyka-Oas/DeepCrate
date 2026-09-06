@@ -58,6 +58,8 @@ Required on the server and on every client.
 > That was measured, not assumed: eight blocks of dirt destroyed per run, patch or no patch. A crate
 > therefore tells automation 64 a slot for as long as lithium is there, which costs you the feature and
 > keeps your items. Your own hands go through the screen and are unaffected either way.
+> Whoever runs the server can take that decision back: `limitAutomationWithLithium` in
+> `config/oas/deepcrate.json`, set to false, gives the feature back and gives up those items.
 
 ## The six crates
 
