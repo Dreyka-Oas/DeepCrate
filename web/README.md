@@ -1,7 +1,13 @@
 # DeepCrate, the site
 
-Static, no build, no dependency. Two hand-written language trees under `lang/`, a root page that
-sends a visitor into one of them, and a set of checks that run under plain `node`.
+Built from the workshop's site template, `.claude/skills/site-template/template/`. The skeleton is
+that template's, unchanged: the spacing and type scales, the components and their dimensions, the
+router, the checks. What belongs to this mod is the palette, the four faces, the crate glyph, the
+moving scene behind the hero, the sound, and every line of text.
+
+[SLOTS.md](SLOTS.md) is the template's own map and is kept as it shipped. It says which files hold a
+decision (`SLOT`) and which are plumbing (`KEEP`), and `check-slots.mjs` fails on a source file
+carrying neither marker.
 
 ## Looking at it locally
 
@@ -10,71 +16,48 @@ Serve the folder instead:
 
     python3 -m http.server 8123 --bind 127.0.0.1
 
-Then open `http://127.0.0.1:8123/`, never the `.html` file itself.
-
 That server sends `Last-Modified` and no `Cache-Control`, so a browser holds the stylesheets and a
 CSS edit does not show up on reload. It cost half an hour once, chasing a padding bug that was
 already fixed on disk. When editing CSS, serve with `Cache-Control: no-store` instead, or read the
 computed value rather than trusting the picture.
 
-## The layers a page carries
-
-Order in `<head>`, and none of it deferred: `core/dc-lang` (it can redirect, and everything reads
-`DC.s` off it), the two string tables, `core/dc-theme`, `chrome/dc-boot`, the four sound files, then
-`chrome/components`. The parser has to reach the `<dc-*>` tags with the elements already defined, or
-undefined content flashes before the swap.
-
-`chrome/dc-boot.js` is the opening screen: two halves meeting on a seam, a cell filling between
-them, and the site behind. It plays on a full load only, since the router never re-runs the `<head>`,
-and it does not exist at all under reduced-motion or with JS off. A click, Escape, Enter or space
-cuts it short, and a cap ends it whatever the font server is doing.
-
-`fx/sound/` is four files: the engine (one context, one master gain, the room tone, the mute stored
-in `dc-sound`), the shared burst graph, the four voices, and the nav button. Nothing is loaded from
-disk, it is all synthesised. Nothing plays before a first real gesture either, which is a browser
-rule and not a choice: a `click` dispatched over CDP does not always count as one, so an audit that
-wants the context running should send a keypress. The voices are wired in one place each, the router
-for `tap` and `slide`, the theme button for `latch`, and `data-sfx` on a revealed block for `shard`.
-
-`lang/*/oas.html` is where the footer signature goes. It presents the workshop rather than the mod,
-and it is the one page in the tree with no sidebar and no breadcrumb.
-
 ## The checks
 
     node tools/check.mjs
 
-Six of them, and one command gates a commit. `check-assets` walks every `href` and `src`, refuses a
-page whose script and stylesheet list differs from its siblings, and reports anything under
-`assets/` that nothing points at. `check-lang` proves the two trees are symmetric, by `<html lang>`,
-by `hreflang` and by file name. `check-i18n` runs both string tables in a sandbox and compares their
-keys. `check-source` finds classes defined and never used, and used and never defined.
-`check-tells` covers the typography, the horizontal rule and the filler words. `check-design`
-measures variety: easing curves, reveal distances, background textures, page skeletons.
+Seven, and one command gates a commit. They are the template's, with two lists filled in for this
+site: the forbidden register in `check-tells.mjs`, and the per-page word ceilings beside it.
+
+## What this site adds to the template
+
+One component, `components/wiki/shots.css`. The template draws everything in CSS and loads no image,
+which is the right default for a site that has to paint before the fonts land. This mod has seven
+frames taken by its own client gametest, and a guide page that describes a screen without showing it
+is asking to be taken at its word. Interface frames render with `image-rendering: pixelated`, the
+two world views take `.shot--world` and render smooth, and `hero.png` is the only one kept at its
+native 1920 because it is the only figure that draws full width.
+
+Every picture under `assets/img/` comes out of `./gradlew runClientGameTest` in `../mod/`. Nothing
+here is staged or drawn by hand: a picture that is not the mod running has no place on the page.
+
+## Where the mod's own decisions live
+
+The palette and the four faces are in `assets/css/tokens.css`. The nav links, the sidebar groups,
+the crate glyph and the footer are in `assets/js/chrome/site-chrome.js`. The six tiers are in the
+two i18n tables, not in `home-tiers.js`, because the game prints their material names differently in
+the two languages. The chart on the rows page is the mod's own rule, base plus nine per module, and
+its endpoints match the prose on that page digit for digit.
 
 ## What the checks do not cover
 
-Two things only a browser answers, and neither is in `check.mjs`. Responsive behaviour, read at the
-widths a phone, a tablet and a desktop actually use rather than guessed from the media queries; the
-nav breakpoint and the guide padding were both wrong and both looked fine in the source. And an
-accessibility audit, which caught colour-only links, an unreachable code block and dark ink on a
-fill too dark to carry it.
+Two things only a browser answers. Responsive behaviour, read at the widths a phone, a tablet and a
+desktop actually use, and read wide: a container capped at a fixed pixel width with an auto margin
+is centering, and it looks fine at 1440 and shameful at 2560. And an accessibility audit, on both
+themes, because half of what it finds shows up in one and not the other. Force the theme through
+`localStorage` and confirm `data-theme` on `<html>` before trusting the run.
 
-Centering is worth a grep before the browser pass, since a page held in the middle by `margin: auto`
-and a couple of `text-align: center` reads as a layout until the window narrows:
-
-    grep -rnE 'text-align:\s*center|margin(-inline)?:\s*(0|auto)|justify-content:\s*center|place-items:\s*center' assets lang
-
-Every hit gets read where it sits. Here they are a digit inside a step badge, the page gutter on
-`.container`, and the language gate, which is two links and has nothing to reflow. The real test is
-that the first mechanic band goes from two columns to one and that the nav and the hero mark change
-with the width, not that the middle column gets thinner.
-
-    agent-browser --headed --session <name> open http://127.0.0.1:8123/lang/fr/
-    agent-browser --headed --session <name> set viewport 390 844
-    agent-browser --headed --session <name> a11y
-    agent-browser --headed --session <name> set media dark
-
-Run the audit on both themes. Half of what it found showed up in one and not the other.
+A click dispatched over CDP does not always count as the user gesture the audio context waits for.
+Send a keypress and read the context state before concluding the sound is broken.
 
 ## Deploying
 
@@ -84,24 +67,10 @@ Build command empty, output directory this folder.
 
 Pushing to GitHub does not put the site online. The deploy command is what does.
 
-## Layout
+## Licence
 
-    index.html          language gate, no content of its own
-    _headers            security headers, one policy for every response
-    lang/fr, lang/en    one tree per language, the same file names on both sides
-    assets/css          tokens, base, and one file per component
-    assets/js           core, chrome, fx, router, i18n
-    assets/img          frames taken by the mod's own client test
-    tools               the checks, dependency-free
-
-Every picture under `assets/img/` comes out of `./gradlew runClientGameTest` in `../mod/`. Those
-carrying interface are halved with a box filter, an exact half of a four-times scale, so the text
-lands back on whole pixels, and they render with `image-rendering: pixelated`.
-
-The two world views carry no interface and take `.shot--world`, which renders them smooth: scaling
-one by a fraction with `pixelated` drops rows of pixels unevenly. `hero.png` is the only one kept at
-its native 1920, because it is the only figure that draws full width, up to 1720, where a half-size
-source would upscale visibly. The rest never exceed the column they sit in.
-
-Nothing here is drawn by hand or staged: a picture that is not the mod running has no place on the
-page.
+Two, and they are not the same one. This site is private, all rights reserved, in [LICENSE](LICENSE)
+at the root of this folder. The mod it talks about ships under its own terms, in its own `LICENSE`
+next to the Java sources: free to play, free to pass on unmodified, never to be sold, everything
+else on request. `wiki/api.html` and `wiki/installation.html` describe the mod's terms and point at
+the file that travels in every download, never at the one sitting here.

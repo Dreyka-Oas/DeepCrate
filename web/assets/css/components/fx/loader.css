@@ -1,8 +1,12 @@
-/* Opening screen, injected by chrome/dc-boot.js from <head> and removed once
-   the site is ready. Full loads only, never during a router swap. Absent when
-   JS is off or reduced-motion is set, so the page stays directly reachable.
-   Everything comes from the tokens, so it follows the theme like the rest. */
-#dc-loader {
+/* ============================================================
+   KEEP. Draws the opening screen injected by chrome/site-boot.js: two panels
+   and the wordmark placeholder, shown as early as possible (a <head> script)
+   and removed once the site is ready. Plays on full loads only, never during
+   a pjax navigation, and stays absent when JS is disabled or reduced-motion
+   is set. Colors already come from the tokens, and the mod's own name is set
+   in site-boot.js, not here, so this file needs no edit to fill in a mod.
+   ============================================================ */
+#site-loader {
   position: fixed;
   inset: 0;
   z-index: 9999;
@@ -10,94 +14,63 @@
   place-items: center;
   overflow: hidden;
   color: var(--ink);
+  font-family: var(--font-display), sans-serif;
 }
-
-/* Two opaque halves meeting in the middle. They part sideways on opening, the
-   way a lid is pulled off rather than the way a door swings. */
-.dc-loader__half {
+/* Two opaque panels. They part on opening. */
+.site-loader__panel {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50.5%;
+  left: 0;
+  right: 0;
+  height: 50%;
   background: var(--bg);
   z-index: 0;
-  transition: transform 740ms var(--ease-slide);
+  transition: transform 780ms var(--ease-glide);
 }
-.dc-loader__half--left { left: 0; }
-.dc-loader__half--right { right: 0; }
-
-/* The seam. Each half carries half of it, so closed it reads as one line down
-   the middle and it leaves with the halves. */
-.dc-loader__half::after {
+.site-loader__panel--top { top: 0; }
+.site-loader__panel--bottom { bottom: 0; }
+/* Hazard stripe on the outer edge of each door. It frames the screen, and
+   leaves with the door when the seal breaks. */
+.site-loader__panel::after {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--fill-primary);
-  opacity: 0.55;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(135deg, var(--primary-text) 0 13px, var(--ink) 13px 26px);
+  opacity: 0.85;
 }
-.dc-loader__half--left::after { right: 0; }
-.dc-loader__half--right::after { left: 0; }
+.site-loader__panel--top::after { top: 0; }
+.site-loader__panel--bottom::after { bottom: 0; }
 
-.dc-loader__core {
+.site-loader__core {
   position: relative;
   z-index: 2;
-  width: min(88vw, 380px);
+  width: min(90vw, 440px);
   text-align: center;
-  /* Opaque, so the seam runs behind the block instead of through the
-     wordmark's letters. */
-  background: var(--bg);
-  padding: var(--space-4) var(--space-3);
-  transition: opacity 280ms ease, transform 280ms ease;
+  transition: opacity 300ms ease, transform 300ms ease;
 }
-
-/* One cell filling, the mod's whole idea in a rectangle: it does not stop at
-   the width a vanilla stack would have taken. */
-.dc-loader__cell {
-  height: 10px;
-  margin: 0 auto var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  overflow: hidden;
-}
-.dc-loader__fill {
-  display: block;
-  height: 100%;
-  width: 100%;
-  background: var(--fill-primary);
-  transform-origin: left;
-  animation: dc-loader-fill 1.45s var(--ease-drop) forwards;
-}
-@keyframes dc-loader-fill {
-  0%   { transform: scaleX(0.04); }
-  38%  { transform: scaleX(0.22); }
-  62%  { transform: scaleX(0.44); }
-  100% { transform: scaleX(1); }
-}
-
-.dc-loader__mark {
-  margin: 0;
+.site-loader__mark {
+  margin: 0 0 22px;
   font-family: var(--font-display);
-  font-size: clamp(2.1rem, 7vw, 3.4rem);
-  line-height: 1;
-  letter-spacing: -0.02em;
+  font-weight: 400;
+  font-size: clamp(2.6rem, 9vw, 4.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
   color: var(--ink);
 }
-.dc-loader__mark span { color: var(--primary-text); }
+.site-loader__mark-b { color: var(--primary-text); }
 
-#dc-loader.is-done .dc-loader__core { opacity: 0; transform: translateY(-6px); }
-#dc-loader.is-open { pointer-events: none; }
-#dc-loader.is-open .dc-loader__half--left { transform: translateX(-100%); }
-#dc-loader.is-open .dc-loader__half--right { transform: translateX(100%); }
+/* Ouverture : les panneaux s'écartent, le bloc central s'efface, le site apparaît. */
+#site-loader.is-open { pointer-events: none; }
+#site-loader.is-open .site-loader__panel--top { transform: translateY(-100%); }
+#site-loader.is-open .site-loader__panel--bottom { transform: translateY(100%); }
+#site-loader.is-open .site-loader__core { opacity: 0; transform: scale(0.96); }
 
-/* Scrolling is locked while the screen is up, otherwise the page underneath
-   moves behind a cover the visitor cannot see through. */
-html.dc-booting { overflow: hidden; }
+/* Verrouille le défilement pendant l'écran d'ouverture. */
+html.site-booting { overflow: hidden; }
 
-/* dc-boot.js already refuses to run under reduced-motion. This is the guard
-   for the case where the element exists anyway. */
+/* Garde-fou : si l'écran existe malgré reduced-motion, aucune animation. */
 @media (prefers-reduced-motion: reduce) {
-  #dc-loader, #dc-loader * { animation: none !important; transition: none !important; }
+  #site-loader, #site-loader * { animation: none !important; transition: none !important; }
 }

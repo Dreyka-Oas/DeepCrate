@@ -1,16 +1,17 @@
 // Run from web/:  node tools/check-assets.mjs
 //
-// The asset graph. Three things nothing else enforces on a site with no build:
+// KEEP. The asset graph. Three things nothing else enforces on a zero-build site,
+// each of which has already broken once:
 //
 //   1. Every href/src in every page resolves to a file that exists. A rename
-//      under assets/ is otherwise invisible until a 404 shows up live.
+//      under assets/ is otherwise invisible until a 404 shows up in production.
 //   2. Every page carries the SAME ordered asset list. The router only swaps
 //      <body>, so a script present on one page and missing on another arrives
 //      crippled after an internal navigation, and router-swap.js rebinds
-//      unguarded on the strength of this check.
+//      unguarded, on the strength of this check.
 //   3. Every file under assets/ is actually reached, and every component
 //      stylesheet is imported by components.css exactly once. An orphan is
-//      either dead weight in the deploy or a file nobody wired up.
+//      either dead weight in the deploy or a file someone forgot to wire up.
 import { existsSync } from "node:fs";
 import { dirname, join, normalize } from "node:path";
 import { walk, read, byExt, fail, pass, done } from "./lib/tree.mjs";
@@ -19,8 +20,8 @@ const files = walk();
 const pages = byExt(files, ".html").sort();
 const assets = files.filter((f) => f.startsWith("assets/"));
 
-// The root gate is not a router destination: it carries one script of its own
-// and is exempt from rule 2. Rules 1 and 3 still cover it.
+// The root switch page is not a router destination: it carries its own single
+// script and is exempt from rule 2 below. Rules 1 and 3 still cover it.
 const GATE = "index.html";
 const routed = pages.filter((p) => p !== GATE);
 
@@ -33,7 +34,8 @@ const isLocal = (ref) => ref && !/^(https?:|mailto:|tel:|data:|#|\/\/)/i.test(re
 const reached = new Set();
 let broken = 0;
 for (const page of pages) {
-  for (const [, , ref] of read(page).matchAll(/\b(href|src)="([^"]*)"/g)) {
+  const html = read(page);
+  for (const [, , ref] of html.matchAll(/\b(href|src)="([^"]*)"/g)) {
     if (!isLocal(ref)) continue;
     const target = resolve(page, ref.split(/[?#]/)[0]);
     if (!existsSync(target)) { fail(`${page} -> ${ref} (missing ${target})`); broken++; }

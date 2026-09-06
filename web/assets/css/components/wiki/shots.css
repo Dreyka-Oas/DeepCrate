@@ -1,7 +1,13 @@
-/* Every picture on this site is a frame taken by the mod's own client test.
-   They are pixel art at heart, so nothing here is allowed to smooth them. */
+/* SLOT shots. The one component this site adds to the template, because the
+   template draws everything in CSS and this mod has frames taken by its own
+   client test. A guide page that describes a screen and never shows it is
+   asking the reader to take its word for it.
+
+   What has to survive if the shape changes: the figure keeps its caption, and
+   an interface frame keeps image-rendering: pixelated. Delete the whole file
+   and its @import together with every <figure class="shot"> in both trees. */
 .shot {
-  margin: 0;
+  margin: var(--space-4) 0;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--surface);
@@ -16,7 +22,6 @@
      nothing may smooth it back into mush. */
   image-rendering: pixelated;
 }
-
 /* A world view carries no interface, and scaling one by a fraction with
    pixelated drops rows of pixels unevenly. These get the smooth path. */
 .shot--world img { image-rendering: auto; }
@@ -27,6 +32,3 @@
   font-size: 0.75rem;
   color: var(--muted);
 }
-
-/* Inside a wiki page the picture sits in the prose column and stays narrow. */
-.prose .shot { margin: var(--space-4) 0; max-width: 100%; }

@@ -1,0 +1,18 @@
+/* The shared furniture of a home band. Every section below the hero uses the
+   same wrapper, the same tag above the heading and the same title treatment,
+   defined once here so a new band needs no CSS of its own.
+   SLOT: the tag above each heading is where a mod's own register shows. One
+   site numbered its bands like exhibits in a file; the next one names them
+   another way. Change the wording in the HTML, not the rules here. */
+
+.home-edition { padding: clamp(48px, 7vh, 96px) clamp(20px, 5vw, 64px); max-width: 1180px; margin: 0 auto; }
+.home-tag { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.005em; color: var(--primary-text); display: flex; gap: 12px; align-items: center; margin-bottom: 22px; }
+.home-tag::before { content: ""; width: 26px; height: 2px; background: var(--primary-text); flex: 0 0 auto; }
+.home-tag em { color: var(--muted); font-style: normal; font-family: var(--font-mono); }
+
+.home-sec-title {
+  font-family: var(--font-display); font-weight: 400; text-transform: uppercase;
+  font-size: clamp(2rem, 5.2vw, 3.6rem); line-height: 1.1; letter-spacing: -0.005em;
+  color: var(--ink); max-width: 18ch; margin-bottom: 18px;
+}
+.home-sec-title .dot { color: var(--primary-text); }

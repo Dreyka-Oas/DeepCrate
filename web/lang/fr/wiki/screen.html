@@ -3,93 +3,96 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tri, recherche et pages, DeepCrate</title>
-<meta name="description" content="Les deux boutons de tri, le champ de recherche, le découpage en pages et les comptes abrégés.">
+<title>Tri, recherche et pages · DeepCrate</title>
+<meta name="description" content="Deux boutons de tri calcules chez le joueur, une recherche qui eteint au lieu de cacher, et des pages de quatre rangees.">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate" hreflang="fr" href="/lang/fr/wiki/screen.html">
 <link rel="alternate" hreflang="en" href="/lang/en/wiki/screen.html">
+<link rel="alternate" hreflang="x-default" href="/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Saira+Stencil+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/tokens.css">
 <link rel="stylesheet" href="/assets/css/base.css">
 <link rel="stylesheet" href="/assets/css/components.css">
-<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/core/site-lang.js"></script>
 <script src="/assets/js/i18n/fr.js"></script>
 <script src="/assets/js/i18n/en.js"></script>
-<script src="/assets/js/core/dc-theme.js"></script>
-<script src="/assets/js/chrome/dc-boot.js"></script>
+<script src="/assets/js/core/site-theme.js"></script>
+<script src="/assets/js/core/site-motion.js"></script>
 <script src="/assets/js/fx/sound/engine.js"></script>
 <script src="/assets/js/fx/sound/burst.js"></script>
 <script src="/assets/js/fx/sound/voices.js"></script>
 <script src="/assets/js/fx/sound/toggle.js"></script>
+<script src="/assets/js/chrome/site-boot.js"></script>
+<script src="/assets/js/chrome/site-icons.js"></script>
+<script src="/assets/js/chrome/site-chrome.js"></script>
+<script src="/assets/js/chrome/site-ledger.js"></script>
 <script src="/assets/js/chrome/components.js"></script>
+<script src="/assets/js/page/home-backdrop.js"></script>
+<script src="/assets/js/page/home-tiers.js"></script>
+<script src="/assets/js/page/home.js"></script>
 </head>
 <body>
-<dc-nav></dc-nav>
+
+<site-nav current="/wiki/screen.html"></site-nav>
 
 <div class="container wiki-layout">
-<dc-sidebar></dc-sidebar>
-<main class="wiki-content prose">
+  <site-sidebar current="/wiki/screen.html"></site-sidebar>
 
-<p class="wiki-breadcrumb"><a href="/lang/fr/index.html">DeepCrate</a> / Tri, recherche et pages</p>
-<h1>Tri, recherche et pages</h1>
-<p class="wiki-lede">Trois choses vivent autour de la grille : deux boutons au-dessus du coin haut
-gauche, un champ de recherche à côté du mot Inventaire, et une colonne de numéros au bord droit
-quand le coffre ne tient plus sur une page.</p>
+  <main class="wiki-content prose">
+    <p class="breadcrumb"><a href="../index.html">DeepCrate</a> / L'écran / Tri, recherche et pages</p>
+    <h1 class="reveal reveal--wide">Tri, recherche et pages</h1>
+    <p class="reveal">Trois choses vivent autour de la grille : deux boutons au-dessus du coin haut
+      gauche, un champ de recherche à côté du mot Inventaire, et une colonne de numéros au bord droit
+      quand le coffre ne tient plus sur une page.</p>
 
-<h2>Les deux boutons</h2>
-<p>Le premier range par nom, le second par ce que chaque pile contient. Les deux rassemblent les
-piles identiques en une seule, jusqu'à ce que le module autorise, et c'est de là que viennent les
-cases libres après un tri. Une seconde pression sur le même bouton inverse le sens.</p>
-<p>Le dessin annonce ce que fera la pression suivante, A au-dessus de Z ou Z au-dessus de A, pas ce
-qu'a fait la dernière. Une paire est triée comme une seule série de cases plutôt qu'une moitié après
-l'autre, donc les lettres ne recommencent pas au milieu. Les modules restent dans leur languette.</p>
+    <h2 class="reveal reveal--wide">Les deux boutons</h2>
+    <p class="reveal">Le premier range par nom, le second par ce que chaque pile contient. Les deux
+      rassemblent les piles identiques en une seule, jusqu'à ce que le module autorise, et c'est de
+      là que viennent les cases libres après un tri. Une seconde pression sur le même bouton inverse
+      le sens.</p>
+    <p class="reveal">Le dessin annonce ce que fera la pression suivante, A au-dessus de Z ou Z
+      au-dessus de A, pas ce qu'a fait la dernière. Une paire est triée comme une seule série de
+      cases plutôt qu'une moitié après l'autre, donc les lettres ne recommencent pas au milieu. Les
+      modules restent dans leur languette.</p>
 
-<figure class="shot">
-<img src="/assets/img/sorting.png" width="960" height="540" alt="Un coffre de cuivre rangé par nom, l'infobulle du bouton annonçant Sort Z to A.">
-<figcaption>Après un tri par nom, l'infobulle annonce déjà le sens inverse.</figcaption>
-</figure>
+    <figure class="shot reveal">
+      <img src="/assets/img/sorting.png" width="960" height="540" alt="Un coffre de cuivre rangé par nom, l'infobulle du bouton annonçant Sort Z to A.">
+      <figcaption>Après un tri par nom, l'infobulle annonce déjà le sens inverse.</figcaption>
+    </figure>
 
-<h2>Le tri se calcule chez le joueur</h2>
-<p>Un serveur n'a pas de fichiers de langue : il ne peut pas savoir que ce joueur lit Pierre là où
-son voisin lit Stone, et trier sur un nom que personne ne voit n'est pas trier. Le classement est
-donc fait sur la machine du joueur et envoyé entier, comme une liste d'objets.</p>
-<p>Ce qui revient n'est qu'un réarrangement de ce que le coffre avait déjà, donc une liste inventée
-coûte à son auteur un coffre en désordre, et rien de plus.</p>
+    <h2 class="reveal reveal--wide">Le tri se calcule chez le joueur</h2>
+    <p class="reveal">Un serveur n'a pas de fichiers de langue : il ne peut pas savoir que ce joueur
+      lit Pierre là où son voisin lit Stone, et trier sur un nom que personne ne voit n'est pas
+      trier. Le classement est donc fait sur la machine du joueur et envoyé entier, comme une liste
+      d'objets. Ce qui revient n'est qu'un réarrangement de ce que le coffre avait déjà, donc une
+      liste inventée coûte à son auteur un coffre en désordre, et rien de plus.</p>
 
-<h2>La recherche</h2>
-<p>Le champ à droite du mot Inventaire éteint ce qui ne correspond pas plutôt que de le cacher : les
-cases restent où elles sont, et seules celles qui répondent gardent leur éclat. Rien n'est déplacé,
-donc effacer la recherche rend le coffre exactement tel qu'il était.</p>
+    <h2 class="reveal reveal--wide">La recherche</h2>
+    <p class="reveal">Le champ à droite du mot Inventaire éteint ce qui ne correspond pas plutôt que
+      de le cacher : les cases restent où elles sont, et seules celles qui répondent gardent leur
+      éclat. Rien n'est déplacé, donc effacer la recherche rend le coffre exactement tel qu'il
+      était.</p>
 
-<h2 id="pages">Les pages</h2>
-<p>Une page porte quatre rangées au maximum, et au-delà l'écran se coupe. Les pages se partagent les
-rangées à parts égales : six rangées donnent deux pages de trois, pas une pleine et une presque vide.
-Les numéros s'empilent au bord droit, sur deux colonnes s'il y en a beaucoup, et un point marque
-celles qui portent quelque chose.</p>
-<p>Il n'y a pas de barre de défilement, et un clic avec Maj atteint toutes les cases, y compris
-celles des pages qui ne sont pas ouvertes.</p>
-<p>Le numéro de page est une vue, et il ne part jamais vers le serveur. Aucun indice de case côté
-serveur ne se pilote donc depuis l'extérieur, ce qui est la porte par laquelle passeraient des objets
-dupliqués.</p>
+    <h2 class="reveal reveal--wide">Les pages</h2>
+    <p class="reveal">Une page porte quatre rangées au maximum, et au-delà l'écran se coupe. Les
+      pages se partagent les rangées à parts égales : six rangées donnent deux pages de trois, pas
+      une pleine et une presque vide. Les numéros s'empilent au bord droit, sur deux colonnes s'il y
+      en a beaucoup, et un point marque celles qui portent quelque chose.</p>
 
-<figure class="shot">
-<img src="/assets/img/pages.png" width="960" height="540" alt="Un coffre d'écho de huit rangées, coupé en deux pages, les numéros 1 et 2 au bord droit de l'écran.">
-<figcaption>Huit rangées coupées en deux pages de quatre.</figcaption>
-</figure>
-
-<h2>Les grands nombres</h2>
-<p>Au-delà d'un certain compte, une case affiche 2k plutôt que 2048, et 2M plutôt que 2 400 000. Le
-seuil est un réglage, <code>abbreviateAbove</code>, lu là où l'écran est dessiné : il appartient donc
-à celui qui regarde, pas au serveur. Le compte exact reste lisible dans l'infobulle de la case.</p>
-
-</main>
+    <figure class="shot reveal">
+      <img src="/assets/img/pages.png" width="960" height="540" alt="Un coffre d'écho de huit rangées, coupé en deux pages, les numéros 1 et 2 au bord droit de l'écran.">
+      <figcaption>Huit rangées coupées en deux pages de quatre.</figcaption>
+    </figure>
+  </main>
 </div>
 
-<dc-footer></dc-footer>
-<script defer src="/assets/js/fx/reveal.js"></script>
-<script defer src="/assets/js/router/router-swap.js"></script>
-<script defer src="/assets/js/router/router.js"></script>
+<site-footer></site-footer>
+
+<script src="/assets/js/fx/reveal.js" defer></script>
+<script src="/assets/js/page/wiki-chart.js" defer></script>
+<script src="/assets/js/router/router-swap.js" defer></script>
+<script src="/assets/js/router/router.js" defer></script>
 </body>
 </html>

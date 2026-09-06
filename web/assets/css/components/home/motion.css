@@ -1,0 +1,39 @@
+/* SLOT: the home page's reveal pacing, the durations and translateY distances
+   that make the scroll-in feel handmade instead of uniform. A new mod tunes
+   the three duration and distance pairs below (.reveal, .reveal--wide,
+   .reveal--tight) to its own pacing, and may reassign which of --ease-soft,
+   --ease-glide and --ease-snap drives which variant, though the curves
+   themselves are defined once in assets/css/tokens.css and shared with nav,
+   buttons and the loader. The contract comes from tools/check-design.mjs,
+   which refuses fewer than three distinct easing curves or fewer than three
+   distinct reveal distances, on purpose, because uniform motion reads as
+   machine-made. Collapse everything onto one curve or one distance and the
+   check fails by design, however the page looks. */
+
+/* Home-wide motion policy. The home reveals more strongly than the rest of the
+   site (each amplitude a notch taller and longer), and drops every animation
+   under prefers-reduced-motion. Kept out of the individual sections: it applies
+   to all of them, and a per-section copy would drift. */
+
+/* ============================================================
+   Reveal + reduced motion
+   ============================================================ */
+.home .reveal        { transition: opacity .62s var(--ease-soft), transform .62s var(--ease-soft); }
+.home .reveal--wide  { transition: opacity .9s var(--ease-glide), transform .9s var(--ease-glide); }
+.home .reveal--tight { transition: opacity .34s var(--ease-snap), transform .34s var(--ease-snap); }
+.home .reveal-ready:not(.in-view)               { opacity: 0; transform: translateY(16px); }
+.home .reveal--wide.reveal-ready:not(.in-view)  { opacity: 0; transform: translateY(26px); }
+.home .reveal--tight.reveal-ready:not(.in-view) { opacity: 0; transform: translateY(6px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .home *, .home *::before, .home *::after { animation: none !important; transition: none !important; }
+  /* Les trois, comme dans base.css : une amplitude ajoute une classe, donc
+     les variantes passeraient devant une règle qui ne nomme que la base. */
+  .home .reveal-ready:not(.in-view),
+  .home .reveal--wide.reveal-ready:not(.in-view),
+  .home .reveal--tight.reveal-ready:not(.in-view) { opacity: 1; transform: none; }
+  .home-title.is-anim .ch::before { display: none; }
+  /* Flattens the interactive transforms (tilt, expansions) that would snap
+     harshly without a transition. */
+  .home-toc__link, .home-row__more, .home-tick { transform: none !important; }
+}

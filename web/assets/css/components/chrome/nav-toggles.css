@@ -1,0 +1,68 @@
+/* KEEP. Styling for the three nav buttons: one shared 40px template so they
+   never drift apart by a pixel, then per-state icon swaps driven by classes
+   and attributes the corresponding JS controllers set at runtime. Colors and
+   spacing already come from tokens.css, so filling in a mod needs no edit
+   here. */
+
+/* All three share one template: a 40px control with a hairline border that
+   warms up on hover and dips on press. Only the footprint differs. Theme and
+   sound are square icon buttons, language is wider to fit its FR/EN code.
+   One block, so the three can never drift apart by a pixel. */
+.theme-toggle,
+.sound-toggle,
+.lang-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--ink);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 180ms var(--ease-snap), color 180ms var(--ease-snap), transform 160ms var(--ease-snap);
+}
+.theme-toggle:hover,
+.sound-toggle:hover,
+.lang-toggle:hover,
+.lang-toggle:focus-visible { border-color: var(--primary-text); color: var(--primary-text); }
+.theme-toggle:active,
+.sound-toggle:active,
+.lang-toggle:active { transform: scale(0.92); }
+
+/* Theme and sound: square, icon only. Each shows the icon for its current
+   state and hides the others. */
+.theme-toggle,
+.sound-toggle { width: 40px; }
+.theme-toggle__icons,
+.sound-toggle__icons { position: relative; width: 18px; height: 18px; }
+.theme-toggle__icon,
+.sound-toggle__icon {
+  position: absolute; inset: 0; width: 18px; height: 18px; display: block;
+  transition: opacity 180ms var(--ease-snap), transform 180ms var(--ease-snap);
+}
+.icon-off { opacity: 0; transform: scale(0.7); }
+.sound-toggle.is-muted .icon-on { opacity: 0; transform: scale(0.7); }
+.sound-toggle.is-muted .icon-off { opacity: 1; transform: scale(1); color: var(--accent-text); }
+
+/* Theme button: shows only the icon for the current mode. */
+.theme-toggle__icon { opacity: 0; transform: scale(0.7); }
+.theme-toggle[data-theme-mode="auto"] .icon-auto,
+.theme-toggle[data-theme-mode="light"] .icon-day,
+.theme-toggle[data-theme-mode="dark"] .icon-night { opacity: 1; transform: none; }
+
+/* Language: wider than square, to seat the FR/EN code next to the globe. It is
+   an <a> (a real link to the same page in the other language, so it works with
+   JS off), styled as a button to stay consistent with theme and sound. */
+.lang-toggle {
+  gap: 6px;
+  padding: 0 10px;
+  text-decoration: none;
+}
+.lang-toggle__icon { width: 17px; height: 17px; display: block; flex: 0 0 auto; }
+.lang-toggle__code {
+  font-family: var(--font-mono);
+  font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}

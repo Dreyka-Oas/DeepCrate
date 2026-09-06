@@ -1,0 +1,139 @@
+/* SLOT, and the biggest one in the template: the moving scene behind the hero.
+   Everything below the contract is an example, not a design to keep. Delete it
+   whole, write another one, and the site still works.
+
+   What ships: a skyline, two towers with sweeping beams, a stripe on the ground
+   line. Drawn in pure CSS, no image. A crate mod would draw stacked crates and
+   a travelling hook; a cave mod, layers of rock sliding at different speeds.
+   Anything goes as long as it moves and it is not this.
+
+   The contract, and it is short:
+
+   1. The whole scene sits inside .home-hero__scene, which is already positioned
+      and clipped below. Add layers inside it, do not move it.
+   2. The block in the HTML is marked SLOT in lang/fr/index.html and
+      lang/en/index.html. Replace the markup and this file together, in both
+      trees, or check-source will report classes with no rule and rules with no
+      class.
+   3. aria-hidden and pointer-events: none. The scene is decoration and never
+      takes a click or a screen reader's attention.
+   4. Colours come from the tokens, never from a literal. Structure tones
+      (--border) for the shapes, --primary-text for what lights up, never --ink
+      which belongs to the text sharing the same band.
+   5. Every animation stops under prefers-reduced-motion, in the block at the
+      end of this file.
+   6. No image request, no font, no external asset: the hero must paint before
+      anything finishes downloading.
+   7. Under 640px, whatever is expensive or crowded hides itself, as the towers
+      do at the end of this file.
+
+   The second layer of the backdrop, the drifting glyphs on a canvas, lives in
+   assets/js/page/home-backdrop.js and is a slot of its own. The two are
+   independent: replacing one does not touch the other, and a site may keep just
+   one of the two. */
+
+/* ---- DeepCrate's scene starts here ----
+   A shelf, three crates standing on it at different heights, and a hook that
+   travels the rail above them. Each crate fills from the bottom on its own
+   cycle and none of them stops at the height a vanilla stack would have
+   stopped at, which is the whole mod in one gesture. Everything is a box and a
+   line, so it paints before the fonts land. */
+.home-hero__scene {
+  position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+}
+
+/* The shelf the crates stand on, and the one horizontal the scene needs. */
+.home-hero__floor {
+  position: absolute; left: 0; right: 0; bottom: 8px; height: 1px;
+  background: var(--border);
+  opacity: 0.9;
+}
+
+/* The rail runs the width of the hero, well above the crates, so the hook
+   crosses the empty band rather than the wordmark. */
+.home-hero__rail {
+  position: absolute; left: 0; right: 0; top: 16%; height: 1px;
+  background: var(--border);
+  opacity: 0.55;
+}
+.home-hero__hook {
+  position: absolute; top: 0; left: 0; width: 26px; height: 26px;
+  animation: hook-travel 19s var(--ease-glide) infinite;
+}
+/* The carriage on the rail, and the line dropping from it. Two pseudo-elements
+   rather than two nodes: the hook is one thing that happens to have a body and
+   a cable. */
+.home-hero__hook::before {
+  content: ""; position: absolute; top: -3px; left: 0; width: 26px; height: 6px;
+  background: var(--border);
+  opacity: 0.95;
+}
+.home-hero__hook::after {
+  content: ""; position: absolute; top: 3px; left: 12px; width: 2px; height: 22px;
+  background: var(--primary-text);
+  opacity: 0.5;
+}
+@keyframes hook-travel {
+  0%   { transform: translateX(-8vw); }
+  50%  { transform: translateX(88vw); }
+  100% { transform: translateX(-8vw); }
+}
+
+/* Three crates: a box outline, the line its lid closes along, and the level
+   inside it. Widths and heights differ per crate so the row does not read as a
+   repeated element. */
+.home-hero__crate {
+  position: absolute; bottom: 9px;
+  border: 1px solid var(--border);
+  opacity: 0.8;
+  overflow: hidden;
+}
+.home-hero__crate::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 30%; height: 1px;
+  background: var(--border);
+  z-index: 1;
+}
+/* The level. transform-origin bottom and scaleY, because a custom property
+   holding a height is not animatable without @property and this has to work
+   everywhere. */
+.home-hero__crate::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; top: 0;
+  background: var(--primary-text);
+  opacity: 0.22;
+  transform-origin: bottom;
+  transform: scaleY(0.2);
+  animation: crate-level 13s var(--ease-soft) infinite;
+}
+@keyframes crate-level {
+  0%, 8%    { transform: scaleY(0.12); }
+  26%, 34%  { transform: scaleY(0.38); }
+  52%, 60%  { transform: scaleY(0.7); }
+  78%, 94%  { transform: scaleY(1); }
+  100%      { transform: scaleY(0.12); }
+}
+.home-hero__crate--a { left: 9%;  width: 92px;  height: clamp(80px, 17%, 150px); }
+.home-hero__crate--b { left: 25%; width: 128px; height: clamp(110px, 24%, 210px); }
+.home-hero__crate--c { left: 76%; width: 108px; height: clamp(96px, 20%, 180px); }
+.home-hero__crate--b::after { animation-duration: 17s; animation-delay: -6s; }
+.home-hero__crate--c::after { animation-duration: 11s; animation-delay: -3s; }
+/* One plate, on the tallest crate only: the module is a rare thing and three
+   of them on screen would read as decoration. */
+.home-hero__crate--b .home-hero__plate {
+  position: absolute; top: 26%; left: 50%; margin-left: -11px;
+  width: 22px; height: 13px;
+  background: var(--accent-text);
+  opacity: 0.75;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__hook { animation: none; transform: translateX(40vw); }
+  .home-hero__crate::after { animation: none; transform: scaleY(0.62); }
+}
+/* Under 640px the hero is a column of text and the scene has no room left, so
+   the two outer crates and the rail go and the tallest one stays. */
+@media (max-width: 640px) {
+  .home-hero__rail, .home-hero__hook,
+  .home-hero__crate--a, .home-hero__crate--c { display: none; }
+  .home-hero__crate--b { left: 62%; }
+}

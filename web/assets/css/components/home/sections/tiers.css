@@ -1,0 +1,56 @@
+/* Second home band: a tier selector. A large current number, a strip of
+   ticks, and a wash whose colour answers to the tier picked
+   (page/home-tiers.js). The tier count comes from the phases array in
+   assets/js/i18n/, so changing it there changes this band.
+   KEEP, for the band a mod is most likely to delete. It needs a progression
+   that is genuinely numbered: waves, depths, floors, crafting steps. Anything
+   else fits it badly, and inventing tiers to fill the band shows. */
+
+/* ============================================================
+   ESCALATION (scroll-driven)
+   ============================================================ */
+.home-tiers { position: relative; padding: clamp(48px, 8vh, 100px) 0; overflow: hidden; border-bottom: 1px solid var(--border); background: var(--surface); }
+/* Hazard stripe on the section's TOP EDGE, like .home-statement::before.
+   As display:block it stayed in the flow: it was painted AFTER the 48-100px of
+   top padding, and then the section tag butted straight underneath it with no
+   space at all: a ribbon floating in the middle of nowhere instead of marking
+   the edge. In absolute, the section's padding becomes the gap between ribbon
+   and heading again. z-index above the wash (z-index: 0). */
+.home-tiers::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px; z-index: 3;
+  background: repeating-linear-gradient(135deg, var(--primary-text) 0 10px, var(--ink) 10px 20px);
+  opacity: 0.8;
+}
+.home-tiers__inner { max-width: 1180px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 64px); position: relative; z-index: 2; }
+.home-tiers__head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; margin-bottom: 36px; }
+.home-bignum { font-family: var(--font-display); font-weight: 400; line-height: 0.8; letter-spacing: -0.01em; }
+.home-bignum .n { font-size: clamp(5.5rem, 22vw, 18rem); color: var(--ink); display: inline-block; font-variant-numeric: tabular-nums; }
+.home-bignum .n.punch { animation: bignum-punch 420ms cubic-bezier(.2,1.4,.4,1); }
+@keyframes bignum-punch {
+  0% { transform: scale(1); color: var(--ink); }
+  35% { transform: scale(1.06); color: var(--primary-text); }
+  100% { transform: scale(1); color: var(--ink); }
+}
+.home-bignum .slash { color: var(--primary-text); }
+.home-bignum .tot { font-size: clamp(1.6rem, 5vw, 3.2rem); color: var(--muted); }
+.home-tiers__meta { text-align: right; max-width: 34ch; }
+.home-tiers__meta h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.2rem, 2.8vw, 1.9rem); text-transform: uppercase; color: var(--ink); line-height: 1.1; margin: 0; }
+.home-tiers__meta p { color: var(--muted); margin-top: 8px; font-size: 0.98rem; }
+.home-ticks { display: flex; gap: 4px; margin-top: 22px; flex-wrap: wrap; }
+.home-tick {
+  flex: 1 1 12px; height: 42px; min-width: 10px; padding: 0;
+  background: var(--border); border: 0; cursor: pointer;
+  transition: background .3s, box-shadow .3s, transform .2s var(--ease-snap);
+  position: relative;
+}
+.home-tick:hover, .home-tick:focus-visible { transform: scaleY(1.14); }
+.home-tick:focus-visible { outline: 2px solid var(--primary-text); outline-offset: 2px; }
+.home-tick.on { background: var(--fill-primary); box-shadow: var(--glow-teal); }
+.home-tick.peak { background: color-mix(in oklch, var(--fill-primary) 70%, var(--accent-text) 30%); }
+.home-tick.sel { background: color-mix(in oklch, var(--primary-text) 70%, white 20%); box-shadow: 0 0 0 1px var(--ink), 0 0 16px color-mix(in oklch, var(--primary-text) 60%, transparent); z-index: 1; }
+.home-ticks__hint {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-top: 12px;
+}
+.home-ticks__hint b { color: var(--primary-text); font-weight: 600; }
+.home-tiers__wash { position: absolute; inset: 0; z-index: 0; background: radial-gradient(80% 60% at 50% 120%, color-mix(in oklch, var(--primary-text) 40%, transparent), transparent 60%); opacity: var(--heat, 0); transition: opacity .3s; pointer-events: none; }

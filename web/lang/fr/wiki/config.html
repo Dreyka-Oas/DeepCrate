@@ -3,98 +3,84 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fichier de réglages, DeepCrate</title>
-<meta name="description" content="Les cinq options de config/oas/deepcrate.json, leurs bornes, et lesquelles appartiennent au serveur.">
+<title>Fichier de réglages · DeepCrate</title>
+<meta name="description" content="Les cinq options de config/oas/deepcrate.json, leurs plages, et qui les lit du serveur ou du client.">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate" hreflang="fr" href="/lang/fr/wiki/config.html">
 <link rel="alternate" hreflang="en" href="/lang/en/wiki/config.html">
+<link rel="alternate" hreflang="x-default" href="/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Saira+Stencil+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/tokens.css">
 <link rel="stylesheet" href="/assets/css/base.css">
 <link rel="stylesheet" href="/assets/css/components.css">
-<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/core/site-lang.js"></script>
 <script src="/assets/js/i18n/fr.js"></script>
 <script src="/assets/js/i18n/en.js"></script>
-<script src="/assets/js/core/dc-theme.js"></script>
-<script src="/assets/js/chrome/dc-boot.js"></script>
+<script src="/assets/js/core/site-theme.js"></script>
+<script src="/assets/js/core/site-motion.js"></script>
 <script src="/assets/js/fx/sound/engine.js"></script>
 <script src="/assets/js/fx/sound/burst.js"></script>
 <script src="/assets/js/fx/sound/voices.js"></script>
 <script src="/assets/js/fx/sound/toggle.js"></script>
+<script src="/assets/js/chrome/site-boot.js"></script>
+<script src="/assets/js/chrome/site-icons.js"></script>
+<script src="/assets/js/chrome/site-chrome.js"></script>
+<script src="/assets/js/chrome/site-ledger.js"></script>
 <script src="/assets/js/chrome/components.js"></script>
+<script src="/assets/js/page/home-backdrop.js"></script>
+<script src="/assets/js/page/home-tiers.js"></script>
+<script src="/assets/js/page/home.js"></script>
 </head>
 <body>
-<dc-nav></dc-nav>
+
+<site-nav current="/wiki/config.html"></site-nav>
 
 <div class="container wiki-layout">
-<dc-sidebar></dc-sidebar>
-<main class="wiki-content prose">
+  <site-sidebar current="/wiki/config.html"></site-sidebar>
 
-<p class="wiki-breadcrumb"><a href="/lang/fr/index.html">DeepCrate</a> / Fichier de réglages</p>
-<h1>Fichier de réglages</h1>
-<p class="wiki-lede">Tout se décide dans <code>config/oas/deepcrate.json</code>, écrit au premier
-démarrage et réécrit à chacun des suivants, pour qu'une option ajoutée par une mise à jour apparaisse
-d'elle-même.</p>
+  <main class="wiki-content prose">
+    <p class="breadcrumb"><a href="../index.html">DeepCrate</a> / Réglages / Fichier de réglages</p>
+    <h1 class="reveal reveal--wide">Fichier de réglages</h1>
+    <p class="reveal">Tout se décide dans <code class="mono">config/oas/deepcrate.json</code>, écrit
+      au premier démarrage et réécrit à chacun des suivants, pour qu'une option ajoutée par une mise
+      à jour apparaisse d'elle-même.</p>
 
-<table class="param-table reveal reveal--tight">
-<thead><tr><th>Option</th><th>Ce qu'elle décide</th><th>Défaut</th></tr></thead>
-<tbody>
-<tr>
-<td class="param-table__key">crate.baseCapacity</td>
-<td>ce qu'une case tient sans module de capacité, de 1 à 32 767</td>
-<td class="param-table__value">64</td>
-</tr>
-<tr>
-<td class="param-table__key">crate.limitAutomationWithLithium</td>
-<td>si un coffre répond 64 à l'automatisation tant que lithium est installé</td>
-<td class="param-table__value">true</td>
-</tr>
-<tr>
-<td class="param-table__key">crate.maxRowsPerPage</td>
-<td>rangées sur une page avant que l'écran ne se coupe, de 1 à 6</td>
-<td class="param-table__value">4</td>
-</tr>
-<tr>
-<td class="param-table__key">crate.rowModuleStackLimit</td>
-<td>modules de rangée qu'une cellule accepte, de 1 à 20</td>
-<td class="param-table__value">16</td>
-</tr>
-<tr>
-<td class="param-table__key">screen.abbreviateAbove</td>
-<td>le compte au-delà duquel une case affiche 2k plutôt que 2048</td>
-<td class="param-table__value">999</td>
-</tr>
-</tbody>
-</table>
+    <table class="param-table reveal reveal--tight">
+      <caption>Les cinq options, et la plage dans laquelle chacune est ramenée</caption>
+      <thead><tr><th>Option</th><th>Ce qu'elle décide</th><th>Défaut</th></tr></thead>
+      <tbody>
+        <tr><td class="key">crate.baseCapacity</td><td>ce qu'une case tient sans module de capacité, de 1 à 32 767</td><td class="default">64</td></tr>
+        <tr><td class="key">crate.limitAutomationWithLithium</td><td>si un coffre répond 64 à l'automatisation tant que lithium est installé</td><td class="default">true</td></tr>
+        <tr><td class="key">crate.maxRowsPerPage</td><td>rangées sur une page avant que l'écran ne se coupe, de 1 à 6</td><td class="default">4</td></tr>
+        <tr><td class="key">crate.rowModuleStackLimit</td><td>modules de rangée qu'une cellule accepte, de 1 à 20</td><td class="default">16</td></tr>
+        <tr><td class="key">screen.abbreviateAbove</td><td>le compte au-delà duquel une case affiche 2k plutôt que 2048</td><td class="default">999</td></tr>
+      </tbody>
+    </table>
 
-<h2>Une valeur hors bornes est ramenée dedans</h2>
-<p>Chaque option a une plage, et une valeur en dehors est ramenée à la borne la plus proche. C'est la
-valeur corrigée qui reste sur le disque, donc le fichier dit toujours ce que le jeu utilise
-réellement.</p>
+    <h2 class="reveal reveal--wide">Une valeur hors bornes est ramenée dedans</h2>
+    <p class="reveal">Chaque option a une plage, et une valeur en dehors est ramenée à la borne la
+      plus proche. C'est la valeur corrigée qui reste sur le disque, donc le fichier dit toujours ce
+      que le jeu utilise réellement.</p>
 
-<h2>Qui lit quoi</h2>
-<p>Les quatre premières sont lues sur le serveur et valent pour tous ses clients. La cinquième est
-lue là où l'écran est dessiné, donc elle appartient à celui qui regarde : deux joueurs du même
-serveur peuvent avoir deux seuils d'abréviation différents.</p>
+    <h2 class="reveal reveal--wide">Qui lit quoi</h2>
+    <p class="reveal">Les quatre premières sont lues sur le serveur et valent pour tous ses clients.
+      La cinquième est lue là où l'écran est dessiné, donc elle appartient à celui qui regarde : deux
+      joueurs du même serveur peuvent avoir deux seuils d'abréviation différents.</p>
 
-<h2>Le dossier oas</h2>
-<p>Le fichier vit sous <code>config/oas/</code> plutôt qu'à la racine du dossier de configuration.
-C'est l'espace de nom de l'auteur, donc tous les mods de la même main se regroupent au même endroit
-au lieu de se disperser.</p>
-
-<h2>Les options des autres mods</h2>
-<p>Un mod qui se branche sur DeepCrate écrit ses propres options dans ce même fichier, sous son
-propre nom, avec ses propres bornes. Rien de séparé à maintenir, et un serveur garde un seul fichier
-à relire. Les deux appels sont sur la <a href="/lang/fr/wiki/addons.html">page des addons</a>.</p>
-
-</main>
+    <h2 class="reveal reveal--wide">Le dossier oas</h2>
+    <p class="reveal">Le fichier vit sous <code class="mono">config/oas/</code> plutôt qu'à la racine
+      du dossier de configuration. C'est l'espace de nom de l'auteur, donc tous les mods de la même
+      main se regroupent au même endroit au lieu de se perdre dans la liste.</p>
+  </main>
 </div>
 
-<dc-footer></dc-footer>
-<script defer src="/assets/js/fx/reveal.js"></script>
-<script defer src="/assets/js/router/router-swap.js"></script>
-<script defer src="/assets/js/router/router.js"></script>
+<site-footer></site-footer>
+
+<script src="/assets/js/fx/reveal.js" defer></script>
+<script src="/assets/js/page/wiki-chart.js" defer></script>
+<script src="/assets/js/router/router-swap.js" defer></script>
+<script src="/assets/js/router/router.js" defer></script>
 </body>
 </html>

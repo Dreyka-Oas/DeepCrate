@@ -8,88 +8,82 @@
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate" hreflang="fr" href="/lang/fr/oas.html">
 <link rel="alternate" hreflang="en" href="/lang/en/oas.html">
+<link rel="alternate" hreflang="x-default" href="/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Saira+Stencil+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/tokens.css">
 <link rel="stylesheet" href="/assets/css/base.css">
 <link rel="stylesheet" href="/assets/css/components.css">
-<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/core/site-lang.js"></script>
 <script src="/assets/js/i18n/fr.js"></script>
 <script src="/assets/js/i18n/en.js"></script>
-<script src="/assets/js/core/dc-theme.js"></script>
-<script src="/assets/js/chrome/dc-boot.js"></script>
+<script src="/assets/js/core/site-theme.js"></script>
+<script src="/assets/js/core/site-motion.js"></script>
 <script src="/assets/js/fx/sound/engine.js"></script>
 <script src="/assets/js/fx/sound/burst.js"></script>
 <script src="/assets/js/fx/sound/voices.js"></script>
 <script src="/assets/js/fx/sound/toggle.js"></script>
+<script src="/assets/js/chrome/site-boot.js"></script>
+<script src="/assets/js/chrome/site-icons.js"></script>
+<script src="/assets/js/chrome/site-chrome.js"></script>
+<script src="/assets/js/chrome/site-ledger.js"></script>
 <script src="/assets/js/chrome/components.js"></script>
+<script src="/assets/js/page/home-backdrop.js"></script>
+<script src="/assets/js/page/home-tiers.js"></script>
+<script src="/assets/js/page/home.js"></script>
 </head>
 <body>
-<dc-nav></dc-nav>
 
-<main class="container studio-page">
+<site-nav current="/oas.html"></site-nav>
 
-<header class="studio">
-<h1 class="studio__mark">o<span>.</span>a<span>.</span>s</h1>
-<p class="studio__lede">Two Minecraft mods written by the same hand, with the same habits and the
-same refusal to decide anything on the installer's behalf.</p>
-<div class="studio__cell"><span class="studio__fill"></span></div>
-</header>
+<main class="container wiki-content prose">
+  <p class="breadcrumb"><a href="index.html">DeepCrate</a> / o.a.s</p>
+  <h1 class="reveal reveal--wide">o.a.s</h1>
+  <p class="reveal">Two Minecraft mods written by the same hand, with the same habits and the same
+    refusal to decide anything on the installer's behalf.</p>
 
-<div class="prose">
+  <h2 class="reveal reveal--wide">Where the name comes from</h2>
+  <p class="reveal">The config folder. Every mod out of this workshop drops its options into
+    <code class="mono">config/oas/</code>, one file each, so a server running two of them finds them
+    side by side instead of scattered through the root. It started there and stayed as a
+    signature.</p>
 
-<p>The name comes from the config folder. Every mod out of this workshop drops its options into
-<code>config/oas/</code>, one file each, so a server running two of them finds them side by side
-instead of scattered through the root. It started there and stayed as a signature.</p>
+  <h2 class="reveal reveal--wide">What the two mods share</h2>
+  <p class="reveal">A number written into the code is a number decided for everyone. Tiers,
+    capacities, distances, delays: anything a server owner might reasonably want otherwise is read
+    from the config file, inside a range that pulls an absurd value back to something playable rather
+    than taking the server down with it.</p>
+  <p class="reveal">Nothing a player reads lives in the Java. The two language files,
+    <code class="mono">en_us</code> and <code class="mono">fr_fr</code>, carry the same keys, and a
+    line added on one side and forgotten on the other is caught before release. The sites follow the
+    same rule, two complete trees and no generator between them.</p>
+  <p class="reveal">A mod that does not open up is a mod you replace instead of extending. Each one
+    publishes an entry point: enough to add a tier, a creature, a rule, without patching anything and
+    without asking me first. <a class="link" href="wiki/api.html">DeepCrate's twelve points</a> show
+    what that looks like.</p>
 
-<h2>What the two mods share</h2>
+  <h2 class="reveal reveal--wide">The two mods</h2>
+  <table class="param-table reveal reveal--tight">
+    <caption>What each one adds, and where to read it</caption>
+    <thead><tr><th>Mod</th><th>What it adds</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td class="key">DeepCrate</td><td>six crates, a slot from 64 to 512, rows by the module, a screen in pages</td><td><a class="link" href="index.html">this site</a></td></tr>
+      <tr><td class="key">LethalBreed</td><td>a contagion in phases, zombies that learn the ground they walk</td><td><a class="link" href="https://lethalbreed.pages.dev/" rel="noopener">its site</a></td></tr>
+    </tbody>
+  </table>
 
-<p>A number written into the code is a number decided for everyone. Tiers, capacities, distances,
-delays: anything a server owner might reasonably want otherwise is read from the config file, inside
-a range that pulls an absurd value back to something playable rather than taking the server down
-with it.</p>
-
-<p>Nothing a player reads lives in the Java. The two language files, <code>en_us</code> and
-<code>fr_fr</code>, carry the same keys, and a line added on one side and forgotten on the other is
-caught before release. The sites follow the same rule, two complete trees and no generator between
-them.</p>
-
-<p>A mod that does not open up is a mod you replace instead of extending. Each one publishes an
-entry point: enough to add a tier, a creature, a rule, without patching anything and without asking
-me first. The <a class="link" href="/lang/en/wiki/addons.html">page for other mods</a> shows what
-that looks like on the DeepCrate side.</p>
-
-<h2>The two mods</h2>
-
-<ul class="studio__works">
-<li class="work">
-<p class="work__name">DeepCrate</p>
-<p class="work__note">Six crates, a cell going from 64 to 512, rows bought one module at a time, a
-screen that splits into pages.</p>
-<p class="work__links"><a class="link" href="/lang/en/index.html">the site</a> <a class="link" href="https://github.com/Dreyka-Oas/DeepCrate" rel="noopener">the code</a></p>
-</li>
-<li class="work">
-<p class="work__name">LethalBreed</p>
-<p class="work__note">A contagion that climbs in phases, zombies that learn the ground they walk,
-and a night that never repeats the one before it.</p>
-<p class="work__links"><a class="link" href="https://lethalbreed.pages.dev/" rel="noopener">the site</a> <a class="link" href="https://github.com/Dreyka-Oas/LethalBreed" rel="noopener">the code</a></p>
-</li>
-</ul>
-
-<h2>Licence</h2>
-
-<p>Each mod keeps its own, written in its repository, all rights reserved. A modpack wanting to
-carry either one goes through the question asked in that repository, and the answer is usually
-yes.</p>
-
-</div>
-
+  <h2 class="reveal reveal--wide">Licence</h2>
+  <p class="reveal">Each mod keeps its own, written in the downloaded file, all rights reserved. A
+    modpack wanting to carry either one goes through the question asked in that file, and the answer
+    is usually yes.</p>
 </main>
 
-<dc-footer></dc-footer>
-<script defer src="/assets/js/fx/reveal.js"></script>
-<script defer src="/assets/js/router/router-swap.js"></script>
-<script defer src="/assets/js/router/router.js"></script>
+<site-footer></site-footer>
+
+<script src="/assets/js/fx/reveal.js" defer></script>
+<script src="/assets/js/page/wiki-chart.js" defer></script>
+<script src="/assets/js/router/router-swap.js" defer></script>
+<script src="/assets/js/router/router.js" defer></script>
 </body>
 </html>

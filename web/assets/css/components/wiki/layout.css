@@ -1,61 +1,79 @@
-/* padding-block, never the padding shorthand: this element is also the
-   .container, and a shorthand wipes its padding-inline. Below 1180px the
-   container has no auto margin left to hide that, and every guide page ends up
-   flush against the edge of the screen. */
+/* KEEP wiki shell. Lays out every wiki page as a sidebar next to a content
+   column, sticky on desktop, one column under 900px. Nothing here reads a
+   mod's content or colors, so touching the grid, the sticky offset, the
+   min-width fix or the breakpoint moves every wiki page in the site at
+   once. */
+/* padding-block, never the padding shorthand: the element also carries
+   .container, whose padding-inline is the side gutter. The shorthand would
+   reset it to zero and the text would touch both screen edges everywhere the
+   viewport is narrower than the container's max-width. */
 .wiki-layout {
   display: grid;
   grid-template-columns: 240px 1fr;
   gap: var(--space-6);
   padding-block: var(--space-5) var(--space-7);
   align-items: start;
-  /* The guide stops where reading stops. .container runs to 1720px because the
-     home page has pictures to fill it with; a guide page has a sidebar and a
-     column of prose capped at 68ch, and letting it stretch just parks 700px of
-     nothing to the right of every paragraph. Measured at 2560. */
-  max-width: 1240px;
 }
-
+/* Without min-width:0 the 1fr track takes the width of its widest content (a
+   table, a mono line) and overflows instead of shrinking → the page scrolls
+   sideways. min-width:0 lets it contract; the tables scroll internally
+   (param-table.css). */
+.wiki-content { min-width: 0; }
 .wiki-sidebar {
+  view-transition-name: wiki-sidebar;
   position: sticky;
-  /* 64px is the nav height: padding var(--space-3) twice plus a 40px row. */
   top: calc(64px + var(--space-4));
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-1);
   border-left: 1px solid var(--border);
   padding-left: var(--space-3);
 }
 .wiki-sidebar__group {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
+  color: var(--primary-text);
+  margin: var(--space-3) 0 var(--space-1);
 }
-.wiki-sidebar__list { list-style: none; margin: var(--space-2) 0 0; padding: 0; }
-.wiki-sidebar__list li { margin-bottom: var(--space-2); }
-.wiki-sidebar__list a { font-size: var(--text-small); color: var(--muted); }
-.wiki-sidebar__list a:hover, .wiki-sidebar__list a:focus-visible { color: var(--ink); }
-.wiki-sidebar__list a[aria-current="page"] {
+.wiki-sidebar a {
+  position: relative;
+  font-size: var(--text-small);
+  color: var(--muted);
+  padding: 0.5rem 0;
+  display: block;
+  transition: color 140ms var(--ease-snap), padding-left 200ms var(--ease-snap);
+}
+/* The link steps to the right as it lights up, the index answering the
+   pointer, the one bit of movement in an otherwise still column. */
+.wiki-sidebar a:hover, .wiki-sidebar a:focus-visible { color: var(--ink); padding-left: 8px; }
+@media (prefers-reduced-motion: reduce) {
+  .wiki-sidebar a { transition: none; }
+}
+.wiki-sidebar a[aria-current="page"] {
   color: var(--ink);
   font-weight: 600;
 }
-.wiki-sidebar__list a[aria-current="page"]::before {
-  content: "\25AA";
+.wiki-sidebar a[aria-current="page"]::before {
+  content: "● ";
   color: var(--primary-text);
-  margin-right: 0.5em;
 }
 
+/* .wiki-content h2 and .breadcrumb are styled in page.css (the masthead):
+   single source of truth, no duplicate here any more. */
+
 @media (max-width: 900px) {
-  .wiki-layout { grid-template-columns: 1fr; gap: var(--space-4); }
+  .wiki-layout { grid-template-columns: 1fr; }
   .wiki-sidebar {
     position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    border-bottom: 1px solid var(--border);
     border-left: none;
     padding-left: 0;
-    border-bottom: 1px solid var(--border);
     padding-bottom: var(--space-3);
   }
   .wiki-sidebar__group { display: none; }
-  .wiki-sidebar__list { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-  .wiki-sidebar__list li { margin-bottom: 0; }
 }

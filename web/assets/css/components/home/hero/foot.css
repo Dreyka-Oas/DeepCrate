@@ -1,0 +1,33 @@
+/* The hero's foot row, the rule under the wordmark and everything seated
+   on it: the lede, the two calls to action, the scroll cue.
+   KEEP. The words are in both index.html, and the row holds up with one
+   button instead of two if a mod has nowhere to send the second. */
+
+.home-hero__foot {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 24px; flex-wrap: wrap; border-top: 1px solid var(--border);
+  padding-top: 18px; margin-top: 6px;
+}
+.home-lede {
+  max-width: 48ch; font-size: clamp(1rem, 1.1vw, 1.18rem);
+  color: var(--ink); font-weight: 400; line-height: 1.5;
+  text-shadow: 0 2px 16px var(--bg), 0 0 30px var(--bg);
+}
+.home-lede b { color: var(--primary-text); font-weight: 600; }
+.home-cta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+.home-btn {
+  position: relative; font-family: var(--font-mono); font-size: 12.5px;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 14px 24px;
+  overflow: hidden; white-space: nowrap; border: 1px solid var(--primary-text);
+  min-height: 44px; display: inline-flex; align-items: center;
+  transition: color .3s, border-color .3s;
+}
+.home-btn--fill { color: var(--on-fill); background: var(--fill-primary); }
+.home-btn--fill::before { content: ""; position: absolute; inset: 0; background: var(--ink); transform: translateY(101%); transition: transform .4s var(--ease-glide); z-index: 0; }
+.home-btn--fill:hover::before, .home-btn--fill:focus-visible::before { transform: none; }
+.home-btn--fill span { position: relative; z-index: 1; transition: color .3s; }
+.home-btn--fill:hover span, .home-btn--fill:focus-visible span { color: var(--bg); }
+.home-btn--ghost { color: var(--ink); border-color: var(--border); }
+.home-btn--ghost:hover, .home-btn--ghost:focus-visible { border-color: var(--primary-text); color: var(--primary-text); }
+

@@ -3,78 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hoppers and pipes, DeepCrate</title>
-<meta name="description" content="Automatic filling past 64, what lithium does to it, and the setting that takes the decision back.">
+<title>Hoppers and pipes · DeepCrate</title>
+<meta name="description" content="A hopper fills a slot to the crate's capacity, unless lithium is installed, where it stops at 64.">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate" hreflang="fr" href="/lang/fr/wiki/hoppers.html">
 <link rel="alternate" hreflang="en" href="/lang/en/wiki/hoppers.html">
+<link rel="alternate" hreflang="x-default" href="/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Saira+Stencil+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/tokens.css">
 <link rel="stylesheet" href="/assets/css/base.css">
 <link rel="stylesheet" href="/assets/css/components.css">
-<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/core/site-lang.js"></script>
 <script src="/assets/js/i18n/fr.js"></script>
 <script src="/assets/js/i18n/en.js"></script>
-<script src="/assets/js/core/dc-theme.js"></script>
-<script src="/assets/js/chrome/dc-boot.js"></script>
+<script src="/assets/js/core/site-theme.js"></script>
+<script src="/assets/js/core/site-motion.js"></script>
 <script src="/assets/js/fx/sound/engine.js"></script>
 <script src="/assets/js/fx/sound/burst.js"></script>
 <script src="/assets/js/fx/sound/voices.js"></script>
 <script src="/assets/js/fx/sound/toggle.js"></script>
+<script src="/assets/js/chrome/site-boot.js"></script>
+<script src="/assets/js/chrome/site-icons.js"></script>
+<script src="/assets/js/chrome/site-chrome.js"></script>
+<script src="/assets/js/chrome/site-ledger.js"></script>
 <script src="/assets/js/chrome/components.js"></script>
+<script src="/assets/js/page/home-backdrop.js"></script>
+<script src="/assets/js/page/home-tiers.js"></script>
+<script src="/assets/js/page/home.js"></script>
 </head>
 <body>
-<dc-nav></dc-nav>
+
+<site-nav current="/wiki/hoppers.html"></site-nav>
 
 <div class="container wiki-layout">
-<dc-sidebar></dc-sidebar>
-<main class="wiki-content prose">
+  <site-sidebar current="/wiki/hoppers.html"></site-sidebar>
 
-<p class="wiki-breadcrumb"><a href="/lang/en/index.html">DeepCrate</a> / Hoppers and pipes</p>
-<h1>Hoppers and pipes</h1>
+  <main class="wiki-content prose">
+    <p class="breadcrumb"><a href="../index.html">DeepCrate</a> / The screen / Hoppers and pipes</p>
+    <h1 class="reveal reveal--wide">Hoppers and pipes</h1>
+    <div class="callout reveal">
+      <p><strong>In one line.</strong> Without lithium, a hopper fills a slot up to the crate's
+        capacity. With lithium, it stops at 64, because the opposite would destroy the items. The
+        player's own hand is affected in neither case.</p>
+    </div>
 
-<div class="callout">
-<p class="callout__badge">In one line</p>
-<p>Without lithium, a hopper fills a slot up to the crate's capacity. With lithium, it stops at 64,
-because the alternative destroys items. The player's hand is unaffected either way.</p>
+    <h2 class="reveal reveal--wide">What the mod changes about a hopper</h2>
+    <p class="reveal">A vanilla hopper stops at what an ordinary stack accepts, so 64, whatever the
+      target container can hold. DeepCrate corrects that for its own crates, and it is the only part
+      of the mod that depends on what is installed beside it.</p>
+
+    <figure class="shot reveal">
+      <img src="/assets/img/hopper.png" width="960" height="540" alt="An iron crate screen whose first slot holds 96 dirt blocks, a 512 module on the tab.">
+      <figcaption>A hopper pushed dirt past the 64 already there. The slot holds 96.</figcaption>
+    </figure>
+
+    <h2 class="reveal reveal--wide">Why lithium turns it off</h2>
+    <p class="reveal">Lithium replaces the hopper entirely and keeps its own copy of the target
+      inventory. Against a container answering more than 64, it takes the items out of the hopper and
+      never writes them into the crate: they vanish.</p>
+    <p class="reveal">The number was measured rather than assumed, eight dirt blocks destroyed per
+      pass, with or without the fix. The mod therefore chooses to keep the items and lose the
+      feature: as long as lithium is installed, a crate reports 64 per slot to automation.</p>
+
+    <h2 class="reveal reveal--wide">Taking the decision back</h2>
+    <p class="reveal">A server owner can set <code class="mono">limitAutomationWithLithium</code> to
+      <code class="mono">false</code> in <code class="mono">config/oas/deepcrate.json</code>. Filling
+      past 64 comes back, and the items are lost, knowingly.</p>
+
+    <h2 class="reveal reveal--wide">A hopper against a pair</h2>
+    <p class="reveal">A hopper placed against a double crate only reaches the half it touches, as
+      with a barrel. Joining the two halves is what the game does for an ordinary chest, but lithium
+      recasts that result and the server falls over on the first tick.</p>
+  </main>
 </div>
 
-<h2>What the mod changes about the hopper</h2>
-<p>A hopper of the game stops at whatever an ordinary stack accepts, so 64, regardless of the target
-container's capacity. DeepCrate patches that for its own crates, and it is the one part of the mod
-that depends on what else is installed.</p>
+<site-footer></site-footer>
 
-<figure class="shot">
-<img src="/assets/img/hopper.png" width="960" height="540" alt="An iron crate screen whose first slot carries 96 dirt blocks, the 512 module on the tab.">
-<figcaption>A hopper pushed dirt past the 64 already there. The slot carries 96.</figcaption>
-</figure>
-
-<h2>Why lithium turns it off</h2>
-<p>Lithium replaces the hopper wholesale and keeps its own copy of the target inventory. Against a
-container answering more than 64, it takes the items out of the hopper and never writes them into the
-crate: they are gone.</p>
-<p>The number was measured rather than assumed, eight blocks of dirt destroyed per run, with or
-without the patch. So the mod chooses to keep the items and lose the feature: while lithium is
-installed, a crate tells automation 64 a slot.</p>
-
-<h2>Taking the decision back</h2>
-<p>A server owner can set <code>limitAutomationWithLithium</code> to false in
-<code>config/oas/deepcrate.json</code>. Filling past 64 comes back, and the items are lost with the
-owner knowing why.</p>
-
-<h2>A hopper against a pair</h2>
-<p>A hopper placed against a double crate reaches only the half it touches, as it does with a barrel.
-Joining the two halves is what the game does for an ordinary chest, but lithium casts that result
-back and the server falls over on the first tick.</p>
-
-</main>
-</div>
-
-<dc-footer></dc-footer>
-<script defer src="/assets/js/fx/reveal.js"></script>
-<script defer src="/assets/js/router/router-swap.js"></script>
-<script defer src="/assets/js/router/router.js"></script>
+<script src="/assets/js/fx/reveal.js" defer></script>
+<script src="/assets/js/page/wiki-chart.js" defer></script>
+<script src="/assets/js/router/router-swap.js" defer></script>
+<script src="/assets/js/router/router.js" defer></script>
 </body>
 </html>

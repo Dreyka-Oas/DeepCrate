@@ -1,23 +1,40 @@
-/* Design tokens, OKLCH.
+/* SLOT tokens. The first file anyone opens to fill in this template: the
+   palette, the four font roles and the type scale live below as CSS
+   variables, read by everything else in assets/ so nothing downstream needs
+   an edit. The SLOT note further down covers the palette itself; the space,
+   radius and z-index scales are layout infrastructure the template already
+   tuned, not part of dressing up a mod, so leave them alone unless something
+   is visibly broken.
 
-   The theme comes from color-scheme + light-dark(). By default `color-scheme:
-   light dark` follows the operating system; the theme button (core/dc-theme.js)
-   forces `light` or `dark` through [data-theme] on <html> and every light-dark()
-   below flips at once, with no duplicated palette and no media query.
+   Theme resolved by color-scheme + light-dark(): by default `color-scheme:
+   light dark` follows prefers-color-scheme (auto); the theme button
+   (core/site-theme.js) forces `color-scheme: light` or `dark` through [data-theme]
+   on <html>, and every light-dark() below flips at once, without duplicating
+   the palette or depending on a media query.
 
-   Direction: a storeroom cut into rock. Light is sanded pine under a work lamp,
-   dark is the same room lit by what the echo shards give off. Teal carries the
-   interface, amethyst is the second accent and stays rare, on the module cells
-   and on whatever the reader must not skip. */
+   SLOT. This file is the one place a new mod's identity lives. Write the
+   direction in one or two sentences here (what the palette is meant to feel
+   like, which token carries the dominant colour, which one is the rare accent),
+   then replace the values below. Everything else in assets/ reads these tokens
+   and needs no edit.
+   light-dark(<light>, <dark>) order: light value first, dark value second.
+   Check every text-on-surface pair for contrast before keeping it. */
 
 :root {
   color-scheme: light dark;
 
+  /* SLOT: the four faces. Replace, then update the Google Fonts <link> in
+     every page of both lang/ trees, and font-src in _headers if the host changes. */
   --font-display: "Archivo Black", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+  /* A distinct role for --font-stamp: here the stencil a crate is marked with
+     before it is shipped, reserved for the ledger and the wiki
+     table-of-contents keys, so that its texture stays a rare accent rather
+     than the general monospace surface (--font-mono) that labels, chart data
+     and param tables already use. */
+  --font-stamp: "Saira Stencil One", monospace;
 
-  --text-hero: clamp(2.75rem, 6.5vw + 1rem, 5.75rem);
   --text-h1: clamp(2rem, 3vw + 1rem, 3.25rem);
   --text-h2: clamp(1.5rem, 1.5vw + 1rem, 2.25rem);
   --text-h3: clamp(1.15rem, 0.6vw + 1rem, 1.5rem);
@@ -37,45 +54,61 @@
   --radius-md: 3px;
 
   --z-sticky-nav: 10;
-  --z-theme-toggle: 20;
 
-  /* Three curves, three jobs. One curve used everywhere is what gives a site
-     its uniform cadence, recognisable before it is named. */
-  --ease-drop: cubic-bezier(0.28, 0.74, 0.42, 1);      /* content coming in */
-  --ease-latch: cubic-bezier(0.18, 0.88, 0.32, 1.08);  /* answers to a click */
-  --ease-slide: cubic-bezier(0.55, 0.02, 0.24, 1);     /* long travel, panels */
+  /* Trois courbes, trois rôles. Une seule courbe partout est ce qui donne à un
+     site sa cadence uniforme, reconnaissable avant même d'être nommée. */
+  --ease-soft:  cubic-bezier(0.33, 0.8, 0.4, 1);      /* apparitions de contenu */
+  --ease-snap:  cubic-bezier(0.2, 0.9, 0.25, 1.06);   /* réactions à un clic, léger dépassement */
+  --ease-glide: cubic-bezier(0.5, 0, 0.2, 1);         /* déplacements longs, panneaux, portes */
 
-  /* --- themed palette (light, dark) --- */
-  --bg:           light-dark(oklch(0.93 0.010 95),  oklch(0.15 0.020 235));
-  --surface:      light-dark(oklch(0.88 0.014 92),  oklch(0.20 0.024 233));
-  --ink:          light-dark(oklch(0.24 0.020 240), oklch(0.93 0.014 230));
-  --muted:        light-dark(oklch(0.45 0.020 240), oklch(0.66 0.020 230));
-  --border:       light-dark(oklch(0.70 0.018 230), oklch(0.32 0.026 232));
-  --primary-text: light-dark(oklch(0.46 0.100 205), oklch(0.78 0.110 200));
-  --accent-text:  light-dark(oklch(0.44 0.145 305), oklch(0.72 0.130 305));
-  --fill-primary: light-dark(oklch(0.48 0.105 205), oklch(0.72 0.115 200));
-  --fill-accent:  light-dark(oklch(0.44 0.145 305), oklch(0.48 0.150 305));
-  /* --on-fill inverts: dark mode fills are light (L 0.72) and take dark ink,
-     light mode fills are dark (L 0.48) and take pale ink. */
-  --on-fill:      light-dark(oklch(0.97 0.008 200), oklch(0.16 0.020 230));
+  /* Third-party platform brand colors (CurseForge, Modrinth): fixed, NOT
+     derived from the site's own theme tokens. */
+  --brand-curseforge: #f16436;
+  --brand-curseforge-ink: #ffffff;
+  --brand-modrinth: #1bd96a;
+  --brand-modrinth-ink: #0b2016;
+
+
+  /* --- palette thémée (clair, sombre) ---
+     A storeroom cut into rock. Light is sanded pine under a work lamp, dark is
+     the same room lit by what the echo shards give off. Teal carries the
+     interface and the fills, amethyst is the second accent and stays rare, on
+     the module cells and on whatever the reader must not skip. */
+  --bg:             light-dark(oklch(0.93 0.010 95),   oklch(0.15 0.020 235));
+  --surface:        light-dark(oklch(0.88 0.014 92),   oklch(0.20 0.024 233));
+  --ink:            light-dark(oklch(0.24 0.020 240),  oklch(0.93 0.014 230));
+  --muted:          light-dark(oklch(0.45 0.020 240),  oklch(0.66 0.020 230));
+  --border:         light-dark(oklch(0.70 0.018 230),  oklch(0.32 0.026 232));
+  --primary-text:   light-dark(oklch(0.46 0.100 205),  oklch(0.78 0.110 200));
+  --accent-text:    light-dark(oklch(0.44 0.145 305),  oklch(0.72 0.130 305));
+  --fill-primary:   light-dark(oklch(0.48 0.105 205),  oklch(0.72 0.115 200));
+  --fill-accent:    light-dark(oklch(0.44 0.145 305),  oklch(0.48 0.150 305));
+  /* --on-fill inverts: in dark mode the teal is light (L 0.72) and takes dark
+     ink; in light mode it is dark (L 0.48) and takes pale ink. */
+  --on-fill:        light-dark(oklch(0.97 0.008 200),  oklch(0.16 0.020 230));
   /* --on-accent does not invert. The amethyst fill stays mid to dark in both
-     themes, so dark ink on it fails the contrast check either way. Its own
-     token rather than --on-fill, which is cut for the teal one. */
-  --on-accent:    oklch(0.97 0.008 300);
+     themes, so dark ink on it fails the contrast check either way. */
+  --on-accent:      oklch(0.97 0.008 300);
 
-  /* light-dark() takes COLOURS only, never a box-shadow list, whose commas
-     would break the parse. So the colours are themed and the shadow is
-     composed on top of them. */
+  /* light-dark() only accepts COLOURS, not box-shadow lists (their commas
+     would break parsing). So the shadow/glow colours are themed, and the
+     box-shadow itself is composed statically on top of them. */
   --shadow-c1: light-dark(rgba(20, 30, 40, 0.07), rgba(0, 0, 0, 0.52));
   --shadow-c2: light-dark(rgba(20, 30, 40, 0.09), rgba(0, 0, 0, 0.44));
-  --shadow-elevated: 0 1px 2px var(--shadow-c1), 0 12px 28px var(--shadow-c2);
+  --shadow-elevated: 0 1px 2px var(--shadow-c1), 0 10px 26px var(--shadow-c2);
+  /* Named after the two accents rather than after the colours the template
+     shipped with, so a later reader is not told amber by a token holding
+     teal. Four files read them, listed by check-source if one is left behind. */
   --glow-teal-ring: light-dark(oklch(0.48 0.105 205 / 0.42), oklch(0.72 0.115 200 / 0.5));
-  --glow-teal-c: light-dark(oklch(0.48 0.105 205 / 0.15), oklch(0.75 0.120 202 / 0.3));
+  --glow-teal-c:    light-dark(oklch(0.48 0.105 205 / 0.15), oklch(0.75 0.120 202 / 0.3));
   --glow-teal: 0 0 0 1px var(--glow-teal-ring), 0 0 24px var(--glow-teal-c);
   --glow-amethyst-c: light-dark(oklch(0.44 0.145 305 / 0.18), oklch(0.55 0.150 305 / 0.3));
-  --glow-amethyst: 0 0 18px var(--glow-amethyst-c);
+  --glow-amethyst: 0 0 19px var(--glow-amethyst-c);
+
+  /* Radial glow at the top of the page (body): a themed colour, so it follows
+     the theme override without a media query. */
 }
 
-/* The theme button forces the scheme, light-dark() follows. */
+/* The theme button forces the scheme; light-dark() follows. */
 :root[data-theme="light"] { color-scheme: light; }
 :root[data-theme="dark"]  { color-scheme: dark; }

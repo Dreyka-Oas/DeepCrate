@@ -1,39 +1,40 @@
+/* KEEP. Layout for the footer: legal line, license note and the small
+   signature line kept deliberately separate and quieter than the rest. The
+   text itself lives in the page markup and the i18n tables, not here, so this
+   file needs no edit to fill in a mod. */
 .site-footer {
+  position: relative;
   border-top: 1px solid var(--border);
   padding: var(--space-5) 0;
-  margin-top: var(--space-6);
   color: var(--muted);
   font-size: var(--text-small);
-}
-.site-footer .container {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--space-3);
 }
 
-/* The signature, and the way to the workshop page. Faint enough to stay a
-   signature, legible enough to be a link: 0.78 is the lowest opacity that
-   clears the contrast threshold against both backgrounds, and below it axe is
-   right to complain. */
+/* Deliberately separate from the copyright/license line above: its own line,
+   smaller, near-invisible unless you are looking for it. */
+/* Here the signature is a link to the workshop page, not an inert span, so it
+   has to clear the contrast threshold rather than merely be readable. --ink at
+   0.78 is the lowest that does in both themes; the template's 0.55 over --muted
+   failed axe the moment it became clickable. */
 .site-footer__sig {
-  /* Pushed to the end of the row rather than given a line of its own: as a
-     block it was a 900px wide link with three letters in the corner of it, and
-     everything between was a target nobody could see. */
-  margin-left: auto;
-  font-family: var(--font-mono);
+  flex-basis: 100%;
+  text-align: right;
   font-size: 0.65rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   color: var(--ink);
   opacity: 0.78;
   text-decoration: none;
-  transition: color 180ms var(--ease-latch), opacity 180ms var(--ease-latch);
+  transition: color 180ms var(--ease-snap), opacity 180ms var(--ease-snap);
 }
 .site-footer__sig:hover,
-.site-footer__sig:focus-visible,
-.site-footer__sig[aria-current="page"] {
+.site-footer__sig:focus-visible {
   color: var(--primary-text);
   opacity: 1;
   text-decoration: underline;
   text-underline-offset: 0.3em;
 }
+

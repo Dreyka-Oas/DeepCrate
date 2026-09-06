@@ -3,82 +3,102 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Capacity, DeepCrate</title>
-<meta name="description" content="The capacity module, the tab that carries it, and what drops on the floor when you take it back.">
+<title>Capacity · DeepCrate</title>
+<meta name="description" content="A slot holds 64, a module lifts it to 512, and the crate keeps the best offer rather than the sum.">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate" hreflang="fr" href="/lang/fr/wiki/capacity.html">
 <link rel="alternate" hreflang="en" href="/lang/en/wiki/capacity.html">
+<link rel="alternate" hreflang="x-default" href="/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Saira+Stencil+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/tokens.css">
 <link rel="stylesheet" href="/assets/css/base.css">
 <link rel="stylesheet" href="/assets/css/components.css">
-<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/core/site-lang.js"></script>
 <script src="/assets/js/i18n/fr.js"></script>
 <script src="/assets/js/i18n/en.js"></script>
-<script src="/assets/js/core/dc-theme.js"></script>
-<script src="/assets/js/chrome/dc-boot.js"></script>
+<script src="/assets/js/core/site-theme.js"></script>
+<script src="/assets/js/core/site-motion.js"></script>
 <script src="/assets/js/fx/sound/engine.js"></script>
 <script src="/assets/js/fx/sound/burst.js"></script>
 <script src="/assets/js/fx/sound/voices.js"></script>
 <script src="/assets/js/fx/sound/toggle.js"></script>
+<script src="/assets/js/chrome/site-boot.js"></script>
+<script src="/assets/js/chrome/site-icons.js"></script>
+<script src="/assets/js/chrome/site-chrome.js"></script>
+<script src="/assets/js/chrome/site-ledger.js"></script>
 <script src="/assets/js/chrome/components.js"></script>
+<script src="/assets/js/page/home-backdrop.js"></script>
+<script src="/assets/js/page/home-tiers.js"></script>
+<script src="/assets/js/page/home.js"></script>
 </head>
 <body>
-<dc-nav></dc-nav>
+
+<site-nav current="/wiki/capacity.html"></site-nav>
 
 <div class="container wiki-layout">
-<dc-sidebar></dc-sidebar>
-<main class="wiki-content prose">
+  <site-sidebar current="/wiki/capacity.html"></site-sidebar>
 
-<p class="wiki-breadcrumb"><a href="/lang/en/index.html">DeepCrate</a> / Capacity</p>
-<h1>Capacity</h1>
-<p class="wiki-lede">A slot holds 64. What changes that number sits on the tab hanging off the left
-edge of the screen, and counts for the whole crate wherever it is put.</p>
+  <main class="wiki-content prose">
+    <p class="breadcrumb"><a href="../index.html">DeepCrate</a> / The mod / Capacity</p>
+    <h1 class="reveal reveal--wide">Capacity</h1>
+    <p class="reveal">A slot holds 64. What changes that number sits on the tab clipped to the left
+      edge of the screen, and counts for the whole crate wherever inside it is placed.</p>
 
-<h2>The tab and its cells</h2>
-<p>The tab is a column, not a fixed pair. The mod ships two cells: the top one takes a capacity
-module, the one under it a stack of sixteen row modules. Another mod can add its own and the tab
-grows with it. An empty cell shows a greyed plate, so it reads as what it is waiting for.</p>
+    <h2 class="reveal reveal--wide">The tab and its cells</h2>
+    <p class="reveal">The tab is not a fixed pair of slots, it is a column. The mod ships two: the
+      top one takes a capacity module, the one below it a stack of sixteen row modules. Another mod
+      can add more, and the tab grows with them. An empty cell shows a greyed plate, so you can see
+      what it is waiting for.</p>
 
-<div class="callout callout--loss">
-<p class="callout__badge">What it costs</p>
-<p>Pull the module out, close the screen, and everything above the new capacity drops on the ground
-in one tick. A full double echo crate losing its 512 module empties 1,008 stacks at once, and nobody
-picks that up before it despawns. Empty the crate before taking the module back.</p>
+<table class="param-table reveal reveal--tight">
+      <caption>The three capacity modules the mod ships</caption>
+      <thead><tr><th>Module</th><th>What a slot holds</th><th>Tag</th></tr></thead>
+      <tbody>
+        <tr><td class="key">128 module</td><td class="default">128</td><td>deepcrate:module_128</td></tr>
+        <tr><td class="key">256 module</td><td class="default">256</td><td>deepcrate:module_256</td></tr>
+        <tr><td class="key">512 module</td><td class="default">512</td><td>deepcrate:module_512</td></tr>
+      </tbody>
+    </table>
+    <p class="muted reveal">A module aims at an item tag rather than a precise item, so another mod
+      adds its own to one of these three without writing a line of code.</p>
+
+    <figure class="shot reveal">
+      <img src="/assets/img/capacity.png" width="960" height="540" alt="A copper crate screen, a 512 module on the tab, one slot holding 512 redstone dust.">
+      <figcaption>The 512 module at the top of the tab, the empty row cell below it.</figcaption>
+    </figure>
+
+    <h2 class="reveal reveal--wide">The best offer, not the sum</h2>
+    <p class="reveal">The cell an item sits in no longer decides what it does. A capacity module
+      lifts the whole crate from any cell, and the crate keeps the strongest of the offers: two 256
+      modules give 256, a 256 next to a 512 gives 512. Rows follow the opposite rule and add up,
+      which is the only difference between the two families.</p>
+
+    <h2 class="reveal reveal--wide">Why 512 and not more</h2>
+    <p class="reveal">The three modules that ship stop at 512 by choice, not by limit. A slot goes up
+      to 32,767 and a module from another mod may ask for that. The ceiling is the menu's: the
+      current capacity reaches the client in a packet that writes a short integer, and the save file
+      is bounded by the same number.</p>
+    <p class="reveal">A slot's count travels as a variable-length integer, so a large number costs
+      nothing on the wire. What constrains it is the game's save format, which refuses any count
+      above 99: a crate therefore writes its slots in its own format, the item on one side and its
+      count on the other.</p>
+
+    <div class="callout callout--danger reveal">
+      <p><strong>Taking a module back costs whatever is over.</strong> Close the screen and anything
+        above the new capacity drops on the floor in one tick. A full double echo crate losing its
+        512 module empties <strong>1,008 stacks</strong> at once. Empty the crate before you take the
+        module out.</p>
+    </div>
+  </main>
 </div>
 
-<h2>The strongest offer, not the sum</h2>
-<p>Which cell an item sits in no longer decides what it does. A capacity module raises the whole
-crate from any cell, and the crate takes the strongest offer: two 256 modules still give 256, a 256
-next to a 512 gives 512. Rows follow the opposite rule and add up, which is the one difference
-between the two families.</p>
+<site-footer></site-footer>
 
-<figure class="shot">
-<img src="/assets/img/capacity.png" width="960" height="540" alt="A copper crate screen, the 512 module on the tab, one slot carrying 512 redstone dust.">
-<figcaption>The 512 module at the top of the tab, the empty row cell below it.</figcaption>
-</figure>
-
-<h2>Why 512 and no further</h2>
-<p>The three shipped modules stop at 512 by choice, not by capability. A slot goes up to 32,767 and a
-module from another mod may ask for that number. The ceiling belongs to the menu: the current
-capacity reaches the client through a packet that writes a short, and the save file is bounded by the
-same number.</p>
-<p>A slot's count travels as a variable-length integer, so a large number costs nothing on the wire.
-What shapes it is the game's own save format, which refuses any count above 99: a crate therefore
-writes its slots in a format of its own, the item on one side and its count on the other.</p>
-
-<h2>What a hand can carry</h2>
-<p>None of this changes what a player moves around. A hand, a hopper stack and a dropped item are
-still 64, so taking from a crate hands out one ordinary stack at a time.</p>
-
-</main>
-</div>
-
-<dc-footer></dc-footer>
-<script defer src="/assets/js/fx/reveal.js"></script>
-<script defer src="/assets/js/router/router-swap.js"></script>
-<script defer src="/assets/js/router/router.js"></script>
+<script src="/assets/js/fx/reveal.js" defer></script>
+<script src="/assets/js/page/wiki-chart.js" defer></script>
+<script src="/assets/js/router/router-swap.js" defer></script>
+<script src="/assets/js/router/router.js" defer></script>
 </body>
 </html>

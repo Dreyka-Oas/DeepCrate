@@ -1,14 +1,15 @@
-# Cloudflare Pages: security headers on every response.
-# The policy is cut to what the site actually loads: same-origin CSS, JS and
-# images, the Google Fonts stylesheet (fonts.googleapis.com) and its font files
-# (fonts.gstatic.com). No inline script, no on* handler, no eval, so script-src
-# stays strictly 'self'.
-# The style="width:..." attributes on the tier ladder force 'unsafe-inline' for
-# style-src-attr only; style-src-elem stays locked, since the site carries no
-# inline <style> tag. Browsers ignoring -elem/-attr fall back to style-src,
-# which is why 'unsafe-inline' appears there too.
+# Cloudflare Pages : en-têtes de sécurité appliqués à toutes les réponses.
+# CSP calibrée sur ce que le site charge réellement : CSS/JS same-origin, le
+# favicon SVG same-origin, le data: URI SVG du masque d'une feuille de style
+# (components/wiki/page.css), la feuille Google Fonts (fonts.googleapis.com)
+# et ses fichiers de police (fonts.gstatic.com). Aucun script inline, aucun
+# handler on*, aucun eval : script-src reste strictement 'self'.
+# Les attributs style="…" présents dans le HTML imposent 'unsafe-inline' pour
+# style-src-attr uniquement ; style-src-elem reste verrouillé (aucune balise
+# <style> inline dans le site). Les navigateurs qui ignorent -elem/-attr
+# retombent sur style-src, d'où le 'unsafe-inline' qui y figure aussi.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; style-src-elem 'self' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; style-src-elem 'self' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), xr-spatial-tracking=()
   X-Frame-Options: DENY

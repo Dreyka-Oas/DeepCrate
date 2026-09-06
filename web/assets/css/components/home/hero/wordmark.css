@@ -1,0 +1,60 @@
+/* The hero's type block: reading scrim, eyebrow, and the two-part wordmark
+   with its stamp. The scrim lives here rather than with the scene it covers:
+   it exists for the type's legibility, and it has to be tuned with the type,
+   not with the skyline.
+   SLOT, the mod's name at its largest. The split into two spans is what lets
+   the second half take the accent colour; a one-word name drops the second
+   span and the rules go with it. The stamp is optional and often wrong: it
+   only earns its place if the mod actually claims something. */
+
+/* Reading scrim: a GRADIENT, translucent scrim, never a solid flat. The old
+   version laid opaque --bg across the whole lower half of the hero and wiped
+   out the watchtowers and skyline that live there. Here the scrim is strong
+   near the ground (protecting the lede) and fades fast, so the tops of the
+   buildings stay clearly visible through it. Fine-grain text legibility is
+   handled on top of that by the text-shadow on the heading and lede. */
+.home-hero::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(to top,
+    color-mix(in oklch, var(--bg) 62%, transparent) 0%,
+    color-mix(in oklch, var(--bg) 22%, transparent) 34%,
+    transparent 58%);
+}
+
+.home-hero__wrap {
+  position: relative; z-index: 5;
+  padding: 0 clamp(20px, 5vw, 64px) clamp(28px, 6vh, 60px);
+  width: 100%;
+}
+.home-eyebrow {
+  font-family: var(--font-body); font-size: clamp(12px, 1.4vw, 14px);
+  letter-spacing: 0.01em; color: var(--muted);
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  text-shadow: 0 1px 10px var(--bg), 0 0 20px var(--bg);
+}
+.home-eyebrow .dot { width: 6px; height: 6px; background: var(--primary-text); border-radius: 50%; animation: pulse-dot 2.4s infinite; }
+
+.home-title {
+  position: relative;
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(3.4rem, 19vw, 13rem);
+  line-height: 0.82; letter-spacing: -0.01em; text-transform: uppercase;
+  color: var(--ink); margin: 0.1em 0 0.08em;
+  /* A halo in the page colour behind the text. It guarantees legibility
+     whatever the hero's set dressing places underneath, without relying on a
+     pixel-perfect calibration of the protective gradient above. */
+  text-shadow: 0 2px 24px var(--bg), 0 0 46px var(--bg), 0 0 8px var(--bg);
+}
+.home-title .part { display: block; position: relative; }
+.home-title .ch { display: inline-block; position: relative; }
+/* Opening: every letter starts covered by an ink-coloured bar and
+   declassifies itself on load (see home.js initTitle()). */
+.home-title.is-anim .ch::before {
+  content: ""; position: absolute; inset: -0.02em -0.03em;
+  background: var(--ink); border: 1px solid var(--accent-text);
+  transform-origin: left center;
+  animation: home-mask-lift 0.5s var(--ease-soft) forwards;
+}
+@keyframes home-mask-lift { to { transform: scaleX(0); opacity: 0; } }
+.home-title .part-a { color: var(--ink); }
+.home-title .part-b { color: var(--primary-text); }

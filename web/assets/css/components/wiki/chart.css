@@ -1,0 +1,58 @@
+/* SLOT chart. Frames the one chart in the wiki: the box, the grid
+   lines, the two stroke colors and the legend swatches for
+   page/wiki-chart.js, which plots two series against a formula, not a
+   decorative curve. A mod with a third series, or none at all, adds a
+   matching --c pair here, or drops the file the way wiki-chart.js
+   already tells you to. The class names are the contract:
+   .site-chart__line--a, __line--b, __swatch--a and __swatch--b have to
+   keep matching whatever wiki-chart.js writes into the DOM, and the
+   host element needs both id="wiki-chart" for the script and
+   class="site-chart" for this file, today only on the mechanic-8 page
+   in each language. */
+.site-chart {
+  margin: var(--space-4) 0;
+  padding: var(--space-3) var(--space-3) var(--space-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.site-chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+  font-family: var(--font-mono);
+}
+.site-chart__grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+.site-chart__label {
+  fill: var(--muted);
+  font-size: 9px;
+}
+.site-chart__line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.site-chart__line--a { stroke: var(--primary-text); }
+.site-chart__line--b { stroke: var(--accent-text); }
+.site-chart__marker {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.site-chart__legend {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.site-chart__legend span { display: inline-flex; align-items: center; gap: 0.5em; }
+.site-chart__swatch { width: 14px; height: 3px; border-radius: 2px; }
+.site-chart__swatch--a { background: var(--primary-text); }
+.site-chart__swatch--b { background: var(--accent-text); }

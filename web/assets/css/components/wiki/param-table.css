@@ -1,43 +1,79 @@
+/* KEEP param table. Every mod's wiki needs a table like this one, so
+   the mechanism stays, not a design choice: the row and column content
+   is written per page, in the markup, never here. Touch a rule and
+   every param table in the wiki changes at once, in both languages. */
+/* Config reference table: mono key column, right-aligned default value.
+   display:block + width:max-content + overflow-x:auto → a wide table scrolls
+   inside its own box (the .key/.default columns are nowrap) instead of pushing
+   the whole page sideways on mobile. */
 .param-table {
-  width: 100%;
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
   font-size: var(--text-small);
-  margin: var(--space-4) 0;
+  margin: var(--space-3) 0 var(--space-4);
   content-visibility: auto;
   contain-intrinsic-size: auto 320px;
+}
+.param-table caption {
+  text-align: left;
+  font-family: var(--font-stamp);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--primary-text);
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
 }
 .param-table th {
   text-align: left;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-weight: 700;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   color: var(--muted);
-  font-weight: 400;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-2);
   border-bottom: 1px solid var(--border);
 }
 .param-table td {
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2);
   border-bottom: 1px solid var(--border);
   vertical-align: top;
 }
-.param-table tbody tr { transition: background-color 140ms var(--ease-drop); }
-.param-table tbody tr:hover { background: color-mix(in oklab, var(--surface) 70%, transparent); }
-
-.param-table__key {
-  font-family: var(--font-mono);
-  color: var(--primary-text);
-  white-space: nowrap;
-}
-.param-table__value {
+.param-table tbody tr:last-child td { border-bottom: none; }
+.param-table td.key { font-family: var(--font-mono); font-weight: 700; color: var(--primary-text); white-space: nowrap; }
+.param-table td.default {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  text-align: right;
   color: var(--muted);
+  text-align: right;
   white-space: nowrap;
 }
+.param-table tbody tr:hover { background: color-mix(in oklch, var(--fill-primary) 10%, var(--surface)); }
+.param-table tbody tr:hover td.key { color: var(--primary-text); }
 
-@media (max-width: 700px) {
-  .param-table__key { white-space: normal; word-break: break-word; }
+/* Row-by-row cascade when the table comes into view. The table carries
+   class="param-table reveal", so fx/reveal.js adds .in-view through the same
+   observer every other block uses. One mechanism, applied per row here rather
+   than to the block as a whole. */
+.param-table.in-view tbody tr {
+  animation: param-row-in 380ms var(--ease-soft) both;
+}
+.param-table.in-view tbody tr:nth-child(1) { animation-delay: 40ms; }
+.param-table.in-view tbody tr:nth-child(2) { animation-delay: 80ms; }
+.param-table.in-view tbody tr:nth-child(3) { animation-delay: 120ms; }
+.param-table.in-view tbody tr:nth-child(4) { animation-delay: 160ms; }
+.param-table.in-view tbody tr:nth-child(5) { animation-delay: 200ms; }
+.param-table.in-view tbody tr:nth-child(6) { animation-delay: 240ms; }
+.param-table.in-view tbody tr:nth-child(7) { animation-delay: 280ms; }
+.param-table.in-view tbody tr:nth-child(8) { animation-delay: 320ms; }
+.param-table.in-view tbody tr:nth-child(9) { animation-delay: 360ms; }
+.param-table.in-view tbody tr:nth-child(10) { animation-delay: 400ms; }
+.param-table.in-view tbody tr:nth-child(n+11) { animation-delay: 440ms; }
+@keyframes param-row-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: none; }
 }

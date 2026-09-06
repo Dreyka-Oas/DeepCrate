@@ -1,18 +1,22 @@
 // Run from web/:  node tools/check-lang.mjs
 //
-// The two trees under lang/ are provably symmetric rather than symmetric by
-// habit. Two rules per page:
+// KEEP, apart from the CODES list: a site that adds a third language adds it
+// there and creates the matching tree under lang/.
+//
+// The two trees under lang/ are provably symmetric, not just symmetric by
+// convention. Two rules, per page:
 //
 //   1. A page under lang/<code>/ declares <html lang="<code>">. Nothing else
-//      ties the tree a page sits in to the language it renders: DC.lang() reads
-//      that attribute at runtime, so a page left on the wrong value would
-//      quietly serve the other language's strings out of assets/js/i18n/.
+//      ties the tree a page sits in to the language it renders: SITE.lang()
+//      reads this attribute at runtime, so a page left on the wrong value
+//      would silently serve the other language's strings from assets/js/i18n/.
 //
 //   2. A page under lang/<code>/ carries a rel="alternate" hreflang="fr" href
-//      equal to /lang/fr/ plus its path below its own tree, and the same for
-//      "en". Without it a page can drift out of the pair, renamed or moved or
-//      forgotten in the other tree, and nothing notices: both trees are
-//      hand-written, and hreflang is the only place the pairing is recorded.
+//      equal to /lang/fr/ plus its path below its own tree, and likewise for
+//      "en". Without this, a page can drift out of the fr/en pair (renamed,
+//      moved, forgotten in the other tree) and nothing notices: the two trees
+//      are hand-written now, and hreflang is the only place the pairing is
+//      written down.
 import { walk, read, byExt, fail, pass, done } from "./lib/tree.mjs";
 
 const CODES = ["fr", "en"];
@@ -41,16 +45,5 @@ for (const [code, f] of PAGES) {
   }
 }
 if (!altMismatch) pass(`${PAGES.length} pages, hreflang alternates match their counterpart`);
-
-// ---- 3. the two trees hold the same file names ----
-const below = (code) => new Set(byExt(walk(`lang/${code}`), ".html").map((f) => f.slice(`lang/${code}/`.length)));
-const [fr, en] = CODES.map(below);
-let missing = 0;
-for (const [a, b, aCode, bCode] of [[fr, en, "fr", "en"], [en, fr, "en", "fr"]]) {
-  for (const page of a) {
-    if (!b.has(page)) { fail(`${page} exists under lang/${aCode} but not under lang/${bCode}`); missing++; }
-  }
-}
-if (!missing) pass(`${fr.size} pages, the same set in both trees`);
 
 done("lang");

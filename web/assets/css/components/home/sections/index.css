@@ -1,0 +1,22 @@
+/* Exhibit Nº05, the appendices: the four-column index of wiki pages.
+   KEEP, but the band goes if the wiki is small enough that the nav is the way
+   in. Four columns is a maximum, not a shape to fill: three read better than
+   four half-empty ones, and the grid collapses to fewer without a rule. */
+
+/* ============================================================
+   WIKI INDEX: the dossier's appendices
+   ============================================================ */
+.home-index { padding: clamp(48px, 7vh, 90px) clamp(20px, 5vw, 64px) clamp(56px, 8vh, 100px); max-width: 1180px; margin: 0 auto; }
+.home-index__lead { max-width: 60ch; color: var(--muted); margin: 8px 0 40px; font-size: 1.05rem; }
+.home-toc { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0; border-top: 1px solid var(--border); }
+.home-toc__col { border-bottom: 1px solid var(--border); padding: 26px 24px 26px 0; }
+.home-toc__k { font-family: var(--font-stamp); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--primary-text); margin-bottom: 14px; }
+.home-toc__link {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0;
+  border-bottom: 1px solid transparent; color: var(--ink); font-family: var(--font-display); font-weight: 400;
+  font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.005em;
+  transform: perspective(500px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: color .2s, padding .3s var(--ease-snap), transform 120ms linear;
+}
+.home-toc__link span { font-family: var(--font-mono); font-weight: 400; font-size: 11px; letter-spacing: 0.06em; color: var(--muted); text-transform: none; }
+.home-toc__link:hover, .home-toc__link:focus-visible { color: var(--primary-text); padding-left: 10px; }

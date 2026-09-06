@@ -1,128 +1,122 @@
 (function () {
   "use strict";
 
-  window.DC = window.DC || {};
+  window.SITE = window.SITE || {};
 
-  // The four voices, published as DC.sfx. Each opens the same way: ask the
-  // engine for a context, and get null where Web Audio is missing or the
-  // visitor has muted. Nothing here holds state, engine.js owns all of it and
-  // burst.js owns the graph shape they share.
-  //
-  // The four jobs are the ones any page needs: confirm a press, mark a reveal,
-  // answer a link, cover a page swap. Only the numbers belong to this mod, and
-  // they are pine, iron and cut rock rather than paper and ink.
+  // SLOT, and the loudest one in the template: the four voices, stamp, sweep,
+  // click and whoosh, that give the site its own sound identity. A new mod
+  // rewrites what those four functions play, tuning A.burst()'s filter, peak
+  // and decay numbers or wiring in raw oscillators as needed. Keep exporting
+  // the same four names on window.SITE.sfx: router.js, toggle.js and the page
+  // scripts call them by name, so renaming one breaks the call site. Reusing
+  // another mod's exact sound palette here leaves the site dressed in someone
+  // else's clothes, and one rule never bends regardless of what plays: nothing
+  // may sound before a first real user gesture, a click or a key press,
+  // because that is the browser's autoplay policy, not a house preference.
+
+  // The dossier's four voices, published as SITE.sfx. Every one opens the same
+  // way: ask the engine for a context, and get null where Web Audio is missing
+  // or the user has muted. Nothing here holds state: engine.js owns all of it,
+  // burst.js owns the one graph shape they share.
   //
   // Must be loaded AFTER fx/sound/burst.js.
-  var A = window.DC._audio;
+  var A = window.SITE._audio;
 
-  // A small bounded variation. The same sound replayed identically on every
-  // click ends up sounding like a machine rather than a room.
+  // A small bounded random variation. The same sound replayed identically on
+  // every click ends up sounding like a machine, not a living dossier.
   function jitter(base, amount) { return base + (Math.random() * 2 - 1) * amount; }
 
   function volumeOf(opts) { return (opts && opts.volume) || 1; }
 
-  // Iron latch dropping into a pine lid: a short bright tick over a low thud.
-  // The confirmation voice, used by the buttons and by the unmute.
-  function latch(opts) {
+  // Ink stamp: low-pass filtered noise plus a deep sine thump, fast attack and
+  // decay (the containment-level change, picking a tier, the action buttons).
+  function stamp(opts) {
     var c = A.voiceCtx();
     if (!c) return;
     var now = c.currentTime, vol = volumeOf(opts);
 
     A.burst(c, now, {
-      filter: "bandpass", q: 2.4, from: jitter(2300, 260), to: 900, sweep: 0.05,
-      peak: 0.34 * vol, floor: 0.001, decay: 0.07, stop: 0.08
+      filter: "lowpass", from: jitter(1400, 200), to: 180, sweep: 0.09,
+      peak: 0.5 * vol, floor: 0.001, decay: 0.11, stop: 0.12
     });
 
-    // The thud is an oscillator, not noise: it is the weight landing on wood,
-    // and noise has no pitch to drop.
-    var body = c.createOscillator();
-    body.type = "sine";
-    body.frequency.setValueAtTime(jitter(168, 14), now);
-    body.frequency.exponentialRampToValueAtTime(74, now + 0.11);
-    var bg = c.createGain();
-    bg.gain.setValueAtTime(0.5 * vol, now);
-    bg.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-    body.connect(bg).connect(A.master());
-    body.start(now);
-    body.stop(now + 0.16);
+    // The thump is an oscillator, not noise: it is the weight of the stamp
+    // hitting paper, and noise has no pitch to drop.
+    var thump = c.createOscillator();
+    thump.type = "sine";
+    thump.frequency.setValueAtTime(jitter(140, 12), now);
+    thump.frequency.exponentialRampToValueAtTime(60, now + 0.12);
+    var tg = c.createGain();
+    tg.gain.setValueAtTime(0.6 * vol, now);
+    tg.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+    thump.connect(tg).connect(A.master());
+    thump.start(now);
+    thump.stop(now + 0.17);
   }
 
-  // An echo shard ringing thin, the one bright thing in the room: filtered
-  // noise opening upward under a high partial that fades faster than it. Marks
-  // a reveal, so it stays rare.
-  function shard(opts) {
-    var c = A.voiceCtx();
-    if (!c) return;
-    var now = c.currentTime, vol = volumeOf(opts);
-
-    A.burst(c, now, {
-      filter: "bandpass", q: 1.6, from: jitter(900, 120), to: jitter(3400, 300), sweep: 0.2,
-      start: 0.001, attack: 0.03, peak: 0.2 * vol, floor: 0.001, decay: 0.26, stop: 0.28
-    });
-
-    var ring = c.createOscillator();
-    ring.type = "triangle";
-    ring.frequency.value = jitter(1870, 90);
-    var rg = c.createGain();
-    rg.gain.setValueAtTime(0.0001, now);
-    rg.gain.linearRampToValueAtTime(0.09 * vol, now + 0.04);
-    rg.gain.exponentialRampToValueAtTime(0.0001, now + 0.34);
-    ring.connect(rg).connect(A.master());
-    ring.start(now);
-    ring.stop(now + 0.35);
-  }
-
-  // Knuckle on a lid: soft, low, meant to be replayed on every internal link
-  // without wearing thin. Delegated exactly once by router/router.js.
-  function tap() {
+  // Band-pass noise sweeping downward: radio interference being wiped away.
+  // Used by the home page title reveal and the list rows.
+  function sweep(opts) {
     var c = A.voiceCtx();
     if (!c) return;
     A.burst(c, c.currentTime, {
-      filter: "lowpass", from: jitter(760, 120),
-      peak: 0.13, floor: 0.001, decay: 0.05, stop: 0.06
+      filter: "bandpass", q: 0.8, from: jitter(2600, 400), to: jitter(500, 100), sweep: 0.18,
+      start: 0.001, attack: 0.02, peak: 0.32 * volumeOf(opts), floor: 0.001, decay: 0.2, stop: 0.22
     });
   }
 
-  // A crate dragged across stone and set down, synchronised with the router's
-  // swap. Three layers: the grain of the drag, made of short irregular grains
-  // because a smooth whoosh reads as air rather than as stone; the low body of
-  // the travel; and the corner settling at the end.
-  function slide() {
+  // Navigation confirmation: a fingertip tap on paper, soft and low, meant to
+  // be replayed often (the site's links) without wearing thin. Delegated
+  // exactly once by router/router.js.
+  function click() {
+    var c = A.voiceCtx();
+    if (!c) return;
+    A.burst(c, c.currentTime, {
+      filter: "bandpass", q: 1.2, from: jitter(1000, 150),
+      peak: 0.11, floor: 0.001, decay: 0.045, stop: 0.05
+    });
+  }
+
+  // Page turn, synchronised with the router's swap. Three layers: a crumple of
+  // very short grains at random times, pitches and amplitudes (it is that
+  // irregular grain, not a smooth whoosh, that reads as "paper" to the ear), the
+  // rush of air beneath it, and a muffled tap as the page settles.
+  function whoosh() {
     var c = A.voiceCtx();
     if (!c) return;
     var now = c.currentTime;
 
-    var grains = 14 + Math.floor(Math.random() * 8);
+    var grains = 16 + Math.floor(Math.random() * 8);
     for (var i = 0; i < grains; i++) {
       // Drawn in this order on purpose: placement, pitch, amplitude, length.
       // The four come off one random stream, so reordering them re-rolls every
-      // grain in the drag.
-      var at = now + Math.pow(Math.random(), 1.4) * 0.24;
-      var pitch = 900 + Math.random() * 1700;
-      var peak = 0.03 + Math.random() * 0.06;
-      var dur = 0.006 + Math.random() * 0.024;
+      // grain in the burst.
+      var at = now + Math.pow(Math.random(), 1.6) * 0.26;   // biased to the start: the paper folds, then settles
+      var pitch = 1700 + Math.random() * 3200;
+      var peak = 0.04 + Math.random() * 0.08;
+      var dur = 0.005 + Math.random() * 0.02;
       A.burst(c, at, {
-        filter: "bandpass", q: 0.9, from: pitch,
-        start: 0.0001, attack: 0.002, peak: peak,
+        filter: "highpass", from: pitch,
+        start: 0.0001, attack: 0.001, peak: peak,
         floor: 0.0001, decay: dur, stop: dur + 0.01
       });
     }
 
     A.burst(c, now, {
-      filter: "lowpass", from: 240, to: jitter(520, 80), sweep: 0.22,
-      start: 0.001, attack: 0.07, peak: 0.1, floor: 0.001, decay: 0.3, stop: 0.32
+      filter: "bandpass", q: 0.7, from: 520, to: jitter(1600, 200), sweep: 0.24,
+      start: 0.001, attack: 0.06, peak: 0.08, floor: 0.001, decay: 0.3, stop: 0.32
     });
 
-    A.burst(c, now + 0.26, {
-      filter: "lowpass", from: 380,
-      peak: 0.1, floor: 0.0005, decay: 0.07, stop: 0.09
+    A.burst(c, now + 0.27, {
+      filter: "lowpass", from: 850,
+      peak: 0.08, floor: 0.0005, decay: 0.06, stop: 0.08
     });
   }
 
-  window.DC.sfx = {
-    latch: latch,
-    shard: shard,
-    tap: tap,
-    slide: slide
+  window.SITE.sfx = {
+    stamp: stamp,
+    sweep: sweep,
+    click: click,
+    whoosh: whoosh
   };
 })();

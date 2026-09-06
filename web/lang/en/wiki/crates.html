@@ -3,83 +3,97 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The six crates, DeepCrate</title>
-<meta name="description" content="The six crate tiers, what makes each one, and what happens when two crates of the same tier touch.">
+<title>The six crates · DeepCrate</title>
+<meta name="description" content="Six tiers from 27 to 72 slots, each crafted around the one before it, and what pairing two of them changes.">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate" hreflang="fr" href="/lang/fr/wiki/crates.html">
 <link rel="alternate" hreflang="en" href="/lang/en/wiki/crates.html">
+<link rel="alternate" hreflang="x-default" href="/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Saira+Stencil+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/tokens.css">
 <link rel="stylesheet" href="/assets/css/base.css">
 <link rel="stylesheet" href="/assets/css/components.css">
-<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/core/site-lang.js"></script>
 <script src="/assets/js/i18n/fr.js"></script>
 <script src="/assets/js/i18n/en.js"></script>
-<script src="/assets/js/core/dc-theme.js"></script>
-<script src="/assets/js/chrome/dc-boot.js"></script>
+<script src="/assets/js/core/site-theme.js"></script>
+<script src="/assets/js/core/site-motion.js"></script>
 <script src="/assets/js/fx/sound/engine.js"></script>
 <script src="/assets/js/fx/sound/burst.js"></script>
 <script src="/assets/js/fx/sound/voices.js"></script>
 <script src="/assets/js/fx/sound/toggle.js"></script>
+<script src="/assets/js/chrome/site-boot.js"></script>
+<script src="/assets/js/chrome/site-icons.js"></script>
+<script src="/assets/js/chrome/site-chrome.js"></script>
+<script src="/assets/js/chrome/site-ledger.js"></script>
 <script src="/assets/js/chrome/components.js"></script>
+<script src="/assets/js/page/home-backdrop.js"></script>
+<script src="/assets/js/page/home-tiers.js"></script>
+<script src="/assets/js/page/home.js"></script>
 </head>
 <body>
-<dc-nav></dc-nav>
+
+<site-nav current="/wiki/crates.html"></site-nav>
 
 <div class="container wiki-layout">
-<dc-sidebar></dc-sidebar>
-<main class="wiki-content prose">
+  <site-sidebar current="/wiki/crates.html"></site-sidebar>
 
-<p class="wiki-breadcrumb"><a href="/lang/en/index.html">DeepCrate</a> / The six crates</p>
-<h1>The six crates</h1>
-<p class="wiki-lede">Six tiers, each nine slots deeper than the one before, and each made by
-surrounding that crate with the material the next one is named after.</p>
+  <main class="wiki-content prose">
+    <p class="breadcrumb"><a href="../index.html">DeepCrate</a> / The mod / The six crates</p>
+    <h1 class="reveal reveal--wide">The six crates</h1>
+    <p class="reveal">Six tiers, each nine slots larger than the one before, and each crafted by
+      surrounding the previous crate with the material that names the next.</p>
 
-<figure class="shot shot--world">
-<img src="/assets/img/tiers.png" width="960" height="540" alt="The six crates lined up on a platform, copper through echo, with a vanilla chest at the end of the row.">
-<figcaption>Copper, iron, amethyst, prismarine, breeze, echo, and the chest of the game at the end.</figcaption>
-</figure>
+    <figure class="shot shot--world reveal">
+      <img src="/assets/img/tiers.png" width="960" height="540" alt="The six crates lined up on a platform, from copper to echo, with a vanilla chest at the end of the row.">
+      <figcaption>All six in order, with the vanilla chest at the end for scale.</figcaption>
+    </figure>
 
-<h2>The table</h2>
-<table class="param-table reveal reveal--tight">
-<thead><tr><th>Crate</th><th>Around the one before</th><th>Slots</th></tr></thead>
-<tbody>
-<tr><td class="param-table__key">Copper</td><td>copper ingot, around a copper chest</td><td class="param-table__value">27</td></tr>
-<tr><td class="param-table__key">Iron</td><td>iron ingot</td><td class="param-table__value">36</td></tr>
-<tr><td class="param-table__key">Amethyst</td><td>amethyst shard</td><td class="param-table__value">45</td></tr>
-<tr><td class="param-table__key">Prismarine</td><td>prismarine crystals</td><td class="param-table__value">54</td></tr>
-<tr><td class="param-table__key">Breeze</td><td>breeze rod</td><td class="param-table__value">63</td></tr>
-<tr><td class="param-table__key">Echo</td><td>echo shard</td><td class="param-table__value">72</td></tr>
-</tbody>
-</table>
+    <table class="param-table reveal reveal--tight">
+      <caption>The six tiers, and what it takes to reach the next</caption>
+      <thead><tr><th>Crate</th><th>Around the previous one</th><th>Slots</th></tr></thead>
+      <tbody>
+        <tr><td class="key">Copper</td><td>copper ingots, around a vanilla chest</td><td class="default">27</td></tr>
+        <tr><td class="key">Iron</td><td>iron ingots</td><td class="default">36</td></tr>
+        <tr><td class="key">Amethyst</td><td>amethyst shards</td><td class="default">45</td></tr>
+        <tr><td class="key">Prismarine</td><td>prismarine crystals</td><td class="default">54</td></tr>
+        <tr><td class="key">Breeze</td><td>breeze rods</td><td class="default">63</td></tr>
+        <tr><td class="key">Echo</td><td>echo shards</td><td class="default">72</td></tr>
+      </tbody>
+    </table>
+    <p class="muted reveal">The order follows how much trouble the material is to reach, which is why
+      breeze and echo sit at the top: one drops in a trial chamber, the other on the floor of an
+      ancient city.</p>
 
-<p>The order follows how hard the material is to reach, which is what puts breeze and echo at the
-top: one comes out of a trial chamber, the other out of an ancient city.</p>
+    <h2 class="reveal reveal--wide">Two crates that pair up</h2>
+    <p class="reveal">Two crates of the same tier placed side by side open one screen, the way
+      vanilla chests do. The slots of both halves run on without a break, sorting treats them as one
+      series, and the two share a single module: what sits on one half's tab counts for the whole
+      pair.</p>
+    <p class="reveal">A pair of echo crates is therefore 144 slots, and 432 with sixteen row modules.
+      Two different tiers side by side stay two separate crates.</p>
 
-<h2>Two crates that marry</h2>
-<p>Two crates of the same tier placed side by side open one screen, as chests of the game do. The
-slots of the two halves run on without a seam, sorting treats them as a single series, and the two
-share one module: whatever sits on one half's tab counts for the whole pair.</p>
-<p>A pair of echo crates therefore holds 144 slots, and 432 with sixteen row modules in. Two
-different tiers side by side stay two separate crates.</p>
+    <h2 class="reveal reveal--wide">What a crate keeps of its name</h2>
+    <p class="reveal">A crate renamed on an anvil keeps that name once placed, and the screen shows
+      it in the top left. A name wider than the room available is cut before the page number rather
+      than drawn over it.</p>
 
-<h2>What a crate keeps of its name</h2>
-<p>A crate renamed on an anvil keeps that name once placed, and the screen prints it top left. A name
-wider than the room it has is cut short before the page number rather than drawn over it.</p>
-
-<h2>Breaking a crate</h2>
-<p>A broken crate hands its contents back on the ground, cut into stacks of 64, because that is all
-an item entity knows how to carry. A full echo crate returns a great many at once, and none of it
-waits five minutes for you.</p>
-
-</main>
+    <div class="callout callout--danger reveal">
+      <p><strong>Breaking a full crate.</strong> The contents drop on the floor cut into stacks of
+        64, because that is all a ground stack can carry. A double echo crate with a 512 module
+        therefore returns over a thousand stacks at once, and nobody picks that up before it despawns.
+        Empty it before you break it.</p>
+    </div>
+  </main>
 </div>
 
-<dc-footer></dc-footer>
-<script defer src="/assets/js/fx/reveal.js"></script>
-<script defer src="/assets/js/router/router-swap.js"></script>
-<script defer src="/assets/js/router/router.js"></script>
+<site-footer></site-footer>
+
+<script src="/assets/js/fx/reveal.js" defer></script>
+<script src="/assets/js/page/wiki-chart.js" defer></script>
+<script src="/assets/js/router/router-swap.js" defer></script>
+<script src="/assets/js/router/router.js" defer></script>
 </body>
 </html>

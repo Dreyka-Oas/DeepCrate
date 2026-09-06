@@ -1,0 +1,31 @@
+/* KEEP body copy. Sets the running text of a wiki page: the prose
+   measure, the bullet mark on lists, the inline code pill, and the
+   underline under a link. Page furniture lives in page.css and the
+   two-column shell in layout.css; a mod's palette reaches this file
+   only through the OKLCH tokens, so editing the selectors here changes
+   every prose block in every wiki page at once. */
+
+.wiki-content.prose { max-width: 74ch; }
+.wiki-content.prose ul { list-style: none; padding-left: 0; }
+.wiki-content.prose ul li {
+  position: relative;
+  padding-left: 1.4em;
+  margin-bottom: var(--space-2);
+}
+.wiki-content.prose ul li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.62em;
+  width: 7px; height: 7px;
+  background: var(--primary-text);
+  opacity: 0.85;
+}
+.wiki-content.prose a { text-underline-offset: 3px; }
+.wiki-content.prose a:hover, .wiki-content.prose a:focus-visible { text-decoration: underline; }
+.wiki-content code {
+  background: color-mix(in oklch, var(--primary-text) 12%, var(--surface));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.06em 0.4em;
+  color: var(--ink);
+}

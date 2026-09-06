@@ -1,0 +1,37 @@
+/* KEEP. Layout for the language gate at the site root, the page a visitor
+   with JavaScript sees for only a few milliseconds before being redirected,
+   and the one a visitor without it stays on to pick by hand. Font and color
+   already come from tokens.css, so nothing here needs an edit when filling in
+   a mod. */
+.lang-gate {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  margin: 0;
+}
+
+.lang-gate__mark {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 9vw, 5rem);
+  letter-spacing: 0.02em;
+  margin: 0 0 2.5rem;
+  text-align: center;
+}
+
+.lang-gate__choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lang-gate__choice a {
+  border: 1px solid currentColor;
+  display: block;
+  font-family: var(--font-mono);
+  padding: 0.75rem 2rem;
+  text-decoration: none;
+}

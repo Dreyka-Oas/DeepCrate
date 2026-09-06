@@ -1,4 +1,14 @@
+/* KEEP. The sticky nav bar: layout and behavior only, since colors and fonts
+   already come from tokens.css. The two comments below about view-transition
+   and the brand's width are load-bearing; leave the bar's structure as it is. */
+
+/* Sticky top nav: wordmark, section links, theme + sound buttons on the right.
+   Auto theme by default (prefers-color-scheme via light-dark), overridable by
+   the theme button (auto/day/night, see tokens.css and components.js). */
 .site-nav {
+  /* Persists through the navigation cross-fade (so the nav does not flicker
+     between two pages) instead of being part of the root snapshot. */
+  view-transition-name: site-nav;
   position: sticky;
   top: 0;
   z-index: var(--z-sticky-nav);
@@ -7,37 +17,55 @@
   justify-content: space-between;
   gap: var(--space-4);
   padding: var(--space-3) var(--space-4);
-  background: color-mix(in oklab, var(--bg) 90%, transparent);
+  background: color-mix(in oklch, var(--bg) 90%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 0 var(--glow-teal-c);
+  box-shadow: 0 1px 0 oklch(0.5 0.14 60 / 0.28);
 }
-
+/* The brand is the one item whose width the template cannot know: a mod name is
+   one short word or four long ones. min-width: 0 lets it shrink below its
+   content, nowrap keeps it on one line, and .site-nav__right stays flex: 0 0
+   auto. Without the pair, a long name wraps, the bar grows a second line and
+   the buttons on the right slide off a phone screen. */
 .site-nav__brand {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 1.4rem;
+  letter-spacing: -0.01em;
   display: flex;
   align-items: center;
   gap: 0.5em;
-  font-family: var(--font-display);
-  font-size: 1.35rem;
-  letter-spacing: -0.03em;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
 }
-.site-nav__brand svg { width: 22px; height: 22px; flex: 0 0 auto; }
-.site-nav__brand em { font-style: normal; color: var(--primary-text); }
-
+.site-nav__mark {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+.site-nav__brand em {
+  font-style: normal;
+  color: var(--primary-text);
+}
 .site-nav__links {
   display: flex;
-  align-items: center;
   gap: var(--space-4);
-  margin-left: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
 }
 .site-nav__links a {
-  font-size: var(--text-small);
-  color: var(--muted);
-  min-height: 40px;
   display: inline-flex;
   align-items: center;
+  font-size: var(--text-small);
+  color: var(--muted);
+  padding: var(--space-2) 0;
+  min-height: 40px;
   border-bottom: 2px solid transparent;
-  transition: color 150ms var(--ease-drop), border-color 150ms var(--ease-drop);
+  transition: color 160ms var(--ease-snap), border-color 220ms var(--ease-snap);
 }
 .site-nav__links a:hover,
 .site-nav__links a:focus-visible,
@@ -46,33 +74,15 @@
   border-bottom-color: var(--primary-text);
 }
 
-.site-nav__toggles {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  z-index: var(--z-theme-toggle);
-}
-.site-nav__toggle {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--muted);
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.4rem 0.8rem;
-  min-height: 40px;
-  cursor: pointer;
-  transition: color 150ms var(--ease-latch), border-color 150ms var(--ease-latch);
-}
-.site-nav__toggle:hover,
-.site-nav__toggle:focus-visible {
-  color: var(--ink);
-  border-color: var(--primary-text);
-}
-
-/* Three short links, so they hold far below the 900px the wiki sidebar needs.
-   Measured at 820px, where the old breakpoint left an empty bar and no way to
-   navigate on a tablet. */
-@media (max-width: 620px) {
+@media (max-width: 900px) {
   .site-nav__links { display: none; }
 }
+
+/* On a phone the bar carries the brand and three buttons and nothing else, so
+   the brand gives up its size first. */
+@media (max-width: 640px) {
+  .site-nav { gap: var(--space-2); padding-inline: var(--space-3); }
+  .site-nav__brand { font-size: 1.1rem; }
+}
+
+.site-nav__right { display: flex; align-items: center; gap: var(--space-2); flex: 0 0 auto; }

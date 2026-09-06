@@ -1,0 +1,17 @@
+/* The ambient backdrop canvas behind the hero, painted by
+   page/home-backdrop.js. Fixed and full-screen, but always behind the
+   content: it sets the mood, it never carries information.
+   KEEP for the placement, which holds whatever the script decides to draw.
+   SLOT for the two opacity values below: a backdrop that sits nicely in one
+   palette drowns the type in another, so they are retuned per mod. */
+
+/* Backdrop opacity: quieter in light mode. Opacity is not a colour, so
+   light-dark() does not apply. All three states are therefore covered (auto
+   via a media query, plus the forced override via [data-theme]) so the theme
+   button adjusts it too. */
+.home-backdrop { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.85; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .home-backdrop { opacity: 0.4; }
+}
+:root[data-theme="light"] .home-backdrop { opacity: 0.4; }
+:root[data-theme="dark"] .home-backdrop { opacity: 0.85; }

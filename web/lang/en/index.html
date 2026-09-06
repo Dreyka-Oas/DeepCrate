@@ -3,182 +3,279 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DeepCrate</title>
-<meta name="description" content="Six Minecraft crates, a slot that goes from 64 to 512, rows you buy with a module, and a screen that splits into pages.">
+<title>DeepCrate · Minecraft mod</title>
+<meta name="description" content="Six crates, a slot going from 64 to 512, rows bought one module at a time, and a screen that splits into pages.">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate" hreflang="fr" href="/lang/fr/index.html">
 <link rel="alternate" hreflang="en" href="/lang/en/index.html">
+<link rel="alternate" hreflang="x-default" href="/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Saira+Stencil+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/tokens.css">
 <link rel="stylesheet" href="/assets/css/base.css">
 <link rel="stylesheet" href="/assets/css/components.css">
-<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/core/site-lang.js"></script>
 <script src="/assets/js/i18n/fr.js"></script>
 <script src="/assets/js/i18n/en.js"></script>
-<script src="/assets/js/core/dc-theme.js"></script>
-<script src="/assets/js/chrome/dc-boot.js"></script>
+<script src="/assets/js/core/site-theme.js"></script>
+<script src="/assets/js/core/site-motion.js"></script>
 <script src="/assets/js/fx/sound/engine.js"></script>
 <script src="/assets/js/fx/sound/burst.js"></script>
 <script src="/assets/js/fx/sound/voices.js"></script>
 <script src="/assets/js/fx/sound/toggle.js"></script>
+<script src="/assets/js/chrome/site-boot.js"></script>
+<script src="/assets/js/chrome/site-icons.js"></script>
+<script src="/assets/js/chrome/site-chrome.js"></script>
+<script src="/assets/js/chrome/site-ledger.js"></script>
 <script src="/assets/js/chrome/components.js"></script>
+<script src="/assets/js/page/home-backdrop.js"></script>
+<script src="/assets/js/page/home-tiers.js"></script>
+<script src="/assets/js/page/home.js"></script>
 </head>
 <body>
-<dc-nav></dc-nav>
 
-<main class="container">
+<site-nav current="/index.html"></site-nav>
 
-<header class="hero">
-<div class="hero__content">
-<p class="hero__kicker">Minecraft mod, server and client</p>
-<h1 class="hero__title">Six crates, up to 512 a slot</h1>
-<p class="hero__lede">Each tier adds a row of nine. One module on the tab lifts every slot from 64 to
-512, and the screen splits into pages once the grid no longer fits.</p>
-<div class="hero__actions">
-<a class="btn btn--primary" href="/lang/en/wiki/installation.html">Install it</a>
-<a class="btn btn--ghost" href="/lang/en/wiki/crates.html">Read the guide</a>
-</div>
-</div>
-<svg class="hero__mark" viewBox="0 0 24 24" aria-hidden="true">
-<rect class="hero__level" x="6.4" y="11.9" width="11.2" height="5.5"/>
-<path class="brand-mark-back" fill-rule="evenodd" d="M2 4h20v16H2V4Zm2.6 2.6v10.8h14.8V6.6H4.6Z"/>
-<path class="brand-mark-back" d="M2 9.4h20v2H2z"/>
-<path class="brand-mark-front" d="M10 8.6h4v3.6h-4z"/>
-</svg>
-</header>
+<canvas class="home-backdrop" id="home-backdrop" aria-hidden="true"></canvas>
 
-<figure class="shot shot--world reveal reveal--wide">
-<img src="/assets/img/hero.png" width="1920" height="1080" alt="An echo crate, a copper crate, a double iron crate and a vanilla chest standing on a stone platform.">
-<figcaption>An echo crate, a copper one, an iron pair, and a chest of the game to read them against.</figcaption>
-</figure>
+<!-- Every section on this page is optional except the hero. No mod needs all
+     seven: one without a numbered progression drops the tiers, one without
+     variants drops the list. Each section carries, right above it, what it is
+     there to show and the exact list of files to touch in order to delete it,
+     move it or duplicate it. The order of the sections is free. The full map
+     is in SLOTS.md. -->
 
-<section class="mech reveal" data-sfx="shard">
-<div>
-<p class="mech__label">The crates</p>
-<h2>Copper to echo, six tiers</h2>
-<div class="mech__body">
-<p>They are ordered by how dangerous the material is to fetch, not by the usual iron, gold, diamond
-ladder. Each tier is the crate before it surrounded by eight of the new material.</p>
-<ul class="ladder">
-<li><span class="ladder__name">Copper</span><span class="ladder__bar" style="width:37.5%"></span><span class="ladder__slots">27</span></li>
-<li><span class="ladder__name">Iron</span><span class="ladder__bar" style="width:50%"></span><span class="ladder__slots">36</span></li>
-<li><span class="ladder__name">Amethyst</span><span class="ladder__bar" style="width:62.5%"></span><span class="ladder__slots">45</span></li>
-<li><span class="ladder__name">Prismarine</span><span class="ladder__bar" style="width:75%"></span><span class="ladder__slots">54</span></li>
-<li><span class="ladder__name">Breeze</span><span class="ladder__bar" style="width:87.5%"></span><span class="ladder__slots">63</span></li>
-<li><span class="ladder__name">Echo</span><span class="ladder__bar" style="width:100%"></span><span class="ladder__slots">72</span></li>
-</ul>
-<a class="mech__more" href="/lang/en/wiki/crates.html">The tiers in detail</a>
-</div>
-</div>
-<figure class="shot shot--world mech__shot">
-<img src="/assets/img/tiers.png" width="960" height="540" alt="The six crates lined up on a platform, copper through echo, with a vanilla chest at the end of the row.">
-<figcaption>The six, in order, with the chest of the game at the end for scale.</figcaption>
-</figure>
-</section>
+<main class="home">
 
-<section class="mech reveal">
-<div>
-<p class="mech__label">Capacity</p>
-<h2>A slot that holds 512</h2>
-<div class="mech__body">
-<p>What changes the capacity sits on the tab hanging off the left edge of the screen. The mod ships
-three modules, <strong>128, 256 and 512</strong>, and a crate takes the strongest offer rather than
-the sum: two 256 modules still give 256.</p>
-<p>Pull the module out, close the screen, and everything above the new capacity drops on the ground.
-Emptying a crate before taking its module back is the only safe order.</p>
-<a class="mech__more" href="/lang/en/wiki/capacity.html">What the module changes</a>
-</div>
-</div>
-<figure class="shot mech__shot">
-<img src="/assets/img/capacity.png" width="960" height="540" alt="A copper crate screen, the 512 module on the tab, one slot carrying 512 redstone dust.">
-<figcaption>The 512 module on the tab, and a slot carrying 512 redstone dust.</figcaption>
-</figure>
-</section>
+  <!-- REQUIRED SECTION: the hero, the one the page cannot lose.
+       Everything inside it is replaceable: the moving backdrop (marked just
+       below), the eyebrow, the two-part name, the lede and the two buttons.
+       One button, or three, is HTML to remove or copy here and nothing else.
+       Splitting the name across part-a and part-b is a layout choice: for a
+       one-word name, keep both spans and break it where the break reads. -->
+  <header class="home-hero">
+    <div class="home-hero__grid" aria-hidden="true"></div>
+    <!-- SLOT moving backdrop. Everything down to the closing marker gets
+         replaced in one go, together with
+         assets/css/components/home/hero/scene.css which holds the contract.
+         The mod draws whatever it wants here; the only rule is that it
+         moves. -->
+    <div class="home-hero__scene" aria-hidden="true">
+      <div class="home-hero__rail"><div class="home-hero__hook"></div></div>
+      <div class="home-hero__crate home-hero__crate--a"></div>
+      <div class="home-hero__crate home-hero__crate--b"><span class="home-hero__plate"></span></div>
+      <div class="home-hero__crate home-hero__crate--c"></div>
+      <div class="home-hero__floor"></div>
+    </div>
+    <!-- end SLOT moving backdrop -->
 
-<section class="mech reveal">
-<div>
-<p class="mech__label">Rows</p>
-<h2>Sixteen modules, twenty-four rows</h2>
-<div class="mech__body">
-<p>A row module is a chest surrounded by planks, and each one adds nine slots to the crate holding
-it. The cell under the capacity one takes sixteen at once, so a copper crate can end up bigger than
-an echo one.</p>
-<p>Adding or taking one back reopens the screen, because a menu's slot list is fixed once it has been
-built. That happens at the start of the next tick, never inside the click.</p>
-<a class="mech__more" href="/lang/en/wiki/rows.html">How rows add up</a>
-</div>
-</div>
-<figure class="shot mech__shot">
-<img src="/assets/img/rows.png" width="960" height="540" alt="An echo crate whose tab carries sixteen row modules, with six page numbers down the right edge of the screen.">
-<figcaption>Sixteen row modules in the lower cell, and the crate is up to six pages.</figcaption>
-</figure>
-</section>
+    <div class="home-hero__wrap">
+      <p class="home-eyebrow reveal"><span class="dot"></span> Minecraft mod, server and client</p>
+      <h1 class="home-title" id="home-title" aria-label="DeepCrate">
+        <span class="part part-a" aria-hidden="true">DEEP</span><span class="part part-b" aria-hidden="true">CRATE</span>
+      </h1>
+      <div class="home-hero__foot">
+        <p class="home-lede reveal">Six crates, a slot going from 64 to 512, rows bought one module at a time, and a screen that splits into pages once the grid stops fitting.</p>
+        <div class="home-cta reveal">
+          <a class="home-btn home-btn--fill" href="wiki/crates.html"><span>See the six crates</span></a>
+          <a class="home-btn home-btn--ghost" href="wiki/installation.html">How to install it</a>
+        </div>
+      </div>
+    </div>
+  </header>
 
-<section class="mech reveal">
-<div>
-<p class="mech__label">Sorting</p>
-<h2>Two buttons above the corner</h2>
-<div class="mech__body">
-<p>One orders by name, the other by how full each pile is. Both gather identical stacks into one,
-which is where the free slots come from. Pressing again reverses it, and the drawing shows what the
-<strong>next</strong> press will do, not what the last one did.</p>
-<p>The order is worked out on the player's own machine. A server holds no language files, so it
-cannot know that this player reads Pierre where another reads Stone.</p>
-<a class="mech__more" href="/lang/en/wiki/screen.html">Sorting, search and pages</a>
-</div>
-</div>
-<figure class="shot mech__shot">
-<img src="/assets/img/sorting.png" width="960" height="540" alt="A copper crate sorted by name, the button tooltip reading Sort Z to A.">
-<figcaption>Sorted by name. The tooltip reads Z to A, which is what the next press will do.</figcaption>
-</figure>
-</section>
+  <!-- OPTIONAL SECTION: the manifesto.
+       It says in one sentence what the mod changes about a run, right after
+       the hero and before any detail. Most mods keep it, none has to.
+       To delete it: this block in both index.html files, the @import line for
+       manifesto.css in components.css, and the file itself. -->
+  <section class="home-edition">
+    <div class="home-tag reveal reveal--wide">What the mod does</div>
+    <h2 class="home-manifesto reveal reveal--wide">A chest slot holds 64. This one holds <span class="glow">512</span>, and the whole crate follows.</h2>
+    <p class="home-manifesto__note reveal">The number sits on the crate rather than on a slot: a module dropped into the tab on the left edge of the screen lifts every slot at once, wherever inside it happens to be stored. The crate keeps the best offer rather than the sum, so a 256 module next to a 512 gives 512.</p>
+  </section>
 
-<section class="mech reveal">
-<div>
-<p class="mech__label">Pages</p>
-<h2>When the grid no longer fits</h2>
-<div class="mech__body">
-<p>A page holds four rows at most. Past that the screen splits, and the pages share the rows evenly:
-six rows give two pages of three, not one full page and one nearly empty.</p>
-<p>The numbers stack down the right edge, with no scrollbar, and a dot marks the pages that carry
-something. The page number never reaches the server, so no slot index can be steered from
-outside.</p>
-<a class="mech__more" href="/lang/en/wiki/screen.html">How the screen splits</a>
-</div>
-</div>
-<figure class="shot mech__shot">
-<img src="/assets/img/pages.png" width="960" height="540" alt="An eight-row echo crate cut into two pages, the numbers 1 and 2 down the right edge of the screen.">
-<figcaption>Eight rows, two pages of four. The dot on the 1 says that page carries something.</figcaption>
-</figure>
-</section>
+  <!-- OPTIONAL: the separator. It stands in for a horizontal rule with a row of
+       short codes that decay. The codes themselves are a slot, in
+       site-ledger.js. Drop it by removing the tag, here and further down. -->
+  <site-ledger label="What a crate carries"></site-ledger>
 
-<section class="mech reveal">
-<div>
-<p class="mech__label">Automation</p>
-<h2>A hopper fills all the way up</h2>
-<div class="mech__body">
-<p>Hoppers and pipes write into a slot up to the crate's capacity instead of stopping at 64. It is
-the one part of the mod that depends on what else is installed.</p>
-<p>With lithium, it is off. Lithium replaces the hopper wholesale and keeps its own copy of the
-target inventory: against a container answering more than 64 it takes the items out and never writes
-them in. Measured, not assumed. So while lithium is present a crate tells automation 64 a slot, which
-costs the feature and keeps the items.</p>
-<a class="mech__more" href="/lang/en/wiki/hoppers.html">Hoppers, pipes and lithium</a>
-</div>
-</div>
-<figure class="shot mech__shot">
-<img src="/assets/img/hopper.png" width="960" height="540" alt="An iron crate screen whose first slot carries 96 dirt blocks, the 512 module on the tab.">
-<figcaption>A hopper pushed past the 64: the slot carries 96, and it keeps going.</figcaption>
-</figure>
-</section>
+  <!-- OPTIONAL SECTION: the tiers.
+       It shows a numbered progression: waves, levels, depths, floors, crafting
+       steps. A mod with nothing numbered has nothing to put here and deletes
+       the section rather than inventing tiers for it.
+       To delete it: this block in both index.html files, the @import line for
+       tiers.css in components.css, the file itself, home-tiers.js along with
+       its script tag in the head of both index.html files, then the tier and
+       tierDescs keys in both i18n tables (both, or check-i18n fails). -->
+  <section class="home-tiers" id="home-tiers">
+    <div class="home-tiers__wash" id="home-tiers-wash" aria-hidden="true"></div>
+    <div class="home-tiers__inner">
+      <div class="home-tag reveal reveal--wide">The six crates</div>
+      <div class="home-tiers__head">
+        <div class="home-bignum"><span class="n" id="home-tier-num">01</span><span class="slash">/</span><span class="tot">06</span></div>
+        <div class="home-tiers__meta">
+          <h2 id="home-tier-name">Copper</h2>
+          <p id="home-tier-desc">27 slots. A copper ingot around a vanilla chest, and the first row of nine arrives.</p>
+        </div>
+      </div>
+      <div class="home-ticks" id="home-ticks" role="group" aria-label="Pick a crate"></div>
+      <p class="home-ticks__hint">Hover to browse, click to keep.</p>
+      <p class="home-manifesto__note reveal" style="margin-top:26px">Each tier is crafted by surrounding the previous one with the material that names the next, and the order follows how much trouble that material is to reach: copper off a cliff face, an echo shard from the floor of an ancient city. <a class="link" href="wiki/crates.html">The full table</a></p>
+    </div>
+  </section>
+
+  <!-- OPTIONAL SECTION: the numbered list.
+       It enumerates things that compare against each other: variants of a mob,
+       machines, biomes, items. Five rows here, but the count is free: a row is
+       one whole article block to copy or to remove. A mod with nothing to
+       enumerate deletes the section.
+       To delete it: this block in both index.html files, the @import line for
+       list.css in components.css, and the file itself. -->
+  <section class="home-list">
+    <div class="home-tag reveal reveal--wide">4 modules</div>
+    <h2 class="home-sec-title reveal">What goes on the tab<span class="dot">.</span></h2>
+    <p class="home-index__lead reveal">The tab clipped to the left edge of the screen is not a fixed pair of slots but a column. The mod ships two cells, capacity on top and rows below it, and another mod can add more: the tab grows with them.</p>
+    <div class="home-list__rows reveal">
+
+      <article class="home-row" tabindex="0">
+        <div class="home-row__head">
+          <span class="home-row__n">01</span>
+          <h3 class="home-row__name">128 module</h3>
+          <span class="home-row__meta">
+            <span class="home-row__type">top cell</span>
+            <span class="home-row__stat">128 per slot</span>
+            <span class="home-row__more" aria-hidden="true">›</span>
+          </span>
+        </div>
+        <p class="home-row__desc">The first capacity step, and already double what an ordinary stack accepts.</p>
+      </article>
+
+      <article class="home-row" tabindex="0">
+        <div class="home-row__head">
+          <span class="home-row__n">02</span>
+          <h3 class="home-row__name">256 module</h3>
+          <span class="home-row__meta">
+            <span class="home-row__type">top cell</span>
+            <span class="home-row__stat">256 per slot</span>
+            <span class="home-row__more" aria-hidden="true">›</span>
+          </span>
+        </div>
+        <p class="home-row__desc">Two 256 modules together still give 256: it is the best offer that counts, never the sum.</p>
+      </article>
+
+      <article class="home-row" tabindex="0">
+        <div class="home-row__head">
+          <span class="home-row__n">03</span>
+          <h3 class="home-row__name">512 module</h3>
+          <span class="home-row__meta">
+            <span class="home-row__type">top cell</span>
+            <span class="home-row__stat">512 per slot</span>
+            <span class="home-row__more" aria-hidden="true">›</span>
+          </span>
+        </div>
+        <p class="home-row__desc">The last one the mod ships. The ceiling is not there: a slot goes to 32,767, and a module from elsewhere may ask for that.</p>
+      </article>
+
+      <article class="home-row" tabindex="0">
+        <div class="home-row__head">
+          <span class="home-row__n">04</span>
+          <h3 class="home-row__name">Row module</h3>
+          <span class="home-row__meta">
+            <span class="home-row__type">sixteen per cell</span>
+            <span class="home-row__stat">+9 slots</span>
+            <span class="home-row__more" aria-hidden="true">›</span>
+          </span>
+        </div>
+        <p class="home-row__desc">A chest surrounded by planks. These add up instead of replacing each other, so a well equipped copper crate ends up bigger than a bare echo one.</p>
+      </article>
+
+    </div>
+    <p class="home-manifesto__note reveal" style="margin-top:28px"><a class="link" href="wiki/rows.html">What sixteen row modules change</a></p>
+  </section>
+
+  <site-ledger label="What is left at the back"></site-ledger>
+
+  <!-- OPTIONAL SECTION: the secondary mechanic, centred.
+       It tells something that unfolds over time: a four-step timeline whose
+       last step tips over. It is centred while the rest of the page is left
+       aligned, and that is deliberate: one break of alignment per page, past
+       that it stops reading as a break. The number of steps is free, and the
+       crit class marks the one that tips.
+       To delete it: this block in both index.html files, the @import line for
+       statement.css in components.css, and the file itself. -->
+  <section class="home-statement" id="home-statement">
+    <div class="home-tag reveal reveal--wide" style="justify-content:center">The hopper</div>
+    <h2 class="reveal reveal--wide">A VANILLA HOPPER<br><span class="inf">STOPS AT 64</span></h2>
+    <p class="reveal">A hopper fills a container up to what an ordinary stack accepts and no further, whatever the target block can actually hold. The mod corrects that for its own crates, and it is the only part of DeepCrate that depends on what is installed beside it.</p>
+    <div class="home-timeline reveal" role="group" aria-label="What a hopper pushes into one slot">
+      <div class="home-tl" tabindex="0"><b>Empty slot</b>the hopper starts pushing</div>
+      <div class="home-tl" tabindex="0"><b>64</b>where the game would stop</div>
+      <div class="home-tl" tabindex="0"><b>96</b>read off the screen, not deduced</div>
+      <div class="home-tl crit" tabindex="0"><b>lithium</b>forced back to 64, or the items vanish</div>
+    </div>
+    <p class="home-manifesto__note reveal" style="margin:28px auto 0;max-width:52ch;border-left:0;padding-left:0;text-align:center"><a class="link" href="wiki/hoppers.html">Why lithium turns the fix off</a></p>
+  </section>
+
+  <!-- OPTIONAL SECTION: the wiki table of contents.
+       It opens the wiki from the home page. Four columns here, three links
+       each, but a column is a block to copy or to remove and the categories do
+       not have to balance. A mod with no wiki deletes the section, and then
+       also deletes lang/en/wiki with its French twin, the sidebar in
+       site-chrome.js and the wiki link in the navigation.
+       To delete just the section: this block in both index.html files, the
+       @import line for index.css in components.css, and the file itself. -->
+  <section class="home-index">
+    <div class="home-tag reveal reveal--wide">The guide</div>
+    <h2 class="home-manifesto reveal" style="max-width:24ch">Eight pages, written one at a time</h2>
+    <p class="home-index__lead reveal">Every mechanic has its own, with the mod's numbers rather than orders of magnitude, and what it costs when you take it back apart.</p>
+    <div class="home-toc reveal">
+      <div class="home-toc__col">
+        <p class="home-toc__k">The mod</p>
+        <a class="home-toc__link" href="wiki/crates.html">The six crates <span>27 to 72 slots</span></a>
+        <a class="home-toc__link" href="wiki/capacity.html">Capacity <span>64 to 512</span></a>
+        <a class="home-toc__link" href="wiki/rows.html">Rows <span>+9 per module</span></a>
+      </div>
+      <div class="home-toc__col">
+        <p class="home-toc__k">The screen</p>
+        <a class="home-toc__link" href="wiki/screen.html">Sorting, search and pages <span>four rows a page</span></a>
+        <a class="home-toc__link" href="wiki/hoppers.html">Hoppers and pipes <span>past 64</span></a>
+      </div>
+      <div class="home-toc__col">
+        <p class="home-toc__k">Settings</p>
+        <a class="home-toc__link" href="wiki/config.html">Settings file <span>config/oas/deepcrate.json</span></a>
+        <a class="home-toc__link" href="wiki/installation.html">Install <span>server and client</span></a>
+        <a class="home-toc__link" href="wiki/api.html">For other mods <span>twelve open points</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPTIONAL SECTION: the closing call.
+       It gives one last action before the footer. Here it points at an
+       external feedback service, but the button can lead anywhere: a download
+       page, a repository, a chat room.
+       To delete it: this block in both index.html files, the @import line for
+       reports.css in components.css, and the file itself. -->
+  <section class="home-reports">
+    <div class="home-reports__inner">
+      <div class="home-tag reveal reveal--wide">Report, suggest, vote</div>
+      <h2 class="home-manifesto reveal reveal--wide">A crate emptying itself on the floor is a <span class="glow">report</span>, not a fact of life.</h2>
+      <p class="home-index__lead reveal">The feedback channel has no account to create. One sentence, the version number, and what the crate did instead of what it was meant to do.</p>
+      <!-- Absolute URL to the hub, not a relative path: this page is served
+           both from deepcrate.pages.dev (at the root, no Worker) and from
+           /deepcrate/ on the Worker. Only an absolute one is right in both. -->
+      <p class="home-reports__cta reveal"><a class="home-btn home-btn--fill" href="https://feedback-hub.persodreykaoas.workers.dev/?project=deepcrate#rapports" rel="noopener"><span>File a report</span></a></p>
+    </div>
+  </section>
 
 </main>
 
-<dc-footer></dc-footer>
-<script defer src="/assets/js/fx/reveal.js"></script>
-<script defer src="/assets/js/router/router-swap.js"></script>
-<script defer src="/assets/js/router/router.js"></script>
+<site-footer></site-footer>
+
+<script src="/assets/js/fx/reveal.js" defer></script>
+<script src="/assets/js/page/wiki-chart.js" defer></script>
+<script src="/assets/js/router/router-swap.js" defer></script>
+<script src="/assets/js/router/router.js" defer></script>
 </body>
 </html>

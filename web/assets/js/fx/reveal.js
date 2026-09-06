@@ -1,47 +1,53 @@
 (function () {
   "use strict";
 
-  window.DC = window.DC || {};
+  window.SITE = window.SITE || {};
 
-  // Reveal on scroll. Replayable after a router swap, because a reinjected
-  // block carries no observer of its own.
+  // KEEP. Runs the IntersectionObserver that adds in-view to .reveal blocks,
+  // rerun after each pjax swap under the initReveal name that router-swap.js
+  // calls by name; the reveal distances and easing curves a mod actually tunes
+  // live in motion.css, not here. Drop the data-reveal-bound guard and a
+  // second call to initReveal on the same nodes attaches a second observer per
+  // element, so the reveal fires twice and the stagger delay math doubles up.
 
-  window.DC.initReveal = function initReveal() {
+  // Reveal-on-scroll: .reveal blocks appear as they enter the viewport.
+  // Replayable after a pjax swap (router/router-swap.js), because reinjected blocks
+  // carry no observer of their own.
+
+  window.SITE.initReveal = function initReveal() {
     var targets = document.querySelectorAll(".reveal:not([data-reveal-bound])");
     if (!targets.length) return;
 
     if (!("IntersectionObserver" in window)) {
-      targets.forEach(function (el) {
-        el.classList.add("in-view");
-        el.setAttribute("data-reveal-bound", "");
-      });
+      targets.forEach(function (el) { el.classList.add("in-view"); el.setAttribute("data-reveal-bound", ""); });
       return;
     }
 
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("in-view");
-        // The stagger only makes sense on appearance. Cleared once revealed so
-        // it cannot hold back a later transition on the same element.
-        entry.target.style.transitionDelay = "";
-        // A block can ask for a voice as it arrives. Scored here rather than in
-        // the sound layer, because the moment is this observer's to know, and
-        // only a block that names one gets any: a page where every section
-        // chimed would be unusable.
-        var voice = entry.target.getAttribute("data-sfx");
-        if (voice && window.DC.sfx && window.DC.sfx[voice]) window.DC.sfx[voice]({ volume: 0.7 });
-        observer.unobserve(entry.target);
-      });
-    }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            // The stagger delay only makes sense on appearance: once revealed
+            // it is cleared, so it cannot hold back any later transition
+            // (hover and the like) on the same element.
+            entry.target.style.transitionDelay = "";
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+    );
 
     targets.forEach(function (el, i) {
       el.setAttribute("data-reveal-bound", "");
       el.classList.add("reveal-ready");
-      if (!window.DC.reduceMotion()) el.style.transitionDelay = Math.min(i * 55, 220) + "ms";
+      if (!window.SITE.reduceMotion()) {
+        el.style.transitionDelay = Math.min(i * 60, 240) + "ms";
+      }
       observer.observe(el);
     });
   };
 
-  document.addEventListener("DOMContentLoaded", window.DC.initReveal);
+  document.addEventListener("DOMContentLoaded", window.SITE.initReveal);
 })();

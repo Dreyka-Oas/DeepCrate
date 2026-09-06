@@ -1,0 +1,29 @@
+/* Exhibit Nº06, the closing call: the last band before the footer, and a
+   signpost rather than a destination. Whatever it points at, an issue tracker,
+   a forum thread, a page collecting feedback for every project at once, lives
+   somewhere else. This section only sends people there.
+
+   KEEP, and the band is optional like the others, though a page that ends on
+   its wiki index ends on nothing. If you delete it, give the visitor a way out
+   somewhere earlier.
+
+   It carries its own background (--surface) and a top rule, like .home-tiers
+   and .home-statement: without them it butted straight up against Exhibit Nº05,
+   which shares the same .home-index class, and two identical blocks end to end
+   give nothing to signal that a new exhibit begins. */
+
+.home-reports {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.home-reports__inner {
+  padding: clamp(48px, 7vh, 90px) clamp(20px, 5vw, 64px) clamp(56px, 8vh, 100px);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.home-reports__cta {
+  margin: 32px 0 0;
+}

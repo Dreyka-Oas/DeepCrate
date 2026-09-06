@@ -1,0 +1,36 @@
+/* KEEP. Styling for the <site-ledger> element: label, monospace row and the
+   glitch animation on one cell, standing in for a plain horizontal rule. The
+   codes it renders are a mod's slot, but they are generated in
+   assets/js/chrome/site-ledger.js, not here, so this file needs no edit. */
+.ledger {
+  margin: var(--space-5) 0;
+  padding: var(--space-3) 0;
+  border-block: 1px solid var(--border);
+  overflow-x: auto;
+}
+.ledger__label {
+  font-family: var(--font-stamp);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 8px;
+  white-space: nowrap;
+}
+.ledger__row {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  white-space: pre;
+  /* Full --muted (not veiled to 85%): the transparency veil fell below the
+     contrast threshold in the light theme. The "corrupted" texture is still
+     carried by .corrupt/--accent-text, so baseline legibility need not drop. */
+  color: var(--muted);
+  display: flex;
+  gap: 16px;
+  font-variant-numeric: tabular-nums;
+  width: max-content;
+}
+.ledger__row .flag { color: var(--primary-text); }
+.ledger__row .corrupt { color: var(--accent-text); animation: ledger-glitch 1.6s steps(2) infinite; }
+@keyframes ledger-glitch { 0%, 80%, 100% { opacity: 1; } 85% { opacity: 0.3; } 90% { opacity: 1; } 95% { opacity: 0.5; } }
