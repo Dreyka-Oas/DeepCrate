@@ -12,6 +12,11 @@ Serve the folder instead:
 
 Then open `http://127.0.0.1:8123/`, never the `.html` file itself.
 
+That server sends `Last-Modified` and no `Cache-Control`, so a browser holds the stylesheets and a
+CSS edit does not show up on reload. It cost half an hour once, chasing a padding bug that was
+already fixed on disk. When editing CSS, serve with `Cache-Control: no-store` instead, or read the
+computed value rather than trusting the picture.
+
 ## The checks
 
     node tools/check.mjs
@@ -23,6 +28,21 @@ by `hreflang` and by file name. `check-i18n` runs both string tables in a sandbo
 keys. `check-source` finds classes defined and never used, and used and never defined.
 `check-tells` covers the typography, the horizontal rule and the filler words. `check-design`
 measures variety: easing curves, reveal distances, background textures, page skeletons.
+
+## What the checks do not cover
+
+Two things only a browser answers, and neither is in `check.mjs`. Responsive behaviour, read at the
+widths a phone, a tablet and a desktop actually use rather than guessed from the media queries; the
+nav breakpoint and the guide padding were both wrong and both looked fine in the source. And an
+accessibility audit, which caught colour-only links, an unreachable code block and dark ink on a
+fill too dark to carry it.
+
+    agent-browser --headed --session <name> open http://127.0.0.1:8123/lang/fr/
+    agent-browser --headed --session <name> set viewport 390 844
+    agent-browser --headed --session <name> a11y
+    agent-browser --headed --session <name> set media dark
+
+Run the audit on both themes. Half of what it found showed up in one and not the other.
 
 ## Deploying
 
