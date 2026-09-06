@@ -322,7 +322,7 @@ The capacity event is not clamped for you. `registerModule` refuses a module abo
 does not, and a limit above that comes back to bite at save time when the `Count` field refuses the
 number.
 
-### Two traps worth naming
+### What bites an addon first
 
 The screen hands you a `CrateScreenArea`: the panel's corner, its size, a way to add a widget, and
 `keepClickable`. Name any rectangle you draw past the edge of the panel through that last one. The
