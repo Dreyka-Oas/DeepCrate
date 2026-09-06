@@ -95,8 +95,8 @@ pose a relevé 2,17, et la passe de 11h27 ce matin 1,56, avec 132,20 ns seul et 
 même code, même machine, une heure d'écart.
 
 Le reste vient d'un seul appel, et il est localisé. `alignCapacityWithHolder` finit par
-`DeepCrateApi.capacityAmong(holder.modules())`, qui relit la table des modules à chaque passage. En le
-remplaçant par une constante, tout le reste étant identique, trois passes donnent 0,78, 1,16 et 1,27
+`DeepCrateApi.capacityAmong(holder.modules())`, qui relit la table des modules à chaque passage. En
+le remplaçant par une constante, tout le reste étant identique, trois passes donnent 0,78, 1,16 et 1,27
 là où les trois passes de référence juste avant donnaient 2,25, 2,36 et 2,18. Autrement dit, sans cet
 appel, la moitié d'une paire coûte à la case ce que coûte un coffre seul. L'expérience a été défaite,
 rien n'en reste dans l'arbre, et personne n'a demandé d'aller plus loin : c'est écrit ici pour que la
