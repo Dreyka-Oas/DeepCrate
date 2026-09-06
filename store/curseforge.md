@@ -32,13 +32,9 @@
                   vanilla client; the split is read from the source, not tried.
      Categories   Storage, API and Library
      Links        Website  none. web/ is reserved and holds no page yet.
-                  Source   leave empty. github.com/Dreyka-Oas/DeepCrate is a
-                           private repository: gh repo view prints visibility
-                           PRIVATE and an anonymous request gets 404, so the
-                           field would ship a dead link as the only way out of
-                           the page. Fill it the day the repository is opened,
-                           and drop the sentence about a closed source from
-                           the licence section at the same time.
+                  Source   https://github.com/Dreyka-Oas/DeepCrate
+                           Checked anonymously on 6 September 2026: the
+                           repository answers 200, as does its issues page.
                   No CurseForge or Modrinth URL exists: not published.
      ──────────────────────────────────────────────────────────────────── -->
 
@@ -146,9 +142,9 @@ format runs out. The three shipped modules stop at 512 by choice, and yours does
 
 ## Licence and modpacks
 
-Not open source, and the source is not published either: the repository is closed, and the mod ships
-as a jar carrying its licence file inside. Playing it is free, with nothing asked in return, and the
-licence says that will never change.
+Readable but not open source. The repository is public and the code can be read, and the licence in
+the jar is what governs it rather than an open-source one. Playing it is free, with nothing asked in
+return, and the licence says that will never change.
 
 Passing it on is free as well, on the conditions that file sets: the jar goes on unmodified with the
 licence beside it, the author is credited with the link named there, and nothing is charged or earned

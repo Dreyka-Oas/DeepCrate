@@ -10,12 +10,6 @@ qu'on y trouve a `lethalbreed` câblé en dur dans son adresse. Un redistributeu
 tenu de créditer ce mod en pointant la page d'un autre, et une demande de modpack atterrit dans la
 file du voisin. La réparation est dans le fichier lui-même, pas sur une page de boutique.
 
-Le dépôt GitHub est privé. `gh repo view Dreyka-Oas/DeepCrate` rend `PRIVATE` et un `curl` anonyme
-sur son adresse rend 404. Les deux pages de boutique ont donc été écrites sans aucun lien vivant, et
-leur champ Source porte la consigne de le remplir le jour où le dépôt s'ouvre. Tant qu'il reste
-fermé, publier ces pages revient à publier un mod dont personne ne peut lire la source. Ouvrir le
-dépôt est une décision qui appartient à son propriétaire, pas au code.
-
 `BlockEntityRendererRegistry` est déprécié dans l'API Fabric et reste appelé dans
 `DeepCrateClient.onInitializeClient`. Le compilateur le dit à chaque passe, avec
 `-Xlint:deprecation` pour le détail. Ça marche encore, mais la classe partira d'une version à

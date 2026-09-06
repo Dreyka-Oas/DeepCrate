@@ -34,13 +34,25 @@ espèce de widget. `CrateTooltipCallback` porte la case en plus de la pile, ce q
 écouteur de distinguer une case de coffre d'une case du joueur, et la ligne du compte réel du mod
 s'inscrit dessus comme celle de n'importe qui.
 
-La documentation dit ce qui est ouvert : onze points, avec la passe d'où chacun s'inscrit, là où le
-README en nommait trois.
+La documentation dit ce qui est ouvert : douze points, avec la passe d'où chacun s'inscrit, là où le
+README en nommait trois. Le douzième est `onTierRegistered`, qui ne répond pas au grep de la tâche
+parce qu'il ne s'appelle pas `register` quelque chose, et qui est pourtant la seule façon d'apprendre
+qu'un palier vient d'arriver. L'exemple d'addon qui accompagne la liste a été compilé contre cet
+arbre, puis retiré, au lieu d'être recopié de mémoire. Ce qui reste fermé est écrit avec sa raison :
+un palier porte un `Block`, le registre des blocs est gelé avant la première lecture de données, donc
+inventer une espèce de coffre reste du Java.
+
+Les deux sections périmées du README ont suivi. La capacité est la plus forte des cases et les
+rangées s'additionnent, ce qui n'était plus dit depuis que les cases sont devenues un registre.
+`DEFAUTS-CONNUS.md` a reçu ce qui traînait ailleurs : le coffre écho double qui perd son module,
+l'automatisation bridée tant que lithium est là, et ce qu'une trémie payait avant le cache.
 
 ## Ce qui le prouve
 
 45 gametests, 55 tests JUnit, verts après chaque commit. Le jar ne contient rien de développement,
-le compte des quatre motifs rend 0.
+le compte des quatre motifs rend 0. Les deux fichiers de langue portent les mêmes 23 clés, avec les
+mêmes marqueurs de format : rien d'autre ne rattrape une clé écrite d'un seul côté, qui s'afficherait
+telle quelle à l'écran.
 
 Vingt-cinq captures du test client. `0011_screen-with-an-addon-button` montre un bouton posé par un
 écouteur avec la seule API publiée, contre le bord droit du panneau. `0024_13-the-real-count-under-an-abbreviated-one`
@@ -52,11 +64,23 @@ Le plafond du test de coût est à 5,0 et pas à la vraie valeur. La même march
 donné 2,86 un matin, puis 2,67 et 3,86 à deux minutes d'écart : ce qui bougeait était la charge de la
 machine, pas le code.
 
+## Deux choses réglées après coup
+
+Le dépôt est public depuis le 6 septembre à 11h22. Les deux seules adresses du mod, dans
+`fabric.mod.json`, rendaient 404 en anonyme ; elles rendent 200. Les pages de boutique ont récupéré
+leur champ Source et la section licence dit maintenant lisible mais pas open source, ce qui est le
+cas : le code se lit, la licence du jar est ce qui gouverne.
+
+La base de paquet est passée de `com.dreykaoas` à `oas.dreyka`, ce que le gabarit demande. 102
+fichiers, les deux listes de points d'entrée, le paquet des mixins et `maven_group`. Le namespace de
+ressources reste `deepcrate`, donc aucun identifiant écrit dans une sauvegarde ne bouge. C'était la
+dernière fenêtre : après une publication, le même renommage coûte une recompilation à chaque addon.
+
 ## Ce qui reste
 
-Rien du plan de l'audit. Ce qui traîne est dans `DEFAUTS-CONNUS.md`, et deux de ces lignes ne
-regardent pas le code : le dépôt GitHub est privé, et le `LICENSE` renvoie deux fois au site d'un
-autre mod. Les deux appartiennent au propriétaire du dépôt.
+Rien du plan de l'audit. Ce qui traîne est dans `DEFAUTS-CONNUS.md`. Une de ces lignes ne regarde pas
+le code : le `LICENSE` renvoie deux fois au site d'un autre mod, et le canal de signalement qu'on y
+trouve a `lethalbreed` câblé en dur.
 
 Restent aussi les six découpes de `docs/superpowers/specs/2026-09-05-decoupes-restantes.md`, dont un
 adversaire a montré qu'au moins une, `MenuModules`, ne tient pas telle qu'elle est dessinée.
