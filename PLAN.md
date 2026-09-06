@@ -83,6 +83,13 @@ maintenant une page d'accueil, huit pages de guide, les deux arbres de langue au
 vérifications sous `node` sans rien à installer. Les sept images viennent de `runClientGameTest` :
 une mécanique que personne n'a vue tourner n'a pas de bande sur l'accueil.
 
+La forme vient du site de LethalBreed, lu avant d'écrire une ligne : barre avec la marque à gauche et
+les bascules à droite, hero avec pastille, titre, chapeau et deux boutons, sections ouvertes par une
+étiquette, guide en `container wiki-layout` avec fil d'Ariane. Ce qui ne vient pas de lui, et ne
+devait pas venir de lui : la palette passe au bleu-vert et à l'améthyste au lieu de l'ambre et de la
+rouille, les trois polices changent, le glyphe est un coffre, et les bandes de l'accueil alternent
+image et texte plutôt que d'empiler des blocs à mécanique propre.
+
 Le test client a gagné une prise pour la trémie, qui n'en avait aucune. Une case à 96 sur un coffre
 de fer, ce que le plafond du jeu aurait refusé.
 
