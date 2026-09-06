@@ -41,6 +41,12 @@
         window.DC._routerSwap.setMeta(doc);
         if (push) history.pushState({ dcRouter: true }, "", url);
 
+        // The crate sliding covers the swap, so it is scored here and not on
+        // the click: a fetch that never lands must not have made a sound.
+        // Silent under reduced-motion, where there is no visual travel for it
+        // to belong to.
+        if (window.DC.sfx && !window.DC.reduceMotion()) window.DC.sfx.slide();
+
         if (document.startViewTransition && !window.DC.reduceMotion()) {
           var transition = document.startViewTransition(function () { window.DC._routerSwap.swapBody(doc); });
           // A visitor clicking faster than the cross-fade supersedes the running
@@ -65,6 +71,9 @@
     var a = e.target.closest("a[href]");
     if (!isNavigableClick(e, a)) return;
     e.preventDefault();
+    // One delegated listener for the whole site's links, rather than a binding
+    // per link that the body swap would have to redo.
+    if (window.DC.sfx) window.DC.sfx.tap();
     loadPage(a.href, true);
   });
 

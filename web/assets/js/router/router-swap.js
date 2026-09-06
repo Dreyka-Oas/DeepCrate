@@ -50,7 +50,7 @@
   // run if one drifts), so each of these is defined by the time a navigation
   // can happen. A missing one is a structural bug that should surface rather
   // than be swallowed by a guard.
-  var REBIND = ["initReveal", "initThemeToggle", "initLangToggle"];
+  var REBIND = ["initReveal", "initThemeToggle", "initLangToggle", "initSoundToggle"];
 
   function afterSwap() {
     for (var i = 0; i < REBIND.length; i++) window.DC[REBIND[i]]();

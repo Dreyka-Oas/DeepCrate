@@ -60,6 +60,9 @@
     try {
       var pref = localStorage.getItem(LANG_KEY);
       if ((pref === "fr" || pref === "en") && pref !== pageLang()) {
+        // Read by chrome/dc-boot.js: the opening screen must not paint on a
+        // page that is already on its way to another URL.
+        window.DC._langRedirecting = true;
         location.replace(counterpartPath(pref) + location.search + location.hash);
       }
     } catch (e) { /* localStorage unavailable: stay on the page language */ }

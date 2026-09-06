@@ -1,0 +1,87 @@
+/* The page behind the footer signature. It borrows the opening screen's
+   vocabulary on purpose, the seam and the cell that fills, so a visitor who
+   clicks o.a.s lands somewhere that reads as the same hand rather than as a
+   generic about page. */
+.studio-page {
+  /* One column of reading text and nothing to fill a wide screen with, so it
+     caps where reading caps, the same reason .wiki-layout stops at 1240. */
+  max-width: 900px;
+  padding-block: var(--space-6) var(--space-7);
+}
+
+.studio {
+  padding: var(--space-5) 0 var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.studio__mark {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 8vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.studio__mark span { color: var(--primary-text); }
+.studio__lede {
+  margin: var(--space-3) 0 0;
+  max-width: 56ch;
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+
+/* The same cell as the opening screen, held at rest here: it fills once when
+   the page is read and then stays full. */
+.studio__cell {
+  height: 8px;
+  max-width: 220px;
+  margin: var(--space-4) 0 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  overflow: hidden;
+}
+.studio__fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--fill-primary);
+  transform-origin: left;
+  animation: dc-loader-fill 1.6s var(--ease-latch) forwards;
+}
+
+.studio__works {
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.work {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: var(--space-3);
+}
+.work__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--ink);
+}
+.work__note {
+  margin: var(--space-2) 0 var(--space-3);
+  font-size: var(--text-small);
+  color: var(--muted);
+}
+.work__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio__fill { animation: none; }
+}

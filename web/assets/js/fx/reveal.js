@@ -25,6 +25,12 @@
         // The stagger only makes sense on appearance. Cleared once revealed so
         // it cannot hold back a later transition on the same element.
         entry.target.style.transitionDelay = "";
+        // A block can ask for a voice as it arrives. Scored here rather than in
+        // the sound layer, because the moment is this observer's to know, and
+        // only a block that names one gets any: a page where every section
+        // chimed would be unusable.
+        var voice = entry.target.getAttribute("data-sfx");
+        if (voice && window.DC.sfx && window.DC.sfx[voice]) window.DC.sfx[voice]({ volume: 0.7 });
         observer.unobserve(entry.target);
       });
     }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });

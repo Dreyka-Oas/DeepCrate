@@ -60,6 +60,9 @@
     btn.addEventListener("click", function () {
       applyMode(nextMode(currentMode()));
       updateUi(btn);
+      // Guarded rather than assumed: this file loads before the sound layer,
+      // and a browser without Web Audio never defines it at all.
+      if (window.DC.sfx) window.DC.sfx.latch({ volume: 0.5 });
     });
   };
   document.addEventListener("DOMContentLoaded", window.DC.initThemeToggle);

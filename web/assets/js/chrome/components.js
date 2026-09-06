@@ -77,6 +77,15 @@
     theme.textContent = s("themeAuto");
     box.appendChild(theme);
 
+    // Wording and state are set by fx/sound/toggle.js, which owns the mute and
+    // reads it from storage. Rendering the label here too would show "son" for
+    // a beat on a visitor who muted three sessions ago.
+    var sound = document.createElement("button");
+    sound.type = "button";
+    sound.className = "site-nav__toggle";
+    sound.setAttribute("data-sound-toggle", "");
+    box.appendChild(sound);
+
     return box;
   }
 
@@ -128,12 +137,6 @@
     }
   });
 
-  // The click counter lives in a module variable, not on the element: the
-  // router only replaces <body>, so this file never re-runs and the count
-  // survives navigation for the whole session.
-  var sigClicks = 0;
-  var ECHO_AT = 7;
-
   customElements.define("dc-footer", class extends HTMLElement {
     connectedCallback() {
       var footer = document.createElement("footer");
@@ -150,27 +153,14 @@
       licence.textContent = s("footerLicence");
       box.appendChild(licence);
 
-      var echo = document.createElement("span");
-      echo.className = "site-footer__echo";
-      echo.setAttribute("aria-live", "polite");
-      footer.appendChild(echo);
-
-      var sig = document.createElement("span");
+      // The signature is a real link, not a decoration: it goes to the page
+      // saying who wrote this and what the other mod is.
+      var sig = document.createElement("a");
       sig.className = "site-footer__sig";
-      sig.setAttribute("role", "button");
-      sig.setAttribute("tabindex", "0");
+      sig.href = href("/oas.html");
       sig.textContent = "o.a.s";
-      var fire = function () {
-        if (++sigClicks < ECHO_AT) return;
-        sigClicks = 0;
-        echo.textContent = s("footerEcho");
-        echo.setAttribute("data-visible", "true");
-        setTimeout(function () { echo.removeAttribute("data-visible"); }, 2600);
-      };
-      sig.addEventListener("click", fire);
-      sig.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fire(); }
-      });
+      sig.setAttribute("aria-label", s("footerSigAria"));
+      if (isCurrent("/oas.html")) sig.setAttribute("aria-current", "page");
       box.appendChild(sig);
 
       footer.appendChild(box);

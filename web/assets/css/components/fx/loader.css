@@ -1,0 +1,103 @@
+/* Opening screen, injected by chrome/dc-boot.js from <head> and removed once
+   the site is ready. Full loads only, never during a router swap. Absent when
+   JS is off or reduced-motion is set, so the page stays directly reachable.
+   Everything comes from the tokens, so it follows the theme like the rest. */
+#dc-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--ink);
+}
+
+/* Two opaque halves meeting in the middle. They part sideways on opening, the
+   way a lid is pulled off rather than the way a door swings. */
+.dc-loader__half {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.5%;
+  background: var(--bg);
+  z-index: 0;
+  transition: transform 740ms var(--ease-slide);
+}
+.dc-loader__half--left { left: 0; }
+.dc-loader__half--right { right: 0; }
+
+/* The seam. Each half carries half of it, so closed it reads as one line down
+   the middle and it leaves with the halves. */
+.dc-loader__half::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--fill-primary);
+  opacity: 0.55;
+}
+.dc-loader__half--left::after { right: 0; }
+.dc-loader__half--right::after { left: 0; }
+
+.dc-loader__core {
+  position: relative;
+  z-index: 2;
+  width: min(88vw, 380px);
+  text-align: center;
+  /* Opaque, so the seam runs behind the block instead of through the
+     wordmark's letters. */
+  background: var(--bg);
+  padding: var(--space-4) var(--space-3);
+  transition: opacity 280ms ease, transform 280ms ease;
+}
+
+/* One cell filling, the mod's whole idea in a rectangle: it does not stop at
+   the width a vanilla stack would have taken. */
+.dc-loader__cell {
+  height: 10px;
+  margin: 0 auto var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  overflow: hidden;
+}
+.dc-loader__fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--fill-primary);
+  transform-origin: left;
+  animation: dc-loader-fill 1.45s var(--ease-drop) forwards;
+}
+@keyframes dc-loader-fill {
+  0%   { transform: scaleX(0.04); }
+  38%  { transform: scaleX(0.22); }
+  62%  { transform: scaleX(0.44); }
+  100% { transform: scaleX(1); }
+}
+
+.dc-loader__mark {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 7vw, 3.4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.dc-loader__mark span { color: var(--primary-text); }
+
+#dc-loader.is-done .dc-loader__core { opacity: 0; transform: translateY(-6px); }
+#dc-loader.is-open { pointer-events: none; }
+#dc-loader.is-open .dc-loader__half--left { transform: translateX(-100%); }
+#dc-loader.is-open .dc-loader__half--right { transform: translateX(100%); }
+
+/* Scrolling is locked while the screen is up, otherwise the page underneath
+   moves behind a cover the visitor cannot see through. */
+html.dc-booting { overflow: hidden; }
+
+/* dc-boot.js already refuses to run under reduced-motion. This is the guard
+   for the case where the element exists anyway. */
+@media (prefers-reduced-motion: reduce) {
+  #dc-loader, #dc-loader * { animation: none !important; transition: none !important; }
+}

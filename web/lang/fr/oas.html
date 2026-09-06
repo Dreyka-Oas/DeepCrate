@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>o.a.s, l'atelier derrière DeepCrate</title>
+<meta name="description" content="Qui signe DeepCrate, les règles que les mods de l'atelier partagent, et les deux mods sortis jusqu'ici.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="fr" href="/lang/fr/oas.html">
+<link rel="alternate" hreflang="en" href="/lang/en/oas.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<script src="/assets/js/core/dc-lang.js"></script>
+<script src="/assets/js/i18n/fr.js"></script>
+<script src="/assets/js/i18n/en.js"></script>
+<script src="/assets/js/core/dc-theme.js"></script>
+<script src="/assets/js/chrome/dc-boot.js"></script>
+<script src="/assets/js/fx/sound/engine.js"></script>
+<script src="/assets/js/fx/sound/burst.js"></script>
+<script src="/assets/js/fx/sound/voices.js"></script>
+<script src="/assets/js/fx/sound/toggle.js"></script>
+<script src="/assets/js/chrome/components.js"></script>
+</head>
+<body>
+<dc-nav></dc-nav>
+
+<main class="container studio-page">
+
+<header class="studio">
+<h1 class="studio__mark">o<span>.</span>a<span>.</span>s</h1>
+<p class="studio__lede">Deux mods Minecraft écrits par la même main, avec les mêmes manies et le
+même refus de décider à la place de celui qui installe.</p>
+<div class="studio__cell"><span class="studio__fill"></span></div>
+</header>
+
+<div class="prose">
+
+<p>Le nom vient du dossier de réglages. Chaque mod de l'atelier pose ses options dans
+<code>config/oas/</code>, un fichier par mod, et un serveur qui en installe deux les trouve côte à
+côte plutôt qu'éparpillés dans la racine. C'est parti de là, et c'est resté comme signature.</p>
+
+<h2>Ce que les deux mods ont en commun</h2>
+
+<p>Un nombre écrit en dur est un nombre décidé pour tout le monde. Les paliers, les capacités, les
+distances, les délais : tout ce qu'un administrateur de serveur pourrait vouloir autrement se lit
+dans le fichier de réglages, avec une plage qui ramène une valeur aberrante à quelque chose de
+jouable au lieu de faire tomber le serveur.</p>
+
+<p>Rien de ce qu'un joueur lit n'est écrit dans le code. Les deux fichiers de langue,
+<code>en_us</code> et <code>fr_fr</code>, portent les mêmes clés, et un texte ajouté d'un côté sans
+l'autre est une erreur qui se voit avant la sortie. Les sites suivent la même règle, deux arbres
+complets et aucun générateur entre les deux.</p>
+
+<p>Un mod qui ne s'ouvre pas est un mod qu'on remplace au lieu de l'étendre. Chacun publie un point
+d'entrée : de quoi ajouter un palier, une créature, une règle, sans patcher quoi que ce soit et sans
+avoir à me demander la permission. La page <a class="link" href="/lang/fr/wiki/addons.html">pour les
+autres mods</a> montre à quoi ça ressemble côté DeepCrate.</p>
+
+<h2>Les deux mods</h2>
+
+<ul class="studio__works">
+<li class="work">
+<p class="work__name">DeepCrate</p>
+<p class="work__note">Six coffres, une case qui monte de 64 à 512, des rangées qui s'achètent au
+module, un écran qui se coupe en pages.</p>
+<p class="work__links"><a class="link" href="/lang/fr/index.html">le site</a> <a class="link" href="https://github.com/Dreyka-Oas/DeepCrate" rel="noopener">le code</a></p>
+</li>
+<li class="work">
+<p class="work__name">LethalBreed</p>
+<p class="work__note">Une contamination qui progresse par phases, des zombies qui apprennent le
+terrain, et une nuit qui ne ressemble pas à la précédente.</p>
+<p class="work__links"><a class="link" href="https://lethalbreed.pages.dev/" rel="noopener">le site</a> <a class="link" href="https://github.com/Dreyka-Oas/LethalBreed" rel="noopener">le code</a></p>
+</li>
+</ul>
+
+<h2>Licence</h2>
+
+<p>Chaque mod garde la sienne, écrite dans son dépôt, tous droits réservés. Un modpack qui veut
+embarquer l'un des deux passe par la question posée dans le dépôt concerné, et la réponse est
+généralement oui.</p>
+
+</div>
+
+</main>
+
+<dc-footer></dc-footer>
+<script defer src="/assets/js/fx/reveal.js"></script>
+<script defer src="/assets/js/router/router-swap.js"></script>
+<script defer src="/assets/js/router/router.js"></script>
+</body>
+</html>

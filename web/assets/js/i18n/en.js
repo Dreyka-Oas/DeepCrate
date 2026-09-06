@@ -14,6 +14,10 @@
     navWiki: "Guide",
 
     langOther: "FR",
+    soundOn: "sound",
+    soundOff: "muted",
+    soundMuteAria: "Mute the site",
+    soundEnableAria: "Turn the site's sound back on",
     themeAuto: "auto",
     themeLight: "light",
     themeDark: "dark",
@@ -35,6 +39,6 @@
     pageAddons: "For other mods",
 
     footerLicence: "Dreyka Oas, the mod's own licence, all rights reserved.",
-    footerEcho: "there is room left at the back."
+    footerSigAria: "o.a.s, the workshop behind the mod"
   };
 })();
