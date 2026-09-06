@@ -43,7 +43,35 @@ n'ont jamais eu d'étape. La fiche `docs/superpowers/specs/2026-09-05-decoupes-r
 six découpes, et un adversaire a montré qu'au moins une, `MenuModules`, ne tient pas telle qu'elle
 est écrite. À relire avant de s'en servir.
 
+Le commentaire de `CrateDrops` annonce deux mille piles pour un coffre écho double qui perd son
+module. Le compte est de mille huit, la moitié : 144 cases, 448 objets en trop dans chacune, coupés en
+piles de 64. Le nombre a l'air d'avoir été compté une fois par moitié de la paire alors que les 144
+cases sont déjà les deux. Le comportement décrit est le bon, c'est le chiffre qui est faux.
+
 ## Ce qui est écrit exprès et se voit quand même
+
+Un coffre écho double plein qui perd son module 512 vide 1 008 piles sur le sol en un tick. Les
+comptes : 144 cases pour la paire, chacune retombe de 512 à 64, donc 448 objets en trop, 64 512 en
+tout, coupés en piles de 64 parce que c'est tout ce qu'une entité d'objet peut porter. Avec les seize
+modules de rangée dans la case du dessous, la paire fait 432 cases et le même geste en vide 3 024.
+`CrateDrops` les pose entières au lieu de passer par `Containers.dropItemStack`, qui recoupe chaque
+pile en morceaux de dix à trente et triplerait le nombre d'entités, mais le tick reste lourd et
+personne ne ramasse tout ça avant la disparition à cinq minutes. Le choix est de rendre plutôt que
+d'avaler : cette capacité en trop n'a nulle part où être sauvegardée, et l'avaler en silence
+détruirait des objets sans le dire. Vider un coffre avant d'en retirer le module reste le seul ordre
+sûr.
+
+Le remplissage par trémie et par tuyau est éteint tant que lithium est installé. Lithium remplace la
+trémie en entier et garde sa propre copie de l'inventaire visé ; contre un conteneur qui répond plus
+de 64, il sort les objets de la trémie et ne les écrit jamais. Mesuré, pas supposé : huit blocs de
+terre détruits par passage, avec ou sans le correctif. Un coffre annonce donc 64 par case à
+l'automatisation tant que lithium est là, ce qui coûte la fonction et garde les objets. La main du
+joueur n'est pas concernée, elle passe par l'écran. Le propriétaire du serveur peut reprendre la
+décision avec `limitAutomationWithLithium` à false, et perdre ces objets en connaissance de cause.
+
+Une trémie contre un coffre double n'atteint que la moitié qu'elle touche, comme avec un tonneau.
+Réunir les deux moitiés est pourtant ce que le jeu fait pour un coffre, mais lithium recaste ce
+résultat en block entity et le serveur tombe au premier tick.
 
 Un coffre de trois colonnes garde un panneau large comme un coffre de neuf, avec beaucoup de panneau
 nu de chaque côté de la grille. C'est voulu : l'inventaire du joueur est dessiné sur le même panneau
@@ -56,6 +84,13 @@ fabrication : c'est la case de module, dessinée à la taille d'une case ordinai
 grandit avec le nombre de cases que les addons ont inscrites.
 
 ## Ce que la mesure de performance ne dit pas
+
+D'où vient le chiffre : une trémie demande deux fois par case si le coffre est plein, et ces deux
+appels passent chacun par `storage()`, qui appelait `moduleHolder()` deux fois. Quatre recherches de
+block entity par case sur la moitié d'une paire, aucune sur un coffre seul, qui rend `this` dès la
+première ligne. Mesuré sur un coffre écho à seize modules de rangée, 216 cases : 99,85 ns par case
+seul, 286,02 ns par case en paire, soit 2,86 fois. La réponse est gardée depuis, et le même parcours
+donne 2,17.
 
 `CrateHopperCostGameTest` mesure ce qu'une trémie paie pour interroger un coffre, et son plafond est
 à 5,0. Ce n'est pas la vraie valeur, qui tourne autour de 2,2 depuis que la moitié d'une paire retient
