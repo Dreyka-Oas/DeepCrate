@@ -42,6 +42,13 @@ module. Le compte est de mille huit, la moitié : 144 cases, 448 objets en trop 
 en piles de 64. Le nombre a l'air d'avoir été compté une fois par moitié de la paire alors que les
 144 cases sont déjà les deux. Le comportement décrit est le bon, c'est le chiffre qui est faux.
 
+## Deux dossiers d'assets au-dessus de huit fichiers
+
+`assets/deepcrate/items` en tient dix et `assets/deepcrate/textures/entity/chest` dix-huit. Ni l'un
+ni l'autre ne se découpe : le jeu va chercher `items/<identifiant>.json` à cet endroit précis, et les
+dix-huit textures sont les six paliers en trois états, seul, moitié gauche, moitié droite. Le plafond
+de huit vaut pour du code qu'on organise, pas pour un dossier dont le jeu impose le contenu.
+
 ## Ce qui est écrit exprès et se voit quand même
 
 Un coffre écho double plein qui perd son module 512 vide 1 008 piles sur le sol en un tick. Les
