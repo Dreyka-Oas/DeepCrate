@@ -17,6 +17,28 @@ CSS edit does not show up on reload. It cost half an hour once, chasing a paddin
 already fixed on disk. When editing CSS, serve with `Cache-Control: no-store` instead, or read the
 computed value rather than trusting the picture.
 
+## The layers a page carries
+
+Order in `<head>`, and none of it deferred: `core/dc-lang` (it can redirect, and everything reads
+`DC.s` off it), the two string tables, `core/dc-theme`, `chrome/dc-boot`, the four sound files, then
+`chrome/components`. The parser has to reach the `<dc-*>` tags with the elements already defined, or
+undefined content flashes before the swap.
+
+`chrome/dc-boot.js` is the opening screen: two halves meeting on a seam, a cell filling between
+them, and the site behind. It plays on a full load only, since the router never re-runs the `<head>`,
+and it does not exist at all under reduced-motion or with JS off. A click, Escape, Enter or space
+cuts it short, and a cap ends it whatever the font server is doing.
+
+`fx/sound/` is four files: the engine (one context, one master gain, the room tone, the mute stored
+in `dc-sound`), the shared burst graph, the four voices, and the nav button. Nothing is loaded from
+disk, it is all synthesised. Nothing plays before a first real gesture either, which is a browser
+rule and not a choice: a `click` dispatched over CDP does not always count as one, so an audit that
+wants the context running should send a keypress. The voices are wired in one place each, the router
+for `tap` and `slide`, the theme button for `latch`, and `data-sfx` on a revealed block for `shard`.
+
+`lang/*/oas.html` is where the footer signature goes. It presents the workshop rather than the mod,
+and it is the one page in the tree with no sidebar and no breadcrumb.
+
 ## The checks
 
     node tools/check.mjs
