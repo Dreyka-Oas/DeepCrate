@@ -1,0 +1,38 @@
+.site-footer {
+  position: relative;
+  border-top: 1px solid var(--border);
+  padding: var(--space-5) 0;
+  margin-top: var(--space-6);
+  color: var(--muted);
+  font-size: var(--text-small);
+}
+.site-footer .container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.site-footer__sig {
+  flex-basis: 100%;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  opacity: 0.45;
+  cursor: default;
+  user-select: none;
+}
+
+/* Positioned against the footer, which is why .site-footer is relative. */
+.site-footer__echo {
+  position: absolute;
+  right: var(--space-4);
+  bottom: calc(var(--space-5) + 1.2rem);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent-text);
+  opacity: 0;
+  transition: opacity 400ms var(--ease-drop);
+  pointer-events: none;
+}
+.site-footer__echo[data-visible="true"] { opacity: 0.8; }

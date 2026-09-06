@@ -1,0 +1,43 @@
+.wiki-breadcrumb {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--muted);
+  margin-bottom: var(--space-3);
+}
+.wiki-breadcrumb a { color: var(--primary-text); }
+
+/* Sections are told apart by the size of the display type and by the space
+   above it, never by a rule drawn across the column. */
+.wiki-content h2 { margin-top: var(--space-6); }
+.wiki-content h2:first-of-type { margin-top: var(--space-4); }
+.wiki-content h3 { margin-top: var(--space-4); }
+
+.wiki-lede {
+  font-size: 1.1rem;
+  color: var(--muted);
+  max-width: 60ch;
+  margin-bottom: var(--space-5);
+}
+
+/* Steps of the installation page: numbered, and the number carries the accent
+   rather than a bullet glyph the theme cannot repaint. */
+.steps { list-style: none; counter-reset: step; margin: 0; padding: 0; }
+.steps li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 2.5rem;
+  margin-bottom: var(--space-4);
+}
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0; top: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--on-fill);
+  background: var(--fill-primary);
+  width: 1.7rem; height: 1.7rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+}

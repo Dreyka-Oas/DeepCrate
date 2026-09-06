@@ -1,0 +1,13 @@
+/* Import manifest, one line per component. tools/check-assets.mjs fails the
+   run if a file under components/ is missing from here or listed twice. */
+@import "components/chrome/nav.css";
+@import "components/chrome/footer.css";
+@import "components/chrome/buttons.css";
+@import "components/home/hero.css";
+@import "components/home/sections.css";
+@import "components/home/shots.css";
+@import "components/wiki/layout.css";
+@import "components/wiki/page.css";
+@import "components/wiki/param-table.css";
+@import "components/wiki/callouts.css";
+@import "components/wiki/code.css";

@@ -1,0 +1,35 @@
+.callout {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+  padding: var(--space-3) var(--space-4);
+  margin: var(--space-4) 0;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 120px;
+}
+.callout__badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary-text);
+  margin-bottom: var(--space-2);
+}
+.callout p:last-child { margin-bottom: 0; }
+
+.callout--loss {
+  background: var(--fill-accent);
+  border-color: transparent;
+  box-shadow: var(--glow-amethyst);
+  /* A torn bottom-left corner, the lid pried off the wrong way. */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 11px 100%, 0 calc(100% - 11px));
+}
+/* Re-forced on the children: .prose p and .prose strong are more specific than
+   .callout and would repaint them --ink, unreadable on a full accent fill. */
+.callout--loss .callout__badge,
+.callout--loss p,
+.callout--loss strong,
+.callout--loss code { color: var(--on-fill); }

@@ -1,0 +1,26 @@
+/* Every picture on this site is a frame taken by the mod's own client test.
+   They are pixel art at heart, so nothing here is allowed to smooth them. */
+.shot {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-elevated);
+  overflow: hidden;
+}
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
+.shot figcaption {
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* Inside a wiki page the picture sits in the prose column and stays narrow. */
+.prose .shot { margin: var(--space-4) 0; max-width: 100%; }

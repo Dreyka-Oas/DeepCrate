@@ -1,0 +1,58 @@
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-7) 0 var(--space-6);
+}
+
+/* min-width:0 stops a long line of display type from pushing the mark out. */
+.hero__content { flex: 1 1 auto; min-width: 0; }
+
+.hero__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--primary-text);
+  margin-bottom: var(--space-3);
+}
+.hero__kicker::before {
+  content: "";
+  width: 8px; height: 8px;
+  border-radius: 1px;
+  background: var(--accent-text);
+  animation: cell-breathe 2.8s var(--ease-slide) infinite;
+}
+
+.hero__title {
+  font-size: var(--text-hero);
+  max-width: 15ch;
+  margin-bottom: 0;
+}
+
+.hero__lede {
+  max-width: 56ch;
+  font-size: 1.15rem;
+  color: var(--muted);
+  margin-top: var(--space-3);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.hero__mark {
+  flex: 0 0 auto;
+  width: clamp(140px, 20vw, 280px);
+  filter: drop-shadow(0 0 22px var(--glow-teal-c));
+}
+
+@media (max-width: 700px) {
+  .hero { padding-top: var(--space-6); }
+  .hero__mark { display: none; }
+}
