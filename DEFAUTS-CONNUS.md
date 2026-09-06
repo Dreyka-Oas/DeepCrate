@@ -94,6 +94,14 @@ seul, 286,02 ns par case en paire, soit 2,86 fois. La réponse est gardée depui
 pose a relevé 2,17, et la passe de 11h27 ce matin 1,56, avec 132,20 ns seul et 205,78 ns en paire :
 même code, même machine, une heure d'écart.
 
+Le reste vient d'un seul appel, et il est localisé. `alignCapacityWithHolder` finit par
+`DeepCrateApi.capacityAmong(holder.modules())`, qui relit la table des modules à chaque passage. En le
+remplaçant par une constante, tout le reste étant identique, trois passes donnent 0,78, 1,16 et 1,27
+là où les trois passes de référence juste avant donnaient 2,25, 2,36 et 2,18. Autrement dit, sans cet
+appel, la moitié d'une paire coûte à la case ce que coûte un coffre seul. L'expérience a été défaite,
+rien n'en reste dans l'arbre, et personne n'a demandé d'aller plus loin : c'est écrit ici pour que la
+prochaine personne qui veut ce facteur sache où creuser plutôt que de rechercher elle-même.
+
 `CrateHopperCostGameTest` mesure ce qu'une trémie paie pour interroger un coffre, et son plafond est
 à 5,0. Ce n'est pas la vraie valeur, qui tombe entre 1,6 et 2,2 depuis que la moitié d'une paire
 retient quel côté porte son module. Le plafond est large parce que la même marche sur le même code a
