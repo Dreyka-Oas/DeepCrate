@@ -3,14 +3,17 @@ package com.dreykaoas.deepcrate.gametest.client;
 import com.dreykaoas.deepcrate.DeepCrate;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.dreykaoas.deepcrate.client.screen.DeepCrateScreen;
+import com.dreykaoas.deepcrate.client.screen.hook.CrateScreenCallback;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.CrateOpenData;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
+import java.util.concurrent.atomic.AtomicBoolean;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -30,6 +33,8 @@ import net.minecraft.world.item.Items;
 public class CrateLookClientGameTest implements FabricClientGameTest {
     private static final BlockPos SINGLE = new BlockPos(-2, 200, 0);
     private static final BlockPos PAGED = new BlockPos(-5, 200, 0);
+    /** Raised for the one frame the addon button belongs in, and lowered again straight after. */
+    private static final AtomicBoolean SHOWING_THE_ADDON_BUTTON = new AtomicBoolean();
 
     @Override
     public void runTest(ClientGameTestContext context) {
@@ -84,7 +89,41 @@ public class CrateLookClientGameTest implements FabricClientGameTest {
             showAWidthOtherThanNine(context, 9, 3, "three");
             context.setScreen(() -> null);
             context.waitTicks(10);
+
+            // Last, so every shot above stays the picture of a crate with no addon installed.
+            hangAnAddonButton(context);
+            SHOWING_THE_ADDON_BUTTON.set(true);
+            openTheCrate(server, SINGLE);
+            context.waitForScreen(DeepCrateScreen.class);
+            context.waitTicks(20);
+            context.takeScreenshot("screen-with-an-addon-button");
+            SHOWING_THE_ADDON_BUTTON.set(false);
+            context.setScreen(() -> null);
+            context.waitTicks(10);
         }
+    }
+
+    /**
+     * A button put there by a listener and nothing else, registered from the test itself: if this can
+     * hang one on the screen with the published API alone, so can a mod nobody here has ever seen.
+     *
+     * Behind a flag because a Fabric event has no way back out, and both client tests run in the same
+     * game: a listener left standing would put this button in every frame the showcase takes after it.
+     */
+    private static void hangAnAddonButton(ClientGameTestContext context) {
+        context.runOnClient(minecraft -> CrateScreenCallback.EVENT.register((screen, area) -> {
+            if (!SHOWING_THE_ADDON_BUTTON.get()) {
+                return;
+            }
+
+            Button button = Button.builder(Component.literal("+"), ignored -> {})
+                .bounds(area.left() + area.width() + 3, area.top() + area.height() - 20, 20, 20)
+                .build();
+            area.addWidget(button);
+            // Past the right edge of the panel, so without this a click released on it drops the
+            // stack the player is holding into the world.
+            area.keepClickable(button.getX(), button.getY(), button.getWidth(), button.getHeight());
+        }));
     }
 
     /**

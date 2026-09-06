@@ -5,10 +5,14 @@ import com.dreykaoas.deepcrate.api.DeepCrateApi;
 import com.dreykaoas.deepcrate.block.DeepCrateBlockEntity;
 import com.dreykaoas.deepcrate.client.screen.DeepCrateScreen;
 import com.dreykaoas.deepcrate.client.screen.SearchBox;
+import com.dreykaoas.deepcrate.client.screen.hook.CrateScreenArea;
+import com.dreykaoas.deepcrate.client.screen.hook.CrateScreenCallback;
 import com.dreykaoas.deepcrate.config.domain.CrateConfig;
 import com.dreykaoas.deepcrate.init.RegistryInit;
 import com.dreykaoas.deepcrate.inventory.CrateOpenData;
 import com.dreykaoas.deepcrate.inventory.DeepCrateMenu;
+import com.dreykaoas.deepcrate.inventory.slot.DeepCrateSlot;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -20,6 +24,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -46,6 +52,11 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
     private static final String ANVIL_NAME = "Everything the north quarry sent back";
     /** Any number: a menu built here never reaches the server, so nothing ever answers on it. */
     private static final int LOOSE_MENU_ID = 91;
+    /**
+     * Where the panel of the last crate screen stands, kept by the same event an addon would use.
+     * A slot's x and y are read from that corner, and the screen keeps the corner to itself.
+     */
+    private static final AtomicReference<CrateScreenArea> LAST_AREA = new AtomicReference<>();
 
     @Override
     public void runTest(ClientGameTestContext context) {
@@ -53,6 +64,7 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
             TestServerContext server = singleplayer.getServer();
             singleplayer.getClientWorld().waitForChunksRender();
 
+            context.runOnClient(minecraft -> CrateScreenCallback.EVENT.register((screen, area) -> LAST_AREA.set(area)));
             buildTheScene(server);
             context.getInput().resizeWindow(1920, 1080);
             context.runOnClient(minecraft -> minecraft.options.hideGui = true);
@@ -121,6 +133,11 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
                 deepCrateMenu.getContainer().setItem(4, new ItemStack(Items.REDSTONE, 5_000));
                 deepCrateMenu.getContainer().setItem(13, new ItemStack(Items.LAPIS_LAZULI, 2_400_000));
             });
+
+            // The abbreviation hides the real count, so the tooltip has to carry it. That line is a
+            // listener on CrateTooltipCallback like anyone else's, and nothing else would notice if it
+            // stopped being registered.
+            hover(context, Items.LAPIS_LAZULI, "13-the-real-count-under-an-abbreviated-one");
 
             context.setScreen(() -> null);
             context.waitTicks(10);
@@ -238,6 +255,40 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
             fill.accept(deepCrateMenu);
             minecraft.setScreen(new DeepCrateScreen(deepCrateMenu, minecraft.player.getInventory(), Component.literal(title)));
         });
+        context.waitTicks(20);
+        context.takeScreenshot(shot);
+    }
+
+    /**
+     * Puts the pointer on the crate slot holding that item and photographs what comes up.
+     *
+     * The slot is found by what it carries rather than by an index, because the crate slots and the
+     * player's share one list and their order is the menu's business, not this test's.
+     */
+    private static void hover(ClientGameTestContext context, Item item, String shot) {
+        double[] at = {-1.0, -1.0};
+        context.runOnClient(minecraft -> {
+            CrateScreenArea crateScreenArea = LAST_AREA.get();
+            if (!(minecraft.screen instanceof DeepCrateScreen deepCrateScreen) || crateScreenArea == null) {
+                return;
+            }
+
+            // A slot's own x and y are read from the panel's corner, which is what the area carries.
+            double scale = minecraft.getWindow().getGuiScale();
+            for (Slot slot : deepCrateScreen.getMenu().slots) {
+                if (slot instanceof DeepCrateSlot && slot.getItem().is(item)) {
+                    at[0] = (crateScreenArea.left() + slot.x + 8) * scale;
+                    at[1] = (crateScreenArea.top() + slot.y + 8) * scale;
+                }
+            }
+        });
+
+        if (at[0] < 0.0) {
+            DeepCrate.LOGGER.warn("[DeepCrate] no crate slot holds {} on this screen, shot skipped", item);
+            return;
+        }
+
+        context.getInput().setCursorPos(at[0], at[1]);
         context.waitTicks(20);
         context.takeScreenshot(shot);
     }

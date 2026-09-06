@@ -1,6 +1,9 @@
 package com.dreykaoas.deepcrate.client.screen;
 
 import com.dreykaoas.deepcrate.api.DeepCrateApi;
+import com.dreykaoas.deepcrate.client.screen.hook.CrateScreenCallback;
+import com.dreykaoas.deepcrate.client.screen.hook.CrateTooltipCallback;
+import com.dreykaoas.deepcrate.client.screen.hook.PanelArea;
 import com.dreykaoas.deepcrate.client.sort.CrateSortOrder;
 import com.dreykaoas.deepcrate.client.sort.DeepCrateClientApi;
 import com.dreykaoas.deepcrate.client.sort.SortButton;
@@ -16,6 +19,7 @@ import java.util.Map;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
@@ -44,6 +48,13 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /** The two sort buttons stand above the panel, flush with its left edge and clear of it. */
     private static final int SORT_GAP = 4;
     private static final int SORT_BUTTON_GAP = 2;
+    /** Stands in until the first layout, so a click never has to test a field that is not built yet. */
+    private static final PanelArea EMPTY_AREA = new PanelArea(0, 0, 0, 0, new PanelArea.WidgetSink() {
+        @Override
+        public <T extends AbstractWidget> T add(T widget) {
+            return widget;
+        }
+    });
 
     private final int rows;
     private final int columns;
@@ -58,6 +69,12 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
 
     private final CrateSearch crateSearch;
     private SearchBox searchBox;
+
+    /**
+     * The room handed to whoever listens, and the rectangles outside the panel a click may land on.
+     * Built again on every layout, because every one of those moves when the window is resized.
+     */
+    private PanelArea panelArea = EMPTY_AREA;
 
     public DeepCrateScreen(DeepCrateMenu deepCrateMenu, Inventory inventory, Component component) {
         super(deepCrateMenu, inventory, component);
@@ -75,6 +92,18 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     @Override
     protected void init() {
         super.init();
+        this.panelArea = new PanelArea(this.leftPos, this.topPos, this.imageWidth, this.imageHeight, new PanelArea.WidgetSink() {
+            @Override
+            public <T extends AbstractWidget> T add(T widget) {
+                return DeepCrateScreen.this.addRenderableWidget(widget);
+            }
+        });
+        this.panelArea.keepClickable(
+            this.leftPos + DeepCrateMenu.MODULE_X - CratePanel.MODULE_TAB_MARGIN,
+            this.topPos + DeepCrateMenu.MODULE_Y - CratePanel.MODULE_TAB_MARGIN,
+            CratePanel.MODULE_TAB_WIDTH,
+            this.moduleTabHeight
+        );
 
         // On the inventory line, to the right of its label and running to the edge of the panel.
         int labelEnd = DeepCrateMenu.GRID_LEFT + this.font.width(this.playerInventoryTitle) + 6;
@@ -99,7 +128,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
             CrateSortOrder crateSortOrder = orders.get(i);
             int row = sortRows - 1 - i / perRow;
             this.sortButtons.add(
-                this.addRenderableWidget(
+                this.panelArea.addClickableWidget(
                     new SortButton(
                         this.leftPos + i % perRow * (SortButton.SIZE + SORT_BUTTON_GAP),
                         this.topPos - SORT_GAP - SortButton.SIZE - row * (SortButton.SIZE + SORT_BUTTON_GAP),
@@ -114,6 +143,12 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         this.pageButtons.clear();
         this.pagesHoldingItems = new boolean[this.menu.layout().pageCount()];
         this.readPagesHoldingItems();
+        this.addPageButtons();
+        // Last, so a listener sees the screen as a player will and can measure against what is there.
+        CrateScreenCallback.EVENT.invoker().onScreenInit(this, this.panelArea);
+    }
+
+    private void addPageButtons() {
         if (this.menu.layout().pageCount() < 2) {
             return;
         }
@@ -124,7 +159,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         for (int page = 0; page < this.menu.layout().pageCount(); page++) {
             int target = page;
             this.pageButtons.add(
-                this.addRenderableWidget(
+                this.panelArea.addClickableWidget(
                     new PageButton(
                         this.leftPos + this.imageWidth + 3 + page / PAGE_BUTTONS_PER_COLUMN * (PageButton.SIZE + 2),
                         this.topPos + CratePanel.HEADER_HEIGHT + page % PAGE_BUTTONS_PER_COLUMN * (PageButton.SIZE + 2),
@@ -138,41 +173,13 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     }
 
     /**
-     * The page buttons sit past the right edge of the panel, which the game otherwise counts as
-     * outside the screen: releasing a click there drops whatever the player is carrying on the ground.
+     * The page buttons, the sort buttons and the module tab sit past the edges of the panel, which the
+     * game otherwise counts as outside the screen: releasing a click there drops whatever the player
+     * is carrying on the ground. Anything a mod hangs there goes through the same list.
      */
     @Override
     protected boolean hasClickedOutside(double d, double e, int i, int j) {
-        return super.hasClickedOutside(d, e, i, j)
-            && !this.isOverPageButtons(d, e)
-            && !this.isOverModuleTab(d, e, i, j)
-            && !this.isOverSortButtons(d, e);
-    }
-
-    private boolean isOverModuleTab(double d, double e, int i, int j) {
-        int tabX = i + DeepCrateMenu.MODULE_X - CratePanel.MODULE_TAB_MARGIN;
-        int tabY = j + DeepCrateMenu.MODULE_Y - CratePanel.MODULE_TAB_MARGIN;
-        return d >= tabX && d < tabX + CratePanel.MODULE_TAB_WIDTH && e >= tabY && e < tabY + this.moduleTabHeight;
-    }
-
-    private boolean isOverSortButtons(double d, double e) {
-        for (SortButton sortButton : this.sortButtons) {
-            if (sortButton.isMouseOver(d, e)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean isOverPageButtons(double d, double e) {
-        for (PageButton pageButton : this.pageButtons) {
-            if (pageButton.isMouseOver(d, e)) {
-                return true;
-            }
-        }
-
-        return false;
+        return super.hasClickedOutside(d, e, i, j) && !this.panelArea.holdsClick(d, e);
     }
 
     /**
@@ -273,15 +280,10 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         }
     }
 
-    /** The abbreviated count hides the real one, so the item's own tooltip carries it. */
     @Override
     protected List<Component> getTooltipFromContainerItem(ItemStack itemStack) {
-        List<Component> lines = super.getTooltipFromContainerItem(itemStack);
-        if (this.hoveredSlot instanceof DeepCrateSlot && itemStack.getCount() > ScreenConfig.abbreviateAbove) {
-            lines = new ArrayList<>(lines);
-            lines.add(1, Component.translatable("screen.deepcrate.count", itemStack.getCount()));
-        }
-
+        List<Component> lines = new ArrayList<>(super.getTooltipFromContainerItem(itemStack));
+        CrateTooltipCallback.EVENT.invoker().addLines(this.menu, this.hoveredSlot, itemStack, lines);
         return lines;
     }
 
