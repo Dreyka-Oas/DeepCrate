@@ -7,7 +7,9 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The module cells of a crate, and, for a pair, which of its two block entities actually holds them.
@@ -18,6 +20,8 @@ import net.minecraft.world.level.block.state.properties.ChestType;
  */
 final class CrateModuleHolder {
     private final DeepCrateBlockEntity crate;
+    private @Nullable DeepCrateBlockEntity cachedHolder;
+    private @Nullable BlockState cachedFor;
 
     CrateModuleHolder(DeepCrateBlockEntity crate) {
         this.crate = crate;
@@ -49,8 +53,12 @@ final class CrateModuleHolder {
      */
     void setModuleIn(Identifier identifier, ItemStack itemStack) {
         this.crate.modules().set(identifier, itemStack);
+        // Which half holds for the pair turns on which half carries a module, so a stack landing in a
+        // cell can move the answer with the block state standing still.
+        this.forget();
         this.crate.storage().setCapacity(DeepCrateApi.capacityAmong(this.crate.modules()));
         for (DeepCrateBlockEntity deepCrateBlockEntity : DeepCrateBlock.cratesFor(this.crate)) {
+            deepCrateBlockEntity.crateModuleHolder.forget();
             deepCrateBlockEntity.storage();
             deepCrateBlockEntity.setChanged();
         }
@@ -78,12 +86,32 @@ final class CrateModuleHolder {
     }
 
     /**
-     * Where the module of a pair lives.
-     *
-     * A crate that already holds one keeps it, whichever side of the pair it ended up on; otherwise
-     * it is the half the game calls first.
+     * Where the module of a pair lives, kept between calls: a hopper asking whether a crate is full
+     * comes through here four times a slot, and that bought a block entity lookup each time on half of
+     * a pair. The kept answer goes when the state behind it changes, TYPE carrying the pairing, and
+     * when the half it names reports itself removed, all a crate dropped with its chunk leaves behind.
      */
     DeepCrateBlockEntity holder() {
+        DeepCrateBlockEntity remembered = this.cachedHolder;
+        if (remembered != null && this.cachedFor == this.crate.getBlockState() && !remembered.isRemoved()) {
+            return remembered;
+        }
+
+        DeepCrateBlockEntity holder = this.resolveHolder();
+        if (this.crate.getLevel() != null) {
+            this.cachedHolder = holder;
+            this.cachedFor = this.crate.getBlockState();
+        }
+
+        return holder;
+    }
+
+    void forget() {
+        this.cachedHolder = null;
+        this.cachedFor = null;
+    }
+
+    private DeepCrateBlockEntity resolveHolder() {
         if (this.crate.getLevel() == null || this.crate.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.SINGLE) {
             return this.crate;
         }

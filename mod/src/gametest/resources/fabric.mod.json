@@ -9,6 +9,7 @@
       "com.dreykaoas.deepcrate.gametest.CrateMenuGameTest",
       "com.dreykaoas.deepcrate.gametest.CrateRecipeGameTest",
       "com.dreykaoas.deepcrate.gametest.CrateHopperGameTest",
+      "com.dreykaoas.deepcrate.gametest.CrateHopperCostGameTest",
       "com.dreykaoas.deepcrate.gametest.CrateRowModuleGameTest",
       "com.dreykaoas.deepcrate.gametest.CrateSortGameTest",
       "com.dreykaoas.deepcrate.gametest.CrateModuleSlotGameTest",
