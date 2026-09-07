@@ -29,19 +29,24 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
-/** Everything the mod puts into a registry: six crates, three capacity modules, one row module, one block entity, one menu. */
+/** Everything the mod puts into a registry: eleven crates, three capacity modules, one row module, one block entity, one menu. */
 public final class RegistryInit {
     /**
-     * The six tiers, ordered by how dangerous the material is to fetch rather than by the usual
-     * iron-gold-diamond ladder. Each one adds a row of nine.
+     * Les onze paliers, classés selon la difficulté à récupérer le minerai plutôt que selon l'échelle
+     * habituelle fer-or-diamant. Chaque palier ajoute une rangée de neuf.
      */
     private static final List<TierSpec> TIER_SPECS = List.of(
-        new TierSpec("copper_crate", 3, MapColor.COLOR_ORANGE),
-        new TierSpec("iron_crate", 4, MapColor.METAL),
-        new TierSpec("amethyst_crate", 5, MapColor.COLOR_PURPLE),
-        new TierSpec("prismarine_crate", 6, MapColor.COLOR_CYAN),
-        new TierSpec("breeze_crate", 7, MapColor.COLOR_LIGHT_BLUE),
-        new TierSpec("echo_crate", 8, MapColor.COLOR_BLACK)
+        new TierSpec("coal_crate", 3, MapColor.COLOR_BLACK),
+        new TierSpec("copper_crate", 4, MapColor.COLOR_ORANGE),
+        new TierSpec("iron_crate", 5, MapColor.METAL),
+        new TierSpec("redstone_crate", 6, MapColor.FIRE),
+        new TierSpec("lapis_crate", 7, MapColor.LAPIS),
+        new TierSpec("gold_crate", 8, MapColor.GOLD),
+        new TierSpec("amethyst_crate", 9, MapColor.COLOR_PURPLE),
+        new TierSpec("quartz_crate", 10, MapColor.QUARTZ),
+        new TierSpec("emerald_crate", 11, MapColor.EMERALD),
+        new TierSpec("diamond_crate", 12, MapColor.DIAMOND),
+        new TierSpec("netherite_crate", 13, MapColor.COLOR_BLACK)
     );
 
     private static final List<ModuleSpec> MODULE_SPECS = List.of(
