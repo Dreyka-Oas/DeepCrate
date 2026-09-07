@@ -8,9 +8,7 @@ import oas.dreyka.deepcrate.init.RegistryInit;
 import oas.dreyka.deepcrate.inventory.menu.CrateMenuCleanup;
 import oas.dreyka.deepcrate.inventory.menu.CrateModuleReaction;
 import oas.dreyka.deepcrate.inventory.module.ModuleContainer;
-import oas.dreyka.deepcrate.inventory.module.ModuleSlot;
 import oas.dreyka.deepcrate.inventory.slot.DeepCrateSlot;
-import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -47,7 +45,6 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     private final Container moduleContainer;
     private final CrateLayout layout;
     private final int columns;
-    private final List<DeepCrateSlot> crateSlots = new ArrayList<>();
     private final List<DeepCrateBlockEntity> crates;
     private final Player player;
     /**
@@ -64,6 +61,18 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     private final int crateSlotStart;
 
     /**
+     * Builds this menu's cells when it opens and keeps them lined up with the page currently shown.
+     * Built around this menu's own reference, reached through the package-private forwarders below
+     * for addSlot and addStandardInventorySlots, both protected on AbstractContainerMenu.
+     */
+    private final CrateMenuSlots menuSlots = new CrateMenuSlots(this);
+    /**
+     * Quick-moves a stack across this menu on a shift-click or a swap. Built around this menu's own
+     * reference, reached through the package-private forwarder below for moveItemStackTo, protected
+     * on AbstractContainerMenu.
+     */
+    private final CrateQuickMove quickMove = new CrateQuickMove(this);
+    /**
      * Delegates for module-change reactions and end-of-screen cleanup, built around this menu's own
      * reference on the same pattern {@code CrateModuleHolder} uses for a block entity. Reached only
      * through the accessors below, because inventory.menu is a different package from this one.
@@ -71,7 +80,6 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     private final CrateModuleReaction moduleReaction = new CrateModuleReaction(this);
     private final CrateMenuCleanup menuCleanup = new CrateMenuCleanup(this);
 
-    private int page;
     private int capacity;
     private int rowModuleCount;
 
@@ -113,30 +121,16 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
         container.startOpen(inventory.player);
         this.player = inventory.player;
-        for (int cell = 0; cell < kinds.size(); cell++) {
-            this.addSlot(new ModuleSlot(this.moduleContainer, cell, MODULE_X, MODULE_Y + cell * MODULE_SPACING, kinds.get(cell)));
-        }
+        this.menuSlots.buildModuleSlots(this.moduleContainer, kinds);
 
         int panelWidth = panelWidth(columns);
         int crateLeft = gridLeft(panelWidth, columns);
-        for (int slot = 0; slot < container.getContainerSize(); slot++) {
-            int row = slot / columns;
-            int column = slot % columns;
-            DeepCrateSlot deepCrateSlot = new DeepCrateSlot(
-                container,
-                slot,
-                crateLeft + column * CELL,
-                GRID_TOP + row % crateLayout.rowsPerPage() * 18,
-                row / crateLayout.rowsPerPage()
-            );
-            this.crateSlots.add(deepCrateSlot);
-            this.addSlot(deepCrateSlot);
-        }
+        this.menuSlots.buildCrateSlots(container, columns, crateLayout, crateLeft);
 
         // The player keeps nine columns whatever the crate is: their inventory is not the crate's.
         // Both grids are centred, so neither a wide crate nor a narrow one reads as lopsided.
         int playerLeft = gridLeft(panelWidth, COLUMNS_OF_A_PLAYER);
-        this.addStandardInventorySlots(inventory, playerLeft, GRID_TOP + crateLayout.rowsPerPage() * 18 + 13);
+        this.menuSlots.buildPlayerInventorySlots(inventory, playerLeft, GRID_TOP + crateLayout.rowsPerPage() * 18 + 13);
 
         // Another player inserting a module has to reach this screen too, and the opening payload is
         // only sent once. A data slot is the vanilla way of keeping one number in step.
@@ -190,7 +184,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     }
 
     public int page() {
-        return this.page;
+        return this.menuSlots.page();
     }
 
     public int capacity() {
@@ -226,32 +220,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     }
 
     public void setPage(int page) {
-        this.page = Math.floorMod(page, this.layout.pageCount());
-
-        for (DeepCrateSlot deepCrateSlot : this.crateSlots) {
-            deepCrateSlot.setVisible(deepCrateSlot.page() == this.page);
-        }
-    }
-
-    /**
-     * Sends a shift-clicked module to its own slot. A capacity module only goes there while that slot
-     * is free; row modules pile up to their stack limit. Anything left over is stored like any other
-     * item rather than refused.
-     */
-    private boolean moveModuleToItsSlot(ItemStack itemStack) {
-        for (int i = 0; i < this.crateSlotStart; i++) {
-            Slot slot = this.getSlot(i);
-            if (!slot.mayPlace(itemStack) || slot.getItem().getCount() >= slot.getMaxStackSize()) {
-                continue;
-            }
-
-            if (this.moveItemStackTo(itemStack, i, i + 1, false)) {
-                slot.setChanged();
-                return true;
-            }
-        }
-
-        return false;
+        this.menuSlots.setPage(page, this.layout.pageCount());
     }
 
     /**
@@ -274,7 +243,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     /** Whether a slot index belongs to the page currently shown. Read by inventory addons. */
     public boolean isSlotOnCurrentPage(int i) {
         Slot slot = this.slots.get(i);
-        return !(slot instanceof DeepCrateSlot deepCrateSlot) || deepCrateSlot.page() == this.page;
+        return !(slot instanceof DeepCrateSlot deepCrateSlot) || deepCrateSlot.page() == this.menuSlots.page();
     }
 
     /**
@@ -300,39 +269,7 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int i) {
-        ItemStack itemStack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(i);
-        if (slot == null || !slot.hasItem()) {
-            return itemStack;
-        }
-
-        ItemStack itemStack2 = slot.getItem();
-        itemStack = itemStack2.copy();
-        int crateEnd = this.crateSlotStart + this.crateSlotCount;
-
-        if (i < crateEnd) {
-            // Out of the crate, one hand-sized stack per click; doClick loops for the rest.
-            ItemStack itemStack3 = itemStack2.split(Math.min(itemStack2.getCount(), CrateStorage.VANILLA_LIMIT));
-            boolean moved = this.moveItemStackTo(itemStack3, crateEnd, this.slots.size(), true);
-            itemStack2.grow(itemStack3.getCount());
-            if (!moved) {
-                return ItemStack.EMPTY;
-            }
-        } else if (this.moveModuleToItsSlot(itemStack2)) {
-            // Nothing else to do: the module found its own slot.
-        } else if (!this.moveItemStackTo(itemStack2, this.crateSlotStart, crateEnd, false)) {
-            // Deliberately every crate slot, not only the visible page: a player shift-clicking a
-            // stack expects it stored, not refused because the right page is not open.
-            return ItemStack.EMPTY;
-        }
-
-        if (itemStack2.isEmpty()) {
-            slot.setByPlayer(ItemStack.EMPTY);
-        } else {
-            slot.setChanged();
-        }
-
-        return itemStack;
+        return this.quickMove.quickMoveStack(player, i);
     }
 
     @Override
@@ -343,5 +280,24 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
     private void onModuleChanged() {
         this.moduleReaction.onModuleChanged();
+    }
+
+    // One-line forwarders to protected AbstractContainerMenu methods: CrateMenuSlots and
+    // CrateQuickMove share this package but are not subclasses of AbstractContainerMenu, so protected
+    // access does not carry over to them.
+    void addOne(Slot slot) {
+        this.addSlot(slot);
+    }
+
+    void addPlayerSlots(Inventory inventory, int x, int y) {
+        this.addStandardInventorySlots(inventory, x, y);
+    }
+
+    boolean moveOne(ItemStack itemStack, int start, int end, boolean reverse) {
+        return this.moveItemStackTo(itemStack, start, end, reverse);
+    }
+
+    int crateSlotCount() {
+        return this.crateSlotCount;
     }
 }
