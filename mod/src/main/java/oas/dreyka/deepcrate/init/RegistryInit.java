@@ -31,23 +31,6 @@ import net.minecraft.world.level.material.MapColor;
 
 /** Everything the mod puts into a registry: eleven crates, three capacity modules, one row module, one block entity, one menu. */
 public final class RegistryInit {
-    /**
-     * Les onze paliers, classés selon la difficulté à récupérer le minerai plutôt que selon l'échelle
-     * habituelle fer-or-diamant. Chaque palier ajoute une rangée de neuf.
-     */
-    private static final List<TierSpec> TIER_SPECS = List.of(
-        new TierSpec("coal_crate", 3, MapColor.COLOR_BLACK),
-        new TierSpec("copper_crate", 4, MapColor.COLOR_ORANGE),
-        new TierSpec("iron_crate", 5, MapColor.METAL),
-        new TierSpec("redstone_crate", 6, MapColor.FIRE),
-        new TierSpec("lapis_crate", 7, MapColor.LAPIS),
-        new TierSpec("gold_crate", 8, MapColor.GOLD),
-        new TierSpec("amethyst_crate", 9, MapColor.COLOR_PURPLE),
-        new TierSpec("quartz_crate", 10, MapColor.QUARTZ),
-        new TierSpec("emerald_crate", 11, MapColor.EMERALD),
-        new TierSpec("diamond_crate", 12, MapColor.DIAMOND),
-        new TierSpec("netherite_crate", 13, MapColor.COLOR_BLACK)
-    );
 
     private static final List<ModuleSpec> MODULE_SPECS = List.of(
         new ModuleSpec("module_128", 128),
@@ -58,7 +41,7 @@ public final class RegistryInit {
     /** One row of nine slots each. */
     private static final String ROW_MODULE_NAME = "module_row";
 
-    public static final List<CrateTier> TIERS = TIER_SPECS.stream().map(RegistryInit::registerTier).toList();
+    public static final List<CrateTier> TIERS = TierSpecs.TIER_SPECS.stream().map(RegistryInit::registerTier).toList();
     public static final List<Item> MODULE_ITEMS = MODULE_SPECS.stream().map(RegistryInit::registerModule).toList();
 
     public static final Item ROW_MODULE_ITEM = registerRowModule();
@@ -119,7 +102,7 @@ public final class RegistryInit {
         }
     }
 
-    private static CrateTier registerTier(TierSpec tierSpec) {
+    private static CrateTier registerTier(TierSpecs.TierSpec tierSpec) {
         Block block = Blocks.register(
             ResourceKey.create(Registries.BLOCK, id(tierSpec.name())),
             DeepCrateBlock::new,
@@ -146,9 +129,6 @@ public final class RegistryInit {
         DeepCrateApi.registerRowModule(new RowModule(identifier, 1, TagKey.create(Registries.ITEM, identifier)));
         return item;
     }
-
-    /** @param rows rows of nine slots, before any page split */
-    private record TierSpec(String name, int rows, MapColor mapColor) {}
 
     private record ModuleSpec(String name, int capacity) {}
 }
