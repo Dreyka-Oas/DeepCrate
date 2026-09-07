@@ -77,42 +77,6 @@ public class DeepCrateBlock extends BaseEntityBlock {
         return new DeepCrateBlockEntity(blockPos, blockState);
     }
 
-    /** Which way the other half of a pair sits. */
-    public static Direction connectedDirection(BlockState blockState) {
-        Direction direction = blockState.getValue(FACING);
-        return blockState.getValue(TYPE) == ChestType.LEFT ? direction.getClockWise() : direction.getCounterClockWise();
-    }
-
-    public static BlockPos connectedPos(BlockState blockState, BlockPos blockPos) {
-        return blockPos.relative(connectedDirection(blockState));
-    }
-
-    /**
-     * The crate, or both halves of a pair, the module holder first. Callers rely on that order: it is
-     * what makes CompoundContainer answer the shared capacity.
-     */
-    public static List<DeepCrateBlockEntity> cratesFor(DeepCrateBlockEntity deepCrateBlockEntity) {
-        BlockState blockState = deepCrateBlockEntity.getBlockState();
-        Level level = deepCrateBlockEntity.getLevel();
-        if (level == null || blockState.getValue(TYPE) == ChestType.SINGLE) {
-            return List.of(deepCrateBlockEntity);
-        }
-
-        BlockPos blockPos = connectedPos(blockState, deepCrateBlockEntity.getBlockPos());
-        if (!(level.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity other) || !other.getBlockState().is(blockState.getBlock())) {
-            return List.of(deepCrateBlockEntity);
-        }
-
-        DeepCrateBlockEntity holder = deepCrateBlockEntity.moduleHolder();
-        DeepCrateBlockEntity follower = holder == deepCrateBlockEntity ? other : deepCrateBlockEntity;
-        return List.of(holder, follower);
-    }
-
-    /** The single crate, or both halves seen as one. */
-    public static Container containerFor(List<DeepCrateBlockEntity> list) {
-        return list.size() == 1 ? list.get(0) : new CratePairContainer(list.get(0), list.get(1));
-    }
-
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
         // Client only: the lid angle is pure animation, the server already knows the crate is open.
@@ -123,7 +87,7 @@ public class DeepCrateBlock extends BaseEntityBlock {
     protected VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
         return switch (blockState.getValue(TYPE)) {
             case SINGLE -> SHAPE;
-            case LEFT, RIGHT -> HALF_SHAPES.get(connectedDirection(blockState));
+            case LEFT, RIGHT -> HALF_SHAPES.get(CratePairing.connectedDirection(blockState));
         };
     }
 
@@ -190,10 +154,10 @@ public class DeepCrateBlock extends BaseEntityBlock {
             if (blockState.getValue(TYPE) == ChestType.SINGLE
                 && chestType != ChestType.SINGLE
                 && blockState.getValue(FACING) == blockState2.getValue(FACING)
-                && connectedDirection(blockState2) == direction.getOpposite()) {
+                && CratePairing.connectedDirection(blockState2) == direction.getOpposite()) {
                 return blockState.setValue(TYPE, chestType.getOpposite());
             }
-        } else if (blockState.getValue(TYPE) != ChestType.SINGLE && connectedDirection(blockState) == direction) {
+        } else if (blockState.getValue(TYPE) != ChestType.SINGLE && CratePairing.connectedDirection(blockState) == direction) {
             return blockState.setValue(TYPE, ChestType.SINGLE);
         }
 
@@ -234,7 +198,7 @@ public class DeepCrateBlock extends BaseEntityBlock {
         if (level.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity deepCrateBlockEntity) {
             // Bounded on purpose: a slot left above the capacity, right after a module is pulled out,
             // makes the vanilla ratio climb past one and the signal past fifteen.
-            return Math.min(15, AbstractContainerMenu.getRedstoneSignalFromContainer(containerFor(cratesFor(deepCrateBlockEntity))));
+            return Math.min(15, AbstractContainerMenu.getRedstoneSignalFromContainer(CratePairing.containerFor(CratePairing.cratesFor(deepCrateBlockEntity))));
         }
 
         return 0;

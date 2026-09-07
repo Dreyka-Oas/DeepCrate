@@ -144,7 +144,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
      */
     @Override
     public boolean canOpen(Player player) {
-        for (DeepCrateBlockEntity deepCrateBlockEntity : DeepCrateBlock.cratesFor(this)) {
+        for (DeepCrateBlockEntity deepCrateBlockEntity : CratePairing.cratesFor(this)) {
             if (!deepCrateBlockEntity.canOpenOwnLock(player)) {
                 return false;
             }
@@ -186,7 +186,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     @Override
     public CrateOpenData getScreenOpeningData(ServerPlayer serverPlayer) {
-        Container container = DeepCrateBlock.containerFor(DeepCrateBlock.cratesFor(this));
+        Container container = CratePairing.containerFor(CratePairing.cratesFor(this));
         CrateTier crateTier = this.tier();
         CrateLayout crateLayout = DeepCrateApi.layoutFor(crateTier, container.getContainerSize() / crateTier.columns());
         return new CrateOpenData(
@@ -196,8 +196,8 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     @Override
     protected AbstractContainerMenu createMenu(int i, Inventory inventory) {
-        List<DeepCrateBlockEntity> crates = DeepCrateBlock.cratesFor(this);
-        Container container = DeepCrateBlock.containerFor(crates);
+        List<DeepCrateBlockEntity> crates = CratePairing.cratesFor(this);
+        Container container = CratePairing.containerFor(crates);
         CrateTier crateTier = this.tier();
         CrateLayout crateLayout = DeepCrateApi.layoutFor(crateTier, container.getContainerSize() / crateTier.columns());
         return new DeepCrateMenu(i, inventory, container, crates, crateLayout, crateTier.columns());
@@ -305,7 +305,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
      */
     @Override
     public Component getDisplayName() {
-        for (DeepCrateBlockEntity deepCrateBlockEntity : DeepCrateBlock.cratesFor(this)) {
+        for (DeepCrateBlockEntity deepCrateBlockEntity : CratePairing.cratesFor(this)) {
             if (deepCrateBlockEntity.getCustomName() != null) {
                 return deepCrateBlockEntity.getCustomName();
             }

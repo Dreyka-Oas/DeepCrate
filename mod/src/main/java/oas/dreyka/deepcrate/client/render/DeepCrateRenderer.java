@@ -2,6 +2,7 @@ package oas.dreyka.deepcrate.client.render;
 
 import oas.dreyka.deepcrate.api.CrateTier;
 import oas.dreyka.deepcrate.api.DeepCrateApi;
+import oas.dreyka.deepcrate.block.CratePairing;
 import oas.dreyka.deepcrate.block.DeepCrateBlock;
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -69,7 +70,7 @@ public class DeepCrateRenderer implements BlockEntityRenderer<DeepCrateBlockEnti
         // Both halves take the brighter of the two lights, as a double chest does; lit separately the
         // model shows a seam down the middle.
         if (deepCrateRenderState.type != ChestType.SINGLE && deepCrateBlockEntity.getLevel() != null) {
-            BlockPos blockPos = DeepCrateBlock.connectedPos(deepCrateBlockEntity.getBlockState(), deepCrateBlockEntity.getBlockPos());
+            BlockPos blockPos = CratePairing.connectedPos(deepCrateBlockEntity.getBlockState(), deepCrateBlockEntity.getBlockPos());
             int other = LevelRenderer.getLightColor(deepCrateBlockEntity.getLevel(), blockPos);
             deepCrateRenderState.lightCoords = LightTexture.pack(
                 Math.max(LightTexture.block(deepCrateRenderState.lightCoords), LightTexture.block(other)),
@@ -88,7 +89,7 @@ public class DeepCrateRenderer implements BlockEntityRenderer<DeepCrateBlockEnti
             return own;
         }
 
-        BlockPos blockPos = DeepCrateBlock.connectedPos(deepCrateBlockEntity.getBlockState(), deepCrateBlockEntity.getBlockPos());
+        BlockPos blockPos = CratePairing.connectedPos(deepCrateBlockEntity.getBlockState(), deepCrateBlockEntity.getBlockPos());
         return deepCrateBlockEntity.getLevel().getBlockEntity(blockPos) instanceof DeepCrateBlockEntity other
             ? Math.max(own, other.getOpenNess(f))
             : own;

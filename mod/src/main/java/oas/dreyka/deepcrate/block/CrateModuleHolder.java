@@ -57,7 +57,7 @@ final class CrateModuleHolder {
         // cell can move the answer with the block state standing still.
         this.forget();
         this.crate.storage().setCapacity(DeepCrateApi.capacityAmong(this.crate.modules()));
-        for (DeepCrateBlockEntity deepCrateBlockEntity : DeepCrateBlock.cratesFor(this.crate)) {
+        for (DeepCrateBlockEntity deepCrateBlockEntity : CratePairing.cratesFor(this.crate)) {
             deepCrateBlockEntity.crateModuleHolder.forget();
             deepCrateBlockEntity.storage();
             deepCrateBlockEntity.setChanged();
@@ -116,7 +116,7 @@ final class CrateModuleHolder {
             return this.crate;
         }
 
-        BlockPos blockPos = DeepCrateBlock.connectedPos(this.crate.getBlockState(), this.crate.getBlockPos());
+        BlockPos blockPos = CratePairing.connectedPos(this.crate.getBlockState(), this.crate.getBlockPos());
         if (!(this.crate.getLevel().getBlockEntity(blockPos) instanceof DeepCrateBlockEntity other)) {
             return this.crate;
         }

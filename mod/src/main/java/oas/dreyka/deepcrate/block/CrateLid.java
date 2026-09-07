@@ -109,7 +109,7 @@ final class CrateLid {
         double x = blockPos.getX() + 0.5;
         double z = blockPos.getZ() + 0.5;
         if (chestType == ChestType.RIGHT) {
-            Direction direction = DeepCrateBlock.connectedDirection(blockState);
+            Direction direction = CratePairing.connectedDirection(blockState);
             x += direction.getStepX() * 0.5;
             z += direction.getStepZ() * 0.5;
         }
