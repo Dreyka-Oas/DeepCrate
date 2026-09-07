@@ -3,6 +3,9 @@ package oas.dreyka.deepcrate.block;
 import oas.dreyka.deepcrate.api.CrateTier;
 import oas.dreyka.deepcrate.api.DeepCrateApi;
 import oas.dreyka.deepcrate.api.module.CrateModules;
+import oas.dreyka.deepcrate.block.entity.CrateMenuOpening;
+import oas.dreyka.deepcrate.block.entity.CrateNaming;
+import oas.dreyka.deepcrate.block.entity.CrateTierBinding;
 import oas.dreyka.deepcrate.config.domain.CrateConfig;
 import oas.dreyka.deepcrate.init.RegistryInit;
 import oas.dreyka.deepcrate.inventory.CrateOpenData;
@@ -62,9 +65,11 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     /**
      * The field itself, skipping the tier and holder alignment {@link #storage()} runs: the alignment
-     * methods themselves read this instead, or they would recurse through it.
+     * methods themselves read this instead, or they would recurse through it. Public rather than
+     * package-private because {@link CrateTierBinding}, one of those alignment methods, sits in the
+     * block.entity subpackage rather than in this class's own package.
      */
-    CrateStorage unalignedStorage() {
+    public CrateStorage unalignedStorage() {
         return this.storage;
     }
 

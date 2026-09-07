@@ -1,11 +1,12 @@
-package oas.dreyka.deepcrate.block;
+package oas.dreyka.deepcrate.block.entity;
 
 import oas.dreyka.deepcrate.api.CrateTier;
 import oas.dreyka.deepcrate.api.DeepCrateApi;
+import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
 import oas.dreyka.deepcrate.inventory.CrateStorage;
 
 /** Keeps a crate's storage grown to the size its tier and row modules call for. */
-final class CrateTierBinding {
+public final class CrateTierBinding {
     private CrateTierBinding() {}
 
     /**
@@ -13,7 +14,7 @@ final class CrateTierBinding {
      * row count changes while the game runs, and at load time the block state is not known yet
      * because loadAdditional runs before the block entity is bound to a level.
      */
-    static void align(DeepCrateBlockEntity crate) {
+    public static void align(DeepCrateBlockEntity crate) {
         CrateTier crateTier = DeepCrateApi.tierOf(crate.getBlockState().getBlock());
         if (crateTier == null) {
             return;
