@@ -1,4 +1,4 @@
-package oas.dreyka.deepcrate.api.registry;
+package oas.dreyka.deepcrate.registry;
 
 import oas.dreyka.deepcrate.DeepCrate;
 import oas.dreyka.deepcrate.api.CrateTier;
