@@ -162,7 +162,7 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
         server.runCommand("fill -14 199 -2 14 199 32 minecraft:smooth_stone");
         // Far enough down the platform to stay out of every world shot, close enough to open.
         server.runCommand("setblock -2 200 24 deepcrate:copper_crate[facing=south,type=single]");
-        server.runCommand("setblock 2 200 24 deepcrate:echo_crate[facing=south,type=single]");
+        server.runCommand("setblock 2 200 24 deepcrate:netherite_crate[facing=south,type=single]");
     }
 
     /** One crate of every tier, two apart so no two of them marry, and a chest of the game to read them against. */

@@ -12,6 +12,7 @@
       "oas.dreyka.deepcrate.gametest.CrateHopperCostGameTest",
       "oas.dreyka.deepcrate.gametest.CrateRowModuleGameTest",
       "oas.dreyka.deepcrate.gametest.CrateSortGameTest",
+      "oas.dreyka.deepcrate.gametest.CrateSortGateGameTest",
       "oas.dreyka.deepcrate.gametest.CrateModuleSlotGameTest",
       "oas.dreyka.deepcrate.gametest.CrateColumnsGameTest",
       "oas.dreyka.deepcrate.gametest.config.ConfigGateGameTest",
@@ -20,7 +21,8 @@
     "fabric-client-gametest": [
       "oas.dreyka.deepcrate.gametest.client.CrateLookClientGameTest",
       "oas.dreyka.deepcrate.gametest.client.CrateShowcaseClientGameTest",
-      "oas.dreyka.deepcrate.gametest.client.ConfigScreenClientGameTest"
+      "oas.dreyka.deepcrate.gametest.client.ConfigScreenClientGameTest",
+      "oas.dreyka.deepcrate.gametest.client.CraftRecipesClientGameTest"
     ]
   },
   "depends": {

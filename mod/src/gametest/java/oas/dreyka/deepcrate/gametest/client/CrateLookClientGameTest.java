@@ -165,7 +165,7 @@ public class CrateLookClientGameTest implements FabricClientGameTest {
         server.runCommand("tp @a 0.5 205.0 8.0");
         server.runCommand("fill -10 196 -8 10 214 8 air");
         server.runCommand("fill -10 199 -8 10 199 8 minecraft:smooth_stone");
-        server.runCommand("setblock -5 200 0 deepcrate:echo_crate[facing=south,type=single]");
+        server.runCommand("setblock -5 200 0 deepcrate:netherite_crate[facing=south,type=single]");
         server.runCommand("setblock -2 200 0 deepcrate:copper_crate[facing=south,type=single]");
         // A pair is two halves: facing south, a right half's partner sits to its east.
         server.runCommand("setblock 1 200 0 deepcrate:iron_crate[facing=south,type=right]");

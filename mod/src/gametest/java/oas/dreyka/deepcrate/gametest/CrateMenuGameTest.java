@@ -136,11 +136,11 @@ public class CrateMenuGameTest {
 
     @GameTest
     public void changingPageTouchesNothingButVisibility(GameTestHelper gameTestHelper) {
-        DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(5).block().defaultBlockState());
+        DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.getLast().block().defaultBlockState());
         deepCrateMenu.getSlot(2).set(new ItemStack(Items.DIRT, 40));
 
         if (deepCrateMenu.layout().pageCount() < 2) {
-            gameTestHelper.fail("an echo crate should need more than one page");
+            gameTestHelper.fail("a netherite crate should need more than one page");
         }
 
         deepCrateMenu.setPage(1);
@@ -152,7 +152,7 @@ public class CrateMenuGameTest {
         }
 
         assertEquals(gameTestHelper, 40, deepCrateMenu.getSlot(2).getItem().getCount(), "content after paging");
-        assertEquals(gameTestHelper, 72, deepCrateMenu.getContainer().getContainerSize(), "echo crate size");
+        assertEquals(gameTestHelper, 72, deepCrateMenu.getContainer().getContainerSize(), "netherite crate size");
         gameTestHelper.succeed();
     }
 

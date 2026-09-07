@@ -24,12 +24,17 @@ public class CrateRecipeGameTest {
     public void everyCrateHasAWorkingRecipe(GameTestHelper gameTestHelper) {
         ServerLevel serverLevel = gameTestHelper.getLevel();
 
-        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.COPPER_INGOT), new ItemStack(Blocks.COPPER_CHEST), RegistryInit.TIERS.get(0));
-        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.IRON_INGOT), crate(RegistryInit.TIERS.get(0)), RegistryInit.TIERS.get(1));
-        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.AMETHYST_SHARD), crate(RegistryInit.TIERS.get(1)), RegistryInit.TIERS.get(2));
-        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.PRISMARINE_CRYSTALS), crate(RegistryInit.TIERS.get(2)), RegistryInit.TIERS.get(3));
-        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.BREEZE_ROD), crate(RegistryInit.TIERS.get(3)), RegistryInit.TIERS.get(4));
-        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.ECHO_SHARD), crate(RegistryInit.TIERS.get(4)), RegistryInit.TIERS.get(5));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.COAL_BLOCK), new ItemStack(Blocks.CHEST), RegistryInit.TIERS.get(0));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.COPPER_BLOCK), crate(RegistryInit.TIERS.get(0)), RegistryInit.TIERS.get(1));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.IRON_BLOCK), crate(RegistryInit.TIERS.get(1)), RegistryInit.TIERS.get(2));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.REDSTONE_BLOCK), crate(RegistryInit.TIERS.get(2)), RegistryInit.TIERS.get(3));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.LAPIS_BLOCK), crate(RegistryInit.TIERS.get(3)), RegistryInit.TIERS.get(4));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.GOLD_BLOCK), crate(RegistryInit.TIERS.get(4)), RegistryInit.TIERS.get(5));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.AMETHYST_BLOCK), crate(RegistryInit.TIERS.get(5)), RegistryInit.TIERS.get(6));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.QUARTZ_BLOCK), crate(RegistryInit.TIERS.get(6)), RegistryInit.TIERS.get(7));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.EMERALD_BLOCK), crate(RegistryInit.TIERS.get(7)), RegistryInit.TIERS.get(8));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.DIAMOND_BLOCK), crate(RegistryInit.TIERS.get(8)), RegistryInit.TIERS.get(9));
+        assertCrafts(gameTestHelper, serverLevel, new ItemStack(Items.NETHERITE_BLOCK), crate(RegistryInit.TIERS.get(9)), RegistryInit.TIERS.get(10));
 
         gameTestHelper.succeed();
     }
