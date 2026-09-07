@@ -7,8 +7,8 @@
     "RRR"
   ],
   "key": {
-    "R": "minecraft:amethyst_shard",
-    "C": "deepcrate:iron_crate"
+    "R": "minecraft:amethyst_block",
+    "C": "deepcrate:gold_crate"
   },
   "result": {
     "id": "deepcrate:amethyst_crate",

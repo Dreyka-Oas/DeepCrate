@@ -7,11 +7,11 @@
     "RRR"
   ],
   "key": {
-    "R": "minecraft:copper_block",
-    "C": "deepcrate:coal_crate"
+    "R": "minecraft:emerald_block",
+    "C": "deepcrate:quartz_crate"
   },
   "result": {
-    "id": "deepcrate:copper_crate",
+    "id": "deepcrate:emerald_crate",
     "count": 1
   }
 }

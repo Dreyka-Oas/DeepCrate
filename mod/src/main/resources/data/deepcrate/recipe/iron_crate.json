@@ -7,7 +7,7 @@
     "RRR"
   ],
   "key": {
-    "R": "minecraft:iron_ingot",
+    "R": "minecraft:iron_block",
     "C": "deepcrate:copper_crate"
   },
   "result": {
