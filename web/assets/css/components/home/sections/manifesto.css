@@ -1,8 +1,0 @@
-/* The statement blocks on the home: display-size type, one accent word picked
-   out in --primary-text, and a bordered note underneath.
-   KEEP for the rules. The one thing to get right is in the HTML: exactly one
-   word wears .glow. Two accents in a sentence and neither is an accent. */
-
-.home-manifesto { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.6rem, 4.2vw, 3.4rem); line-height: 1.1; letter-spacing: -0.005em; max-width: 21ch; color: var(--ink); }
-.home-manifesto .glow { color: var(--primary-text); }
-.home-manifesto__note { margin-top: 30px; max-width: 54ch; font-size: 1.05rem; color: var(--muted); border-left: 2px solid var(--border); padding-left: 20px; }

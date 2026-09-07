@@ -68,3 +68,6 @@ opencode.json
 .DS_Store
 Thumbs.db
 
+
+# ---- Nested DeepCrate-web repo (separate, private git repo, do not track or embed) ----
+/web/
