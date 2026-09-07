@@ -1,21 +1,27 @@
 # DeepCrate
 
-Six tiers of chest, a capacity module that lifts every slot from 64 to 512, and paged screens for
-the tiers that no longer fit one page. A Fabric mod, needed on the server and on every client.
+Eleven tiers of chest, capacity modules that lift a slot from 64 up to 512, and paged screens for the
+tiers that no longer fit one page. A Fabric mod, needed on the server and on every client.
 
-## The six crates
+## The eleven crates
 
-Ordered by how dangerous the material is to fetch, not by the usual iron-gold-diamond ladder. Each
-tier is the previous crate surrounded by eight of the new material, and adds a row of nine.
+Ordered by how deep the material sits rather than by the usual iron-gold-diamond ladder. Each tier is
+the previous crate surrounded by eight blocks of the new material, and adds a row of nine. Only the
+first starts from something else, a chest of the game.
 
 | Crate | Material | Slots |
 |---|---|---|
-| Copper | copper ingot, around a copper chest | 27 |
-| Iron | iron ingot | 36 |
-| Amethyst | amethyst shard | 45 |
-| Prismarine | prismarine crystals | 54 |
-| Breeze | breeze rod | 63 |
-| Echo | echo shard | 72 |
+| Coal | block of coal, around a chest | 27 |
+| Copper | block of copper | 36 |
+| Iron | block of iron | 45 |
+| Redstone | block of redstone | 54 |
+| Lapis | block of lapis lazuli | 63 |
+| Gold | block of gold | 72 |
+| Amethyst | block of amethyst | 81 |
+| Quartz | block of quartz | 90 |
+| Emerald | block of emerald | 99 |
+| Diamond | block of diamond | 108 |
+| Netherite | block of netherite | 117 |
 
 Two crates of the same tier placed side by side merge into one screen, as chests do, sharing a
 single module.
@@ -50,10 +56,10 @@ hands out one vanilla stack at a time and breaking one drops its content cut int
 ## Rows
 
 A row module is a chest surrounded by planks, and each one adds a row of nine to the crate holding it.
-The cell under the capacity one takes a stack of sixteen, so a copper crate can end up with more slots
-than an echo one, and an echo crate with twenty-four rows. Rows are read from every cell and added
-together, so a cell an addon put there holding row modules extends the crate further rather than
-replacing what the first gave.
+The cell under the capacity one takes a stack of sixteen, so a coal crate can end up with more slots
+than a netherite one, and a netherite crate with twenty-nine rows. Rows are read from every cell and
+added together, so a cell an addon put there holding row modules extends the crate further rather
+than replacing what the first gave.
 
 Adding or taking one back reopens the screen, because a menu's slot list is fixed once it is built.
 That happens at the start of the next tick rather than inside the click, so nothing carried in hand
@@ -153,10 +159,55 @@ every shipped tier, module, cell, sort order and tooltip line goes through the s
 | `CrateScreenCallback.EVENT` | client init | a widget on the crate screen |
 | `CrateTooltipCallback.EVENT` | client init | a line in the tooltip of a crate slot |
 
+Getting the jar onto your compile classpath comes first, and it is the step that has to be exact.
+DeepCrate ships remapped, so Loom has to map it back into the names your development environment
+uses. `modImplementation` does that; `compileOnly files(...)` does not, and the difference shows up
+as `cannot access class_2960` and a dozen errors like it, which reads as a broken API and is only a
+broken dependency line.
+
+Fabric API goes on that same classpath, and at compile time rather than at runtime, even for an addon
+that never calls it directly. Two things depend on it. The events above are Fabric `Event` objects, so
+`CrateLayoutCallback.EVENT.register(...)` does not type-check without it, and it fails as
+`class file for net.fabricmc.fabric.api.event.Event not found`. And registering a block calls
+`Blocks.register`, which Mojang declares private and which Fabric API's access widener opens; Loom
+carries that widener over to whoever declares the module, so `modRuntimeOnly` leaves you with
+`register(...) has private access in Blocks` on the very example below.
+
+```kotlin
+dependencies {
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.141.4+1.21.11")
+    modImplementation(files("libs/deepcrate-1.0.0.jar"))
+}
+```
+
+That `libs/` is a folder of your own project, beside your build script, and it exists so your code has
+something to compile against. It is not how anyone installs DeepCrate: a player drops the same jar in
+`mods/` like any other mod, and yours goes in beside it. Take the jar from the release you are
+building against, or build it from this tree with `cd mod && ./gradlew build`. In the Groovy DSL the
+same line is `modImplementation files("libs/deepcrate-1.0.0.jar")`.
+
+Which versions to build against are in `mod/gradle.properties`, except two that live in
+`mod/build.gradle.kts`: the fabric-loom version on the `plugins` block, and
+`loom.officialMojangMappings()`, which is the mapping set this whole API is named in. Building an
+addon against any other mapping set renames every type it exposes and nothing lines up.
+
+Then the loader has to be told. The modid is `deepcrate`, which is also the resource namespace,
+though not the Java package:
+
+```json
+  "depends": {
+    "deepcrate": "*",
+    "fabric-api": "*"
+  }
+```
+
 `DeepCrateAddon` is the entry point, and its two methods are two passes of the mod's own start-up.
-`onDeepCrateConfig()` runs before the settings file is read, `onDeepCrateInit()` once the six shipped
-tiers are in place and before anything reads a registry. Declare the class under `"deepcrate"`, and
-the client half under `"client"`, as usual:
+`onDeepCrateConfig()` runs before the settings file is read and is a default method you may leave
+out; `onDeepCrateInit()` is the one you have to write, and it runs once the eleven shipped tiers are
+in place and before anything reads a registry. Both passes go to the same instance of your class, so
+a field set in the first is still there in the second. Both also finish before any `"client"` entry
+point starts, which is what lets a sort order or a widget read an option your holder declared.
+Declare the class under `"deepcrate"`, and the client half under `"client"`, as usual:
 
 ```json
   "entrypoints": {
@@ -239,6 +290,28 @@ public class SlateCrateAddon implements DeepCrateAddon {
 }
 ```
 
+Several of those numbers are positions rather than sizes, so here is what each record takes.
+`CrateTier` is `(id, rows, columns, block)`, with a three-argument form that fills in
+`CrateTier.DEFAULT_COLUMNS`, which is nine. `CrateModule` is `(id, capacity, tag)` and `RowModule` is
+`(id, rows, tag)`. `CrateModuleSlot` is `(id, order, stackLimit, emptyIcon, filter)`, where `order`
+places the cell in the column with the smallest at the top, and `stackLimit` is what one cell
+accepts. `CrateLayout` is `(rowsPerPage, pageCount)`, in that order. They are records, so each of
+those names is also the accessor: `tier.id()`, `tier.rows()`, `tier.columns()`, `tier.block()`,
+`layout.rowsPerPage()`, and so on down the list.
+
+The two events fold rather than vote. Each listener is handed what the one before it returned, so
+returning the argument untouched is how an addon steps aside on a crate it has no opinion about, and
+a later listener has the last word only because it saw the earlier answer.
+
+Reading the registries is open too, and none of it needs an event: `DeepCrateApi.tiers()`, `tier(id)`
+and `tierOf(block)` for the crates, `modules()`, `moduleFor(stack)` and `capacityOf(stack)` for the
+capacity modules, `rowModules()`, `rowModuleFor(stack)` and `rowsOf(stack)` for the row modules,
+`moduleSlots()` and `moduleSlot(id)` for the cells, `capacityAmong(stacks)`, `rowsAmong(stacks)` and
+`layoutFor(tier, rows)` for what the mod itself computes, plus `automationLimited()` and
+`MAX_CAPACITY`. On the client, `DeepCrateClientApi` adds `sortOrders()`, `sortOrder(id)`,
+`order(sortOrder, container, reversed)` and `nameOf(item)`, that last one giving the translated,
+displayable name of an item type rather than of a renamed stack.
+
 The options are plain public static fields, enumerated by reflection, so adding one is adding a field:
 
 ```java
@@ -251,6 +324,19 @@ public final class SlateCrateConfig {
     public static int slateCrateRows = 10;
 }
 ```
+
+A field is picked up when it is public, static and not final, and of a type the settings file can
+carry: `int`, `long`, `float`, `double` or `boolean`. The label it wears on the settings screen comes
+from a translation key rather than from its own name, and the key belongs to the host mod: the camel
+case becomes snake case behind `deepcrate.option.`, so `slateCrateRows` reads
+`deepcrate.option.slate_crate_rows`, written in your lang files and never under your own namespace.
+Leave it out and the screen shows the raw key. The registrar handed to `registerGroup` has one
+method, `b(name, min, max)`, and it bounds numbers only; naming a boolean there clamps nothing.
+
+The second argument of `registerHolder` is the category, which is the object your options are written
+under in the settings file and the heading they sit under on the screen. Its key is built the same
+way, `deepcrate.category.` followed by the string you passed, so `"slatecrate"` reads
+`deepcrate.category.slatecrate` and belongs in your lang files too.
 
 The three points that draw something live on the client side, where the language and the screen are:
 
@@ -306,11 +392,39 @@ public class SlateCrateAddonClient implements ClientModInitializer {
 }
 ```
 
+`CrateSortOrder` is `(id, order, icon, rule)`, where `order` places the button in the row with the
+smallest first, and `rule` is handed `(Map<Item, Long> totals, Collator collator)`: `totals` is how
+many of each item type the crate holds, every slot counted, and the collator sorts names in the
+language the player reads.
+
 Two files follow from that code. A sort order reads its wording from `screen.slatecrate.sort.by_mod`
 and `screen.slatecrate.sort.by_mod_reversed`, in your own lang files, because the drawing shows what
 the next press will do rather than what the last one did; its icon is sixteen wide and thirty-two
-tall, the plain way up top and the reversed one under it. A cell's empty icon is a sprite, so
-`slatecrate:container/slot/polish` is read from `textures/gui/sprites/container/slot/polish.png`.
+tall, the plain way up top and the reversed one under it. The two icons are named differently and it
+is easy to get backwards. A sort order's icon is a whole texture path, extension and all, the way the
+shipped ones are written as `deepcrate:textures/gui/sort/name.png`. A cell's empty icon is a sprite
+instead, so `slatecrate:container/slot/polish` is read from
+`textures/gui/sprites/container/slot/polish.png`, at the sixteen by sixteen the game draws a slot at.
+
+Both `order` numbers start at zero and the mod has already taken zero and one in each: the capacity
+cell and the row cell on one side, the name and count buttons on the other. Ties are not an error, and
+they are not refused either; the sort is stable, so two things sharing a number stay in the order they
+were registered, which is a coin toss between two mods. Start at two.
+
+An item tag named in a module or a cell is an ordinary data file, under
+`data/slatecrate/tags/item/module_1024.json`. The folder is `item`, singular, the same as the four
+the mod ships under `data/deepcrate/tags/item/`: `module_128`, `module_256` and `module_512` for the
+capacity modules, `module_row` for the one that buys rows.
+
+A tier is a block, so it needs what any block needs and the mod supplies none of it for you. Under
+`assets/<yours>/`, that is `blockstates/slate_crate.json`, a model in `models/block/`, one in
+`models/item/`, the item definition in `items/slate_crate.json` and the textures they point at, plus
+`block.<yours>.slate_crate` in both lang files. Copy the shapes from
+`mod/src/main/resources/assets/deepcrate/` rather than writing them from memory.
+
+What you do not have to wire is the block entity. Registering a tier is enough for its block to join
+the shared type, whenever it is registered, so a crate with no assets at all still opens, stores and
+saves; it just stands there as a black and violet cube.
 
 ### What stays closed, and why
 
@@ -354,9 +468,10 @@ writing a short is not going to change.
 
 ## Build and test
 
-Minecraft, Fabric loader, Fabric API, Loom and the mappings are all pinned in `mod/gradle.properties`
-and nowhere else, so a version bump never needs a second edit. Java comes from the toolchain rather
-than a path. `mod_version` is repeated in `mod/src/main/resources/fabric.mod.json` and the two must
+Minecraft, the Fabric loader, Fabric API and `mod_version` are pinned in `mod/gradle.properties`.
+Loom's own version and `officialMojangMappings()` cannot live there, since a plugin is resolved before
+the properties are, so both sit in `mod/build.gradle.kts` and a toolchain bump edits two files rather
+than one. Java comes from the toolchain rather than a path. `mod_version` is repeated in `mod/src/main/resources/fabric.mod.json` and the two must
 not drift.
 
 The package base is `oas.dreyka`, the resource namespace and `archives_base_name` are both
