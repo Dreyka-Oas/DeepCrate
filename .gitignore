@@ -71,3 +71,6 @@ Thumbs.db
 
 # ---- Nested DeepCrate-web repo (separate, private git repo, do not track or embed) ----
 /web/
+
+# ---- Session-scoped design docs, never published ----
+docs/superpowers/
