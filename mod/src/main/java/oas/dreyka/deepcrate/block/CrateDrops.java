@@ -1,5 +1,7 @@
 package oas.dreyka.deepcrate.block;
 
+import oas.dreyka.deepcrate.inventory.CrateStorage;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -19,5 +21,24 @@ public final class CrateDrops {
         ItemEntity itemEntity = new ItemEntity(level, blockPos.getX() + 0.5, blockPos.getY() + yOffset, blockPos.getZ() + 0.5, itemStack);
         itemEntity.setDefaultPickUpDelay();
         level.addFreshEntity(itemEntity);
+    }
+
+    static void preRemoveSideEffects(DeepCrateBlockEntity crate, BlockPos blockPos) {
+        if (crate.getLevel() == null) {
+            return;
+        }
+
+        CrateStorage storage = crate.storage();
+        List<ItemStack> list = storage.splitForVanilla();
+        storage.clear();
+        for (ItemStack itemStack : crate.modules()) {
+            list.add(itemStack);
+        }
+
+        crate.modules().clear();
+
+        for (ItemStack itemStack : list) {
+            dropWhole(crate.getLevel(), blockPos, 0.5, itemStack);
+        }
     }
 }

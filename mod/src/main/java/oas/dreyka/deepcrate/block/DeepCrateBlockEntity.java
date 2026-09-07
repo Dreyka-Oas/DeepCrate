@@ -1,6 +1,5 @@
 package oas.dreyka.deepcrate.block;
 
-import oas.dreyka.deepcrate.api.CrateLayout;
 import oas.dreyka.deepcrate.api.CrateTier;
 import oas.dreyka.deepcrate.api.DeepCrateApi;
 import oas.dreyka.deepcrate.api.module.CrateModules;
@@ -8,7 +7,6 @@ import oas.dreyka.deepcrate.config.domain.CrateConfig;
 import oas.dreyka.deepcrate.init.RegistryInit;
 import oas.dreyka.deepcrate.inventory.CrateOpenData;
 import oas.dreyka.deepcrate.inventory.CrateStorage;
-import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
 import java.util.List;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
@@ -17,7 +15,6 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -27,13 +24,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements LidBlockEntity, ExtendedScreenHandlerFactory<CrateOpenData> {
-    private static final Component DEFAULT_NAME = Component.translatable("container.deepcrate.crate");
-
     private CrateStorage storage = new CrateStorage(CrateTier.DEFAULT_COLUMNS, CrateConfig.baseCapacity);
     private final CrateModules modules = new CrateModules();
     private final CrateLid crateLid = new CrateLid(this);
@@ -57,7 +51,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
     }
 
     public CrateStorage storage() {
-        this.alignStorageWithTier();
+        CrateTierBinding.align(this);
         this.crateModuleHolder.alignCapacityWithHolder();
         return this.storage;
     }
@@ -127,15 +121,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     @Override
     protected Component getDefaultName() {
-        CrateTier crateTier = DeepCrateApi.tierOf(this.getBlockState().getBlock());
-        if (crateTier == null) {
-            return DEFAULT_NAME;
-        }
-
-        Component name = Component.translatable(crateTier.block().getDescriptionId());
-        return this.getBlockState().getValue(DeepCrateBlock.TYPE) == ChestType.SINGLE
-            ? name
-            : Component.translatable("container.deepcrate.double", name);
+        return CrateNaming.defaultName(this);
     }
 
     /**
@@ -186,21 +172,12 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     @Override
     public CrateOpenData getScreenOpeningData(ServerPlayer serverPlayer) {
-        Container container = CratePairing.containerFor(CratePairing.cratesFor(this));
-        CrateTier crateTier = this.tier();
-        CrateLayout crateLayout = DeepCrateApi.layoutFor(crateTier, container.getContainerSize() / crateTier.columns());
-        return new CrateOpenData(
-            container.getContainerSize(), crateLayout.rowsPerPage(), crateLayout.pageCount(), container.getMaxStackSize(), crateTier.columns()
-        );
+        return CrateMenuOpening.screenOpeningData(this);
     }
 
     @Override
     protected AbstractContainerMenu createMenu(int i, Inventory inventory) {
-        List<DeepCrateBlockEntity> crates = CratePairing.cratesFor(this);
-        Container container = CratePairing.containerFor(crates);
-        CrateTier crateTier = this.tier();
-        CrateLayout crateLayout = DeepCrateApi.layoutFor(crateTier, container.getContainerSize() / crateTier.columns());
-        return new DeepCrateMenu(i, inventory, container, crates, crateLayout, crateTier.columns());
+        return CrateMenuOpening.menu(this, i, inventory);
     }
 
     @Override
@@ -231,21 +208,7 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     @Override
     public void preRemoveSideEffects(BlockPos blockPos, BlockState blockState) {
-        if (this.level == null) {
-            return;
-        }
-
-        List<ItemStack> list = this.storage().splitForVanilla();
-        this.storage.clear();
-        for (ItemStack itemStack : this.modules) {
-            list.add(itemStack);
-        }
-
-        this.modules.clear();
-
-        for (ItemStack itemStack : list) {
-            CrateDrops.dropWhole(this.level, blockPos, 0.5, itemStack);
-        }
+        CrateDrops.preRemoveSideEffects(this, blockPos);
     }
 
     @Override
@@ -281,36 +244,8 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         return this.crateLid.getOpenNess(f);
     }
 
-    /**
-     * Grows a crate to the size its tier and its row modules call for. Not done once and cached: the
-     * row count changes while the game runs, and at load time the block state is not known yet
-     * because loadAdditional runs before the block entity is bound to a level.
-     */
-    private void alignStorageWithTier() {
-        CrateTier crateTier = DeepCrateApi.tierOf(this.getBlockState().getBlock());
-        if (crateTier == null) {
-            return;
-        }
-
-        this.storage.setTier(crateTier);
-        int target = crateTier.slotCount() + this.extraRows() * crateTier.columns();
-        if (target > this.storage.size()) {
-            this.storage.grow(target);
-        }
-    }
-
-    /**
-     * A pair opens under one title: the name given to either half, or the shared default when neither
-     * was named on an anvil.
-     */
     @Override
     public Component getDisplayName() {
-        for (DeepCrateBlockEntity deepCrateBlockEntity : CratePairing.cratesFor(this)) {
-            if (deepCrateBlockEntity.getCustomName() != null) {
-                return deepCrateBlockEntity.getCustomName();
-            }
-        }
-
-        return this.getDefaultName();
+        return CrateNaming.displayName(this);
     }
 }
