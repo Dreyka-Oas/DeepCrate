@@ -86,3 +86,6 @@ mod/testworld/
 mod/scripts/
 mod/src/test/
 mod/src/gametest/
+
+# ---- Shop description drafts, never published: not part of the mod repository ----
+store/
