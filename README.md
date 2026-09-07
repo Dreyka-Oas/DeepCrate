@@ -312,6 +312,17 @@ capacity modules, `rowModules()`, `rowModuleFor(stack)` and `rowsOf(stack)` for 
 `order(sortOrder, container, reversed)` and `nameOf(item)`, that last one giving the translated,
 displayable name of an item type rather than of a renamed stack.
 
+None of them hands back an `Optional`. Every plural name returns a plain `List` of what it holds, every
+lookup returns the thing it found or null, and `capacityOf`, `rowsOf`, `capacityAmong` and `rowsAmong`
+return an `int`. The lookups by id take an `Identifier`, `moduleFor` and its
+neighbours take an `ItemStack`, `tierOf` takes a `Block`, `capacityAmong` and `rowsAmong` take an
+`Iterable<ItemStack>`, `order` takes a `Container` and gives back a `List<Item>`, and `nameOf` gives
+back a `String`.
+
+The four things the mod registers for itself are addressable like anything else, and you need their
+ids to reach them: the two cells are `deepcrate:capacity` and `deepcrate:rows`, the two sort buttons
+are `deepcrate:name` and `deepcrate:count`.
+
 The options are plain public static fields, enumerated by reflection, so adding one is adding a field:
 
 ```java
