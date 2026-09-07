@@ -80,6 +80,17 @@ loom {
     }
 }
 
+// Loom's runs { environmentVariable(...) } reaches the generated IDE configuration, not the gradle
+// task, so a client launched from a headless compositor still inherited the desktop's socket and
+// opened a real window. Setting it on the task is what actually moves it.
+if (headlessWayland.isPresent) {
+    tasks.withType<JavaExec>().configureEach {
+        if (name == "runClient" || name == "runClientGameTest") {
+            environment("WAYLAND_DISPLAY", headlessWayland.get())
+        }
+    }
+}
+
 // Server game tests: the screen is the one thing JUnit cannot reach, because a menu needs a real
 // player and a real level. createSourceSet gives src/gametest its own mod metadata, so the shipped
 // jar never declares an entry point it does not contain.
