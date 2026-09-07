@@ -15,10 +15,9 @@ import net.minecraft.world.item.Item;
 /**
  * The order the player asked for, worked out on their machine and sent to the crate.
  *
- * The order travels rather than the button that was pressed, because it comes from item names in the
- * language the player reads and a server holds no language files. What the server does with it is
- * a rearrangement of what it already has, so a made-up order costs its sender a messy crate and
- * nothing else.
+ * The order travels, not the button that was pressed. It comes from item names in the language the
+ * player reads, and a server holds no language files. What the server does with it is a rearrangement
+ * of what it already has, so a made-up order costs its sender a messy crate and nothing else.
  */
 public record CrateSortPayload(int containerId, List<Item> order) implements CustomPacketPayload {
     /**

@@ -15,13 +15,13 @@ import net.minecraft.server.permissions.Permissions;
 /**
  * One setting, named and given a new value by the screen, for the server to accept or ignore.
  *
- * The value travels as the text that was typed rather than as a number, because the receiver has to
- * parse it against the option's own kind anyway and a malformed entry then costs a refusal instead of
- * a decoding failure that drops the connection.
+ * The value travels as the text that was typed, not as a number. The receiver parses it against the
+ * option's own kind anyway, so a malformed entry costs a refusal, not a decoding failure that drops
+ * the connection.
  *
- * The permission is checked here and not only on the command that opens the screen. A client can send
- * this packet without ever running the command, so a gate placed on the command alone reads as correct
- * and hands every player the settings file.
+ * The permission is checked here too, in addition to the command that opens the screen. A client can
+ * send this packet without ever running the command, so a gate placed on the command alone reads as
+ * correct and hands every player the settings file.
  */
 public record ConfigSetPayload(String name, String value) implements CustomPacketPayload {
     /** Both fields are an identifier or a short number, so the reader refuses anything longer. */
@@ -57,8 +57,8 @@ public record ConfigSetPayload(String name, String value) implements CustomPacke
         }
 
         DeepCrate.LOGGER.info("[DeepCrate] {} set {} to {}", serverPlayer.getName().getString(), payload.name(), payload.value());
-        // What was stored may have been pulled into range, so the screen is told the table as it now
-        // stands rather than being left showing the number that was typed.
+        // What was stored may have been pulled into range, so the screen gets the table as it now
+        // stands, not left showing the number that was typed.
         ConfigSyncPayload.sendTo(serverPlayer);
     }
 

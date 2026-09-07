@@ -46,7 +46,7 @@ public record ConfigSyncPayload(List<ConfigOption> options) implements CustomPac
 
     /**
      * An option nothing bounds carries no range, so the pair is optional. The nullable field of the
-     * record and the optional on the wire meet here rather than leaking either shape into the other.
+     * record and the optional on the wire meet here; neither shape leaks into the other.
      */
     private static final StreamCodec<RegistryFriendlyByteBuf, ConfigOption> OPTION_CODEC = StreamCodec.composite(
         ByteBufCodecs.stringUtf8(MAX_TEXT),
@@ -74,7 +74,7 @@ public record ConfigSyncPayload(List<ConfigOption> options) implements CustomPac
         PayloadTypeRegistry.playS2C().register(TYPE, STREAM_CODEC);
     }
 
-    /** The snapshot is taken here rather than by the caller, so no stale table can be sent by mistake. */
+    /** The snapshot is taken here, not by the caller, so no stale table can be sent by mistake. */
     public static void sendTo(ServerPlayer serverPlayer) {
         ServerPlayNetworking.send(serverPlayer, new ConfigSyncPayload(ConfigRuntime.snapshot()));
     }

@@ -60,7 +60,7 @@ public final class ModuleRegistry {
 
     /**
      * The strongest capacity any of these stacks asks for. A crate whose cells hold two capacity
-     * modules takes the better of the two rather than adding them, which is the rule one cell already
+     * modules takes the better of the two; it does not add them, the same rule one cell already
      * followed between two tags.
      */
     public static int capacityAmong(Iterable<ItemStack> stacks) {

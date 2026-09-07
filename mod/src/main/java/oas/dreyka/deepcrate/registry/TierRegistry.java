@@ -25,8 +25,8 @@ public final class TierRegistry {
         }
 
         TIERS_BY_BLOCK.put(crateTier.block(), crateTier);
-        // An addon's block joins the shared block entity type here rather than at build time; without
-        // it the game refuses to attach a block entity to that block and the crate breaks on placement.
+        // An addon's block joins the shared block entity type here, not at build time; without it the
+        // game refuses to attach a block entity to that block and the crate breaks on placement.
         for (Runnable listener : TIER_LISTENERS) {
             listener.run();
         }
