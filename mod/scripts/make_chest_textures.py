@@ -34,12 +34,17 @@ BLOCKS = UNPACKED / "assets/minecraft/textures/block"
 VANILLA = UNPACKED / "assets/minecraft/textures/entity/chest"
 
 TIERS = {
+    "coal": "coal_block",
     "copper": "copper_block",
     "iron": "iron_block",
+    "redstone": "redstone_block",
+    "lapis": "lapis_block",
+    "gold": "gold_block",
     "amethyst": "amethyst_block",
-    "prismarine": "prismarine",
-    "breeze": "blue_ice",
-    "echo": "sculk",
+    "quartz": "quartz_block_side",
+    "emerald": "emerald_block",
+    "diamond": "diamond_block",
+    "netherite": "netherite_block",
 }
 
 # The frame the game draws around every face of a chest, and how dark the two faces you only ever
