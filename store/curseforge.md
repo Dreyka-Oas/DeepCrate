@@ -16,14 +16,9 @@
        Bolt on up to sixteen more rows, page through what no longer fits, sort
        the lot with one button. Empty a crate before pulling its module out.
 
-     Licence      Custom. Paste the text of LICENSE itself, and give no URL
-                  for it: the repository is private, so a link to the file in
-                  it answers 404 to everybody but its owner. The same file is
-                  packed into the jar by tasks.jar in mod/build.gradle.kts.
-                  Free to play, free to share unmodified provided the author
-                  is credited and the link named in section 2 is given, never
-                  to sell, everything else on request. The modpack answer is
-                  in the body, since that is the one people actually ask.
+     Licence      MIT, and set the modpack permission to the open one: under
+                  MIT nobody has to ask, so a project page still demanding it
+                  contradicts the file shipped inside the jar.
      Environment  Required on the server and on every client. The client draws
                   the screen and works out the sort order, the server holds the
                   slots and their counts. Read from fabric.mod.json, which
@@ -31,7 +26,7 @@
                   CONFIRM before publishing by joining a modded server with a
                   vanilla client; the split is read from the source, not tried.
      Categories   Storage, API and Library
-     Links        Website  none. web/ is reserved and holds no page yet.
+     Links        Website  https://deepcrate.pages.dev
                   Source   https://github.com/Dreyka-Oas/DeepCrate
                            Checked anonymously on 6 September 2026: the
                            repository answers 200, as does its issues page.
@@ -150,17 +145,4 @@ A crate writes its slots in its own format, the item on one side and its count o
 the stack codec of the base game refuses any count above 99. A slot can go to 32767 before the save
 format runs out. The three shipped modules stop at 512 by choice, and yours does not have to.
 
-## Licence and modpacks
-
-Readable but not open source. The repository is public and the code can be read, and the licence in
-the jar is what governs it rather than an open-source one. Playing it is free, with nothing asked in
-return, and the licence says that will never change.
-
-Passing it on is free as well, on the conditions that file sets: the jar goes on unmodified with the
-licence beside it, the author is credited with the link named there, and nothing is charged or earned
-anywhere along the way. <span style="color:#c62828">**Never to be sold.**</span>
-
-A modpack, a fork, or reusing the code needs written permission first, and it is usually a yes. Where
-to ask is in the licence file, which travels in every download.
-
-No site for the mod yet. What you have just read is the whole of it.
+What you have just read is the whole of it.

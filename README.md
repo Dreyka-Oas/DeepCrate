@@ -373,3 +373,10 @@ inside an invisible sway session, for the cases those shots do not cover.
 `mod/` holds the mod. `web/` holds the site, static with no build step, two hand-written language
 trees and its own checks under `web/tools/`; its pictures come out of `runClientGameTest`. The
 design notes are in `docs/superpowers/`.
+
+## Licence
+
+MIT, © 2026 Dreyka Oas. Play it, share it, fork it, build an addon on it and publish that addon, all
+without asking. Keep the copyright and permission notice with any substantial copy of the code, which
+is the whole of what MIT requires. See [LICENSE](LICENSE). A mention is welcome as a courtesy, never
+as a condition.
