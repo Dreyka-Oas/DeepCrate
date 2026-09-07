@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "deepcrate:block/coal_crate"
+    }
+  }
+}
