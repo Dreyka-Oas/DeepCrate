@@ -81,3 +81,6 @@ DEFAUTS-CONNUS.md
 
 # ---- Local test world, never published ----
 mod/testworld/
+
+# ---- Dev/test tooling, never published: only the mod itself ships ----
+mod/scripts/
