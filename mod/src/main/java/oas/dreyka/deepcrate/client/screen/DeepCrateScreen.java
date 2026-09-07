@@ -251,7 +251,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
     /**
      * While the search field holds the keyboard, no key reaches the rest of the screen. The base
      * class only asks the focused widget first and then acts on whatever it did not claim, and a
-     * plain letter is claimed by nobody: the "e" of "echo" would close the crate, a digit would swap
+     * plain letter is claimed by nobody: the "e" of "emerald" would close the crate, a digit would swap
      * a slot into the hotbar, and the drop key would throw the item under the pointer. Escape is the
      * one key left through, so the screen can still be closed without reaching for the mouse.
      */

@@ -35,12 +35,12 @@ import net.minecraft.world.level.block.entity.HopperBlockEntity;
  *
  * A case already standing inside a frame taken for something else gets no frame of its own: the empty
  * module tab rides on the three-row crate, the tab holding row modules and nothing else rides on the
- * crate of six pages, and a page button wearing its dot stands beside one without in that same
+ * crate of eight pages, and a page button wearing its dot stands beside one without in that same
  * picture. A count past four digits is what no shipped crate reaches, so it comes from a menu built
  * straight from an opening packet.
  *
  * The tab is never seen with both cells at once, because the paged crate of CrateLookClientGameTest
- * carries that already, down to the same six pages and the same dots. A grid of three or twelve
+ * carries that already, down to the same eight pages and the same dots. A grid of three or twelve
  * columns is built there too, from the same five numbers, so neither of those is taken again here.
  *
  * One class rather than two: the scene is built once and read straight down, where a second entry
@@ -48,7 +48,7 @@ import net.minecraft.world.level.block.entity.HopperBlockEntity;
  */
 public class CrateShowcaseClientGameTest implements FabricClientGameTest {
     private static final BlockPos COPPER = new BlockPos(-2, 200, 24);
-    private static final BlockPos ECHO = new BlockPos(2, 200, 24);
+    private static final BlockPos NETHERITE = new BlockPos(2, 200, 24);
     private static final BlockPos IRON = new BlockPos(6, 200, 24);
     private static final BlockPos HOPPER = new BlockPos(6, 201, 24);
     /** Wider than the room the title has, which is what makes it stop before the page number. */
@@ -116,21 +116,21 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
             open(context, server, COPPER);
             context.takeScreenshot("09-name-cut-before-the-page-number");
 
-            fillTheEcho(server);
-            open(context, server, ECHO);
-            context.takeScreenshot("10-eight-rows-over-two-pages");
+            fillTheNetherite(server);
+            open(context, server, NETHERITE);
+            context.takeScreenshot("10-thirteen-rows-over-four-pages");
 
-            onCrate(server, ECHO, echo -> {
+            onCrate(server, NETHERITE, netherite -> {
                 // Rows and nothing beside them. A capacity module in the other cell would draw the tab,
-                // the six pages and the dots of the crate CrateLookClientGameTest already photographs.
-                echo.setRowModules(new ItemStack(RegistryInit.ROW_MODULE_ITEM, CrateConfig.rowModuleStackLimit));
-                // Twenty-four rows now, thirty-six slots to a page. Filling the third page and the sixth
-                // leaves two, four and five empty, so one frame carries a button in both of its states.
-                echo.storage().set(74, new ItemStack(Items.COPPER_INGOT, 64));
-                echo.storage().set(190, new ItemStack(Items.PRISMARINE_CRYSTALS, 32));
+                // the eight pages and the dots of the crate CrateLookClientGameTest already photographs.
+                netherite.setRowModules(new ItemStack(RegistryInit.ROW_MODULE_ITEM, CrateConfig.rowModuleStackLimit));
+                // Twenty-nine rows now, thirty-six slots to a page. Filling the first, the third and the
+                // sixth leaves two, four, five, seven and eight empty, so one frame shows both button states.
+                netherite.storage().set(74, new ItemStack(Items.COPPER_INGOT, 64));
+                netherite.storage().set(190, new ItemStack(Items.QUARTZ, 32));
             });
-            open(context, server, ECHO);
-            context.takeScreenshot("11-six-pages-in-two-columns");
+            open(context, server, NETHERITE);
+            context.takeScreenshot("11-eight-pages-in-two-columns");
 
             looseScreen(context, new CrateOpenData(27, 3, 1, 2_000_000, 9), "big counts", "12-counts-cut-to-k-and-m", deepCrateMenu -> {
                 deepCrateMenu.getContainer().setItem(4, new ItemStack(Items.REDSTONE, 5_000));
@@ -158,8 +158,8 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
         server.runCommand("weather clear");
         server.runCommand("gamemode creative @a");
         server.runCommand("tp @a 0.5 205.0 8.0");
-        server.runCommand("fill -14 196 -2 14 214 32 air");
-        server.runCommand("fill -14 199 -2 14 199 32 minecraft:smooth_stone");
+        server.runCommand("fill -14 196 -2 %d 214 32 air".formatted(pairChestX() + 2));
+        server.runCommand("fill -14 199 -2 %d 199 32 minecraft:smooth_stone".formatted(pairChestX() + 2));
         // Far enough down the platform to stay out of every world shot, close enough to open.
         server.runCommand("setblock -2 200 24 deepcrate:copper_crate[facing=south,type=single]");
         server.runCommand("setblock 2 200 24 deepcrate:netherite_crate[facing=south,type=single]");
@@ -171,20 +171,25 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
             server.runCommand("setblock %d 200 0 %s[facing=south,type=single]".formatted(-5 + i * 2, RegistryInit.TIERS.get(i).id()));
         }
 
-        server.runCommand("setblock 7 200 0 minecraft:chest[facing=south,type=single]");
+        server.runCommand("setblock %d 200 0 minecraft:chest[facing=south,type=single]".formatted(-5 + RegistryInit.TIERS.size() * 2));
     }
 
-    /** The same six as pairs: a half is a texture of its own, and neither half is the single. */
+    /** The same tiers as pairs: a half is a texture of its own, and neither half is the single. */
     private static void placePairs(TestServerContext server) {
-        server.runCommand("fill -12 200 0 12 200 0 air");
+        server.runCommand("fill -12 200 0 %d 200 0 air".formatted(pairChestX() + 1));
         for (int i = 0; i < RegistryInit.TIERS.size(); i++) {
             // A pair is two halves: facing south, a right half's partner sits to its east.
             server.runCommand("setblock %d 200 0 %s[facing=south,type=right]".formatted(-9 + i * 3, RegistryInit.TIERS.get(i).id()));
             server.runCommand("setblock %d 200 0 %s[facing=south,type=left]".formatted(-8 + i * 3, RegistryInit.TIERS.get(i).id()));
         }
 
-        server.runCommand("setblock 9 200 0 minecraft:chest[facing=south,type=right]");
-        server.runCommand("setblock 10 200 0 minecraft:chest[facing=south,type=left]");
+        server.runCommand("setblock %d 200 0 minecraft:chest[facing=south,type=right]".formatted(pairChestX()));
+        server.runCommand("setblock %d 200 0 minecraft:chest[facing=south,type=left]".formatted(pairChestX() + 1));
+    }
+
+    /** One slot past the last pair's left half, and always wider than the row of singles needs. */
+    private static int pairChestX() {
+        return -9 + RegistryInit.TIERS.size() * 3;
     }
 
     /** Several kinds at once, which is what a search has to tell apart and a sort has to reorder. */
@@ -202,11 +207,11 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
     }
 
     /** All of it on the first page, so the second page button stands there with nothing to show. */
-    private static void fillTheEcho(TestServerContext server) {
-        onCrate(server, ECHO, echo -> {
-            echo.storage().set(0, new ItemStack(Items.LAPIS_LAZULI, 64));
-            echo.storage().set(13, new ItemStack(Items.ECHO_SHARD, 20));
-            echo.storage().set(31, new ItemStack(Items.AMETHYST_SHARD, 48));
+    private static void fillTheNetherite(TestServerContext server) {
+        onCrate(server, NETHERITE, netherite -> {
+            netherite.storage().set(0, new ItemStack(Items.LAPIS_LAZULI, 64));
+            netherite.storage().set(13, new ItemStack(Items.RAW_GOLD, 20));
+            netherite.storage().set(31, new ItemStack(Items.AMETHYST_SHARD, 48));
         });
     }
 
@@ -227,7 +232,7 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
      * the patched hopper changes: untouched, the transfer stops at 64 and the hopper keeps the rest.
      *
      * Its own crate rather than one of the two above: the copper one wears an anvil name by this point
-     * and the echo one is twenty-four rows deep, and neither reads as the plain case being shown.
+     * and the netherite one is twenty-nine rows deep, and neither reads as the plain case being shown.
      */
     private static void showHopper(ClientGameTestContext context, TestServerContext server) {
         server.runCommand("setblock 6 200 24 deepcrate:iron_crate[facing=south,type=single]");

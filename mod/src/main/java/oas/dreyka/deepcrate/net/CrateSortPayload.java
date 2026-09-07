@@ -22,10 +22,11 @@ import net.minecraft.world.item.Item;
  */
 public record CrateSortPayload(int containerId, List<Item> order) implements CustomPacketPayload {
     /**
-     * A crate cannot name more items than it has slots. The largest is a pair of echo crates carrying
-     * sixteen row modules: twenty-four rows a side, 432 slots.
+     * A crate cannot name more items than it has slots. The largest is a pair of netherite crates,
+     * thirteen rows of their own plus twenty from row modules: thirty-three rows a side, 594 slots.
+     * 1024 rounds that up with headroom left for an addon tier.
      */
-    private static final int MAX_ITEMS = 512;
+    private static final int MAX_ITEMS = 1024;
 
     public static final Type<CrateSortPayload> TYPE = new Type<>(RegistryInit.id("sort"));
 

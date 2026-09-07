@@ -190,17 +190,17 @@ public class CrateLookClientGameTest implements FabricClientGameTest {
                 copper.setChanged();
             }
 
-            // Eight rows of its own plus sixteen from the modules: twenty-four rows, six pages.
-            if (serverLevel.getBlockEntity(PAGED) instanceof DeepCrateBlockEntity echo) {
-                echo.setModule(new ItemStack(RegistryInit.MODULE_ITEMS.get(2)));
-                echo.setRowModules(new ItemStack(RegistryInit.ROW_MODULE_ITEM, 16));
-                echo.storage().set(0, new ItemStack(Items.AMETHYST_SHARD, 512));
-                echo.storage().set(5, new ItemStack(Items.ECHO_SHARD, 300));
-                // Thirty-six slots to a page. Filling the third and the last leaves pages two, four
-                // and five empty, so one shot carries a page button in both of its states.
-                echo.storage().set(74, new ItemStack(Items.COPPER_INGOT, 64));
-                echo.storage().set(190, new ItemStack(Items.PRISMARINE_CRYSTALS, 32));
-                echo.setChanged();
+            // Thirteen rows of its own plus sixteen from the modules: twenty-nine rows, eight pages.
+            if (serverLevel.getBlockEntity(PAGED) instanceof DeepCrateBlockEntity netherite) {
+                netherite.setModule(new ItemStack(RegistryInit.MODULE_ITEMS.get(2)));
+                netherite.setRowModules(new ItemStack(RegistryInit.ROW_MODULE_ITEM, 16));
+                netherite.storage().set(0, new ItemStack(Items.AMETHYST_SHARD, 512));
+                netherite.storage().set(5, new ItemStack(Items.RAW_GOLD, 300));
+                // Thirty-six slots to a page. The first, third and sixth pages carry an item; the
+                // rest, pages two, four, five, seven and eight, stay empty, so one shot shows both button states.
+                netherite.storage().set(74, new ItemStack(Items.COPPER_INGOT, 64));
+                netherite.storage().set(190, new ItemStack(Items.QUARTZ, 32));
+                netherite.setChanged();
             }
         });
     }

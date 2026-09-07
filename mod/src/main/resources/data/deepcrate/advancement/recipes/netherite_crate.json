@@ -6,7 +6,7 @@
       "conditions": {
         "items": [
           {
-            "items": "deepcrate:netherite_crate"
+            "items": "deepcrate:diamond_crate"
           }
         ]
       }

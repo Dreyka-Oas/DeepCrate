@@ -27,11 +27,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 
 /** Everything the mod puts into a registry: eleven crates, three capacity modules, one row module, one block entity, one menu. */
 public final class RegistryInit {
-
     private static final List<ModuleSpec> MODULE_SPECS = List.of(
         new ModuleSpec("module_128", 128),
         new ModuleSpec("module_256", 256),

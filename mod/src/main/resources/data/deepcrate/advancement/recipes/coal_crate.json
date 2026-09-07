@@ -6,7 +6,7 @@
       "conditions": {
         "items": [
           {
-            "items": "deepcrate:coal_crate"
+            "items": "minecraft:chest"
           }
         ]
       }

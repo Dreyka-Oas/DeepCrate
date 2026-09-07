@@ -10,7 +10,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
-/** A crate is as wide as its tier says, and the six shipped tiers say nine. */
+/** A crate is as wide as its tier says, and the eleven shipped tiers say nine. */
 public class CrateColumnsGameTest {
     private static final BlockPos CRATE = new BlockPos(1, 1, 1);
 

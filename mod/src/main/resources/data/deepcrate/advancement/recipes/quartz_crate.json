@@ -6,7 +6,7 @@
       "conditions": {
         "items": [
           {
-            "items": "deepcrate:quartz_crate"
+            "items": "deepcrate:amethyst_crate"
           }
         ]
       }

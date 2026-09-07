@@ -7,7 +7,7 @@ import net.fabricmc.loader.api.FabricLoader;
 
 /**
  * Runs the other mods that declare a {@code "deepcrate"} entry point, in two passes: their settings
- * before the file is read, then their tiers and modules once the six shipped ones are in place and
+ * before the file is read, then their tiers and modules once the eleven shipped ones are in place and
  * before anything reads a registry.
  */
 public final class AddonInit {

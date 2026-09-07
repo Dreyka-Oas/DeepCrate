@@ -6,7 +6,7 @@
       "conditions": {
         "items": [
           {
-            "items": "deepcrate:redstone_crate"
+            "items": "deepcrate:iron_crate"
           }
         ]
       }

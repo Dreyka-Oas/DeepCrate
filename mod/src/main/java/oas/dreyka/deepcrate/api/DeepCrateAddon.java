@@ -5,7 +5,7 @@ package oas.dreyka.deepcrate.api;
  * its own tiers and modules.
  *
  * It runs while DeepCrate itself initialises, before any registry is read, so a tier registered
- * here is indistinguishable from one of the six shipped tiers.
+ * here is indistinguishable from one of the eleven shipped tiers.
  */
 @FunctionalInterface
 public interface DeepCrateAddon {

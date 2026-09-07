@@ -16,8 +16,8 @@ import net.minecraft.world.item.ItemStack;
 public record StoredSlot(int slot, ItemStack item, int count) {
     public static final Codec<StoredSlot> CODEC = RecordCodecBuilder.create(
         instance -> instance.group(
-                // Was an unsigned byte while a crate had 27 slots; a double echo crate has 144, and
-                // NbtOps reads any numeric tag, so worlds written by the first version still load.
+                // Was an unsigned byte while a crate had 27 slots; a double netherite crate has 234,
+                // and NbtOps reads any numeric tag, so worlds written by the first version still load.
                 Codec.INT.fieldOf("Slot").forGetter(StoredSlot::slot),
                 ItemStack.SINGLE_ITEM_CODEC.fieldOf("Item").forGetter(StoredSlot::item),
                 ExtraCodecs.intRange(1, DeepCrateApi.MAX_CAPACITY).fieldOf("Count").forGetter(StoredSlot::count)
