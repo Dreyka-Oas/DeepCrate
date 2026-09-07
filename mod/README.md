@@ -5,17 +5,9 @@ file is versions and commands.
 
 ## Versions
 
-| | |
-|---|---|
-| Minecraft | 1.21.11 |
-| Fabric loader | 0.19.3 |
-| Fabric API | 0.141.4+1.21.11 |
-| Java | 21, from the toolchain rather than a path |
-| Loom | 1.17.12 |
-| Mappings | official Mojang |
-
-They live in `gradle.properties` and nowhere else. `mod_version` is repeated in
-`src/main/resources/fabric.mod.json` and the two must not drift.
+Minecraft, Fabric loader, Fabric API, Loom and the mappings are all pinned in `gradle.properties` and
+nowhere else, so a version bump never needs a second edit. Java comes from the toolchain rather than a
+path. `mod_version` is repeated in `src/main/resources/fabric.mod.json` and the two must not drift.
 
 The package base is `oas.dreyka`, the resource namespace and `archives_base_name` are both
 `deepcrate`. Those three are not the same string on purpose: the namespace is written into saves, the

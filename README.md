@@ -1,8 +1,7 @@
 # DeepCrate
 
 Six tiers of chest, a capacity module that lifts every slot from 64 to 512, and paged screens for
-the tiers that no longer fit one page. Fabric, Minecraft 1.21.11, Java 21. Needed on the server and
-on every client.
+the tiers that no longer fit one page. A Fabric mod, needed on the server and on every client.
 
 ## The six crates
 
