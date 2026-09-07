@@ -1,8 +1,6 @@
 package oas.dreyka.deepcrate.inventory;
 
 import oas.dreyka.deepcrate.api.CrateTier;
-import oas.dreyka.deepcrate.api.DeepCrateApi;
-import oas.dreyka.deepcrate.api.module.CrateCapacityCallback;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.NonNullList;
@@ -21,8 +19,7 @@ public final class CrateStorage {
     public static final int VANILLA_LIMIT = 64;
 
     private NonNullList<ItemStack> slots;
-    private int capacity;
-    private @Nullable CrateTier tier;
+    private final CrateSlotCapacity slotCapacity;
 
     public CrateStorage(int slotCount, int capacity) {
         if (slotCount < 1) {
@@ -30,7 +27,7 @@ public final class CrateStorage {
         }
 
         this.slots = NonNullList.withSize(slotCount, ItemStack.EMPTY);
-        this.capacity = requirePositive(capacity);
+        this.slotCapacity = new CrateSlotCapacity(CrateSlotCapacity.requirePositive(capacity));
     }
 
     public int size() {
@@ -38,52 +35,27 @@ public final class CrateStorage {
     }
 
     public int capacity() {
-        return this.capacity;
+        return this.slotCapacity.capacity();
     }
 
-    /** Set when the crate lines up with its block, which is the first moment the tier is known. */
     public void setTier(@Nullable CrateTier crateTier) {
-        this.tier = crateTier;
+        this.slotCapacity.setTier(crateTier);
     }
 
-    /**
-     * What one slot holds for a given item. A tool, a bucket or anything else the game refuses to
-     * stack stays at its own limit: a module lifts stacks, it does not turn a sword into a stack of
-     * swords.
-     */
     public int capacityFor(ItemStack itemStack) {
-        // Never below one. A slot told it holds nothing would write a stack of nothing, and that is
-        // how an item gets destroyed rather than refused; refusing is what accepts is for.
-        return Math.max(1, this.limitFor(itemStack));
+        return this.slotCapacity.capacityFor(itemStack);
     }
 
-    /** Whether this crate takes the item at all, which an addon decides through the event. */
     public boolean accepts(ItemStack itemStack) {
-        return this.limitFor(itemStack) > 0;
+        return this.slotCapacity.accepts(itemStack);
     }
 
-    private int limitFor(ItemStack itemStack) {
-        int proposed = !itemStack.isEmpty() && itemStack.getMaxStackSize() <= 1 ? itemStack.getMaxStackSize() : this.capacity;
-        return CrateCapacityCallback.EVENT.invoker().capacity(this.tier, itemStack, proposed);
-    }
-
-    /** What a hopper or a pipe may push into one slot, which is not always what a player may. */
     public int automationCapacityFor(ItemStack itemStack) {
-        if (!this.accepts(itemStack)) {
-            return 0;
-        }
-
-        int limit = this.capacityFor(itemStack);
-        return DeepCrateApi.automationLimited() ? Math.min(limit, VANILLA_LIMIT) : limit;
+        return this.slotCapacity.automationCapacityFor(itemStack);
     }
 
-    /**
-     * Changes what a slot may hold. Nothing is cut back here: a slot left above the new capacity
-     * keeps its content until {@link #overflow()} is drained, which is what happens when the screen
-     * closes after a module is pulled out.
-     */
     public void setCapacity(int capacity) {
-        this.capacity = requirePositive(capacity);
+        this.slotCapacity.setCapacity(capacity);
     }
 
     public NonNullList<ItemStack> slots() {
@@ -155,8 +127,8 @@ public final class CrateStorage {
     public void set(int i, ItemStack itemStack) {
         // A refused item written here is written whole: the caller is a command or another mod
         // forcing it, and clamping it to the refusal would grind the stack down to one.
-        if (this.accepts(itemStack)) {
-            int limit = this.capacityFor(itemStack);
+        if (this.slotCapacity.accepts(itemStack)) {
+            int limit = this.slotCapacity.capacityFor(itemStack);
             if (itemStack.getCount() > limit) {
                 itemStack.setCount(limit);
             }
@@ -194,11 +166,11 @@ public final class CrateStorage {
      * caller holding it sees the same remainder.
      */
     public ItemStack insert(ItemStack itemStack) {
-        if (itemStack.isEmpty() || !this.accepts(itemStack)) {
+        if (itemStack.isEmpty() || !this.slotCapacity.accepts(itemStack)) {
             return itemStack;
         }
 
-        int limit = this.capacityFor(itemStack);
+        int limit = this.slotCapacity.capacityFor(itemStack);
 
         for (int i = 0; i < this.slots.size() && !itemStack.isEmpty(); i++) {
             ItemStack itemStack2 = this.slots.get(i);
@@ -245,11 +217,11 @@ public final class CrateStorage {
         for (ItemStack itemStack : this.slots) {
             // A crate that has started refusing what it already holds keeps it: there is no capacity
             // to cut back to, and the player takes it out by hand.
-            if (!this.accepts(itemStack)) {
+            if (!this.slotCapacity.accepts(itemStack)) {
                 continue;
             }
 
-            int limit = this.capacityFor(itemStack);
+            int limit = this.slotCapacity.capacityFor(itemStack);
             int excess = itemStack.getCount() - limit;
             if (excess > 0) {
                 itemStack.setCount(limit);
@@ -282,13 +254,5 @@ public final class CrateStorage {
         }
 
         return list;
-    }
-
-    private static int requirePositive(int capacity) {
-        if (capacity < 1) {
-            throw new IllegalArgumentException("A slot capacity must be positive, got " + capacity);
-        }
-
-        return capacity;
     }
 }
