@@ -152,7 +152,7 @@ public class CrateMenuGameTest {
         }
 
         assertEquals(gameTestHelper, 40, deepCrateMenu.getSlot(2).getItem().getCount(), "content after paging");
-        assertEquals(gameTestHelper, 72, deepCrateMenu.getContainer().getContainerSize(), "netherite crate size");
+        assertEquals(gameTestHelper, 117, deepCrateMenu.getContainer().getContainerSize(), "netherite crate size");
         gameTestHelper.succeed();
     }
 

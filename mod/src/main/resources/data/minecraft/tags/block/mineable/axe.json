@@ -1,7 +1,15 @@
 {
   "values": [
+    "deepcrate:coal_crate",
     "deepcrate:copper_crate",
     "deepcrate:iron_crate",
-    "deepcrate:amethyst_crate"
+    "deepcrate:redstone_crate",
+    "deepcrate:lapis_crate",
+    "deepcrate:gold_crate",
+    "deepcrate:amethyst_crate",
+    "deepcrate:quartz_crate",
+    "deepcrate:emerald_crate",
+    "deepcrate:diamond_crate",
+    "deepcrate:netherite_crate"
   ]
 }
