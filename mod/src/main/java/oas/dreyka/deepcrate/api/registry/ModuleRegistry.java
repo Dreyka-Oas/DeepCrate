@@ -1,6 +1,7 @@
-package oas.dreyka.deepcrate.api;
+package oas.dreyka.deepcrate.api.registry;
 
 import oas.dreyka.deepcrate.DeepCrate;
+import oas.dreyka.deepcrate.api.Registrations;
 import oas.dreyka.deepcrate.api.module.CrateModule;
 import oas.dreyka.deepcrate.config.domain.CrateConfig;
 import java.util.ArrayList;
