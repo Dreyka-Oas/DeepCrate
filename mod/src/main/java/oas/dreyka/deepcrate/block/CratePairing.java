@@ -9,10 +9,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 
-public class CratePairing {
+public final class CratePairing {
     private CratePairing() {
     }
 
+    /** Which way the other half of a pair sits. */
     public static Direction connectedDirection(BlockState blockState) {
         Direction direction = blockState.getValue(DeepCrateBlock.FACING);
         return blockState.getValue(DeepCrateBlock.TYPE) == ChestType.LEFT ? direction.getClockWise() : direction.getCounterClockWise();
@@ -22,6 +23,10 @@ public class CratePairing {
         return blockPos.relative(connectedDirection(blockState));
     }
 
+    /**
+     * The crate, or both halves of a pair, the module holder first. Callers rely on that order: it is
+     * what makes CratePairContainer answer the shared capacity.
+     */
     public static List<DeepCrateBlockEntity> cratesFor(DeepCrateBlockEntity deepCrateBlockEntity) {
         BlockState blockState = deepCrateBlockEntity.getBlockState();
         Level level = deepCrateBlockEntity.getLevel();
@@ -39,6 +44,7 @@ public class CratePairing {
         return List.of(holder, follower);
     }
 
+    /** The single crate, or both halves seen as one. */
     public static Container containerFor(List<DeepCrateBlockEntity> list) {
         return list.size() == 1 ? list.get(0) : new CratePairContainer(list.get(0), list.get(1));
     }

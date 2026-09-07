@@ -1,15 +1,12 @@
 package oas.dreyka.deepcrate.block;
 
 import oas.dreyka.deepcrate.init.RegistryInit;
-import oas.dreyka.deepcrate.inventory.CratePairContainer;
 import com.mojang.serialization.MapCodec;
-import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
