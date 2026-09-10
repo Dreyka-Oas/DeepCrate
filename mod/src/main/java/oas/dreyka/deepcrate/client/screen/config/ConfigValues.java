@@ -1,7 +1,7 @@
 package oas.dreyka.deepcrate.client.screen.config;
 
-import oas.dreyka.deepcrate.config.ConfigOption;
-import oas.dreyka.deepcrate.config.ConfigRange;
+import oas.dreyka.deepcrate.config.access.ConfigOption;
+import oas.dreyka.deepcrate.config.bounds.ConfigRange;
 import oas.dreyka.deepcrate.config.schema.ConfigPrimitive;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;

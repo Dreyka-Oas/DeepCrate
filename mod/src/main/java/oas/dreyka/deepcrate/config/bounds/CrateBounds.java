@@ -1,7 +1,8 @@
 package oas.dreyka.deepcrate.config.bounds;
 
 import oas.dreyka.deepcrate.api.DeepCrateApi;
-import oas.dreyka.deepcrate.config.BoundsRegistrar;
+import oas.dreyka.deepcrate.config.bounds.BoundsRegistrar;
+import oas.dreyka.deepcrate.inventory.container.CrateStorage;
 
 /**
  * Clamp ranges for the crate options.

@@ -1,8 +1,8 @@
 package oas.dreyka.deepcrate.gametest.client;
 
 import oas.dreyka.deepcrate.client.screen.config.ConfigScreen;
-import oas.dreyka.deepcrate.config.ConfigOption;
-import oas.dreyka.deepcrate.config.ConfigRuntime;
+import oas.dreyka.deepcrate.config.access.ConfigOption;
+import oas.dreyka.deepcrate.config.access.ConfigRuntime;
 import oas.dreyka.deepcrate.config.schema.ConfigPrimitive;
 import java.util.List;
 import com.mojang.blaze3d.platform.InputConstants;

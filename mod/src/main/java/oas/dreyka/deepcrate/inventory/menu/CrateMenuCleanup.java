@@ -1,8 +1,8 @@
 package oas.dreyka.deepcrate.inventory.menu;
 
-import oas.dreyka.deepcrate.block.CrateDrops;
+import oas.dreyka.deepcrate.block.entity.CrateDrops;
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
-import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.inventory.menu.DeepCrateMenu;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.entity.ContainerUser;

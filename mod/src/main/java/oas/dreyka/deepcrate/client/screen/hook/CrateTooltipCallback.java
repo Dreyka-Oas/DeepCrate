@@ -1,6 +1,6 @@
 package oas.dreyka.deepcrate.client.screen.hook;
 
-import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.inventory.menu.DeepCrateMenu;
 import java.util.List;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

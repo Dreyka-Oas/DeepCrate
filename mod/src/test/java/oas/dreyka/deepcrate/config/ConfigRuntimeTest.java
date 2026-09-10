@@ -14,6 +14,9 @@ import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import oas.dreyka.deepcrate.config.bounds.ConfigRange;
+import oas.dreyka.deepcrate.config.access.ConfigOption;
+import oas.dreyka.deepcrate.config.access.ConfigRuntime;
 
 /**
  * The edit path, with no game running. The save inside {@code set} finds no config directory here and

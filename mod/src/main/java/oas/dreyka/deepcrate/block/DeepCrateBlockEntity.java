@@ -7,8 +7,8 @@ import oas.dreyka.deepcrate.block.entity.CrateNaming;
 import oas.dreyka.deepcrate.block.entity.CrateTierBinding;
 import oas.dreyka.deepcrate.config.domain.CrateConfig;
 import oas.dreyka.deepcrate.init.RegistryInit;
-import oas.dreyka.deepcrate.inventory.CrateOpenData;
-import oas.dreyka.deepcrate.inventory.CrateStorage;
+import oas.dreyka.deepcrate.inventory.menu.CrateOpenData;
+import oas.dreyka.deepcrate.inventory.container.CrateStorage;
 import java.util.List;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
@@ -28,6 +28,9 @@ import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import oas.dreyka.deepcrate.block.entity.CrateSave;
+import oas.dreyka.deepcrate.block.entity.CrateDrops;
+import oas.dreyka.deepcrate.block.placement.CratePairing;
 
 public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements LidBlockEntity, ExtendedScreenHandlerFactory<CrateOpenData> {
     private CrateStorage storage = new CrateStorage(CrateTier.DEFAULT_COLUMNS, CrateConfig.baseCapacity);

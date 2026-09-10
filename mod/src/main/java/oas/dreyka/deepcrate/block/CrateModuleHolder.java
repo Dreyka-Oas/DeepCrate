@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import org.jspecify.annotations.Nullable;
+import oas.dreyka.deepcrate.block.placement.CratePairing;
 
 /**
  * The module cells of a crate, and, for a pair, which of its two block entities actually holds them.

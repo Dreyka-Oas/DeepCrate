@@ -1,6 +1,7 @@
 package oas.dreyka.deepcrate.config;
 
 import oas.dreyka.deepcrate.config.io.ConfigIo;
+import oas.dreyka.deepcrate.config.access.ConfigRuntime;
 
 /**
  * The settings, at {@code config/oas/deepcrate.json}.

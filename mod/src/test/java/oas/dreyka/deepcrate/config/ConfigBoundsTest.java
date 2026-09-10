@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import oas.dreyka.deepcrate.config.schema.ConfigSchema;
 import java.lang.reflect.Field;
 import org.junit.jupiter.api.Test;
+import oas.dreyka.deepcrate.config.bounds.ConfigBounds;
+import oas.dreyka.deepcrate.config.bounds.ConfigBoundsTable;
 
 class ConfigBoundsTest {
     @Test

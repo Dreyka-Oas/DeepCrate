@@ -2,8 +2,8 @@ package oas.dreyka.deepcrate.inventory.menu;
 
 import oas.dreyka.deepcrate.api.DeepCrateApi;
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
-import oas.dreyka.deepcrate.inventory.CrateContainer;
-import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.inventory.container.CrateContainer;
+import oas.dreyka.deepcrate.inventory.menu.DeepCrateMenu;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.server.level.ServerLevel;

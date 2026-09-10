@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import oas.dreyka.deepcrate.api.module.CrateModules;
-import oas.dreyka.deepcrate.inventory.CrateStorage;
+import oas.dreyka.deepcrate.inventory.container.CrateStorage;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.registries.VanillaRegistries;
@@ -21,6 +21,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import oas.dreyka.deepcrate.block.entity.CrateSave;
 
 /**
  * Pins the exact NBT shape a crate writes today. StoredSlot and StoredModule read and write worlds

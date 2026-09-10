@@ -1,9 +1,9 @@
 package oas.dreyka.deepcrate.gametest.config;
 
-import oas.dreyka.deepcrate.config.ConfigBounds;
-import oas.dreyka.deepcrate.config.ConfigOption;
-import oas.dreyka.deepcrate.config.ConfigRange;
-import oas.dreyka.deepcrate.config.ConfigRuntime;
+import oas.dreyka.deepcrate.config.bounds.ConfigBounds;
+import oas.dreyka.deepcrate.config.access.ConfigOption;
+import oas.dreyka.deepcrate.config.bounds.ConfigRange;
+import oas.dreyka.deepcrate.config.access.ConfigRuntime;
 import oas.dreyka.deepcrate.config.schema.ConfigSchema;
 import oas.dreyka.deepcrate.net.ConfigSetPayload;
 import java.lang.reflect.Field;

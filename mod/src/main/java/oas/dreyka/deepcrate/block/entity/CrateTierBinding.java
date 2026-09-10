@@ -3,7 +3,7 @@ package oas.dreyka.deepcrate.block.entity;
 import oas.dreyka.deepcrate.api.CrateTier;
 import oas.dreyka.deepcrate.api.DeepCrateApi;
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
-import oas.dreyka.deepcrate.inventory.CrateStorage;
+import oas.dreyka.deepcrate.inventory.container.CrateStorage;
 
 /** Keeps a crate's storage grown to the size its tier and row modules call for. */
 public final class CrateTierBinding {

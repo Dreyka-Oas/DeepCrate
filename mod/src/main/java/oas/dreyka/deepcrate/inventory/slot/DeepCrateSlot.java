@@ -1,11 +1,12 @@
 package oas.dreyka.deepcrate.inventory.slot;
 
-import oas.dreyka.deepcrate.inventory.CrateStorage;
+import oas.dreyka.deepcrate.inventory.container.CrateStorage;
 import java.util.Optional;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import oas.dreyka.deepcrate.inventory.menu.DeepCrateMenu;
 
 /**
  * A crate slot: it accepts what the crate's module allows, never hands out more than a hand can

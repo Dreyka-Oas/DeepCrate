@@ -4,7 +4,7 @@ import oas.dreyka.deepcrate.block.DeepCrateBlock;
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
 import oas.dreyka.deepcrate.config.domain.CrateConfig;
 import oas.dreyka.deepcrate.init.RegistryInit;
-import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.inventory.menu.DeepCrateMenu;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;

@@ -1,7 +1,7 @@
 package oas.dreyka.deepcrate.net;
 
 import oas.dreyka.deepcrate.DeepCrate;
-import oas.dreyka.deepcrate.config.ConfigRuntime;
+import oas.dreyka.deepcrate.config.access.ConfigRuntime;
 import oas.dreyka.deepcrate.init.RegistryInit;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

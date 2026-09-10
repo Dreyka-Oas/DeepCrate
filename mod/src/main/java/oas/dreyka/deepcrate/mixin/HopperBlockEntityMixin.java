@@ -1,7 +1,7 @@
 package oas.dreyka.deepcrate.mixin;
 
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
-import oas.dreyka.deepcrate.inventory.CratePairContainer;
+import oas.dreyka.deepcrate.inventory.container.CratePairContainer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;

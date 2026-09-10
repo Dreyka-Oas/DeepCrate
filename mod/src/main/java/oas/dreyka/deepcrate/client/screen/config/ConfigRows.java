@@ -1,6 +1,6 @@
 package oas.dreyka.deepcrate.client.screen.config;
 
-import oas.dreyka.deepcrate.config.ConfigOption;
+import oas.dreyka.deepcrate.config.access.ConfigOption;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

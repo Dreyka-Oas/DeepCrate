@@ -1,7 +1,7 @@
 package oas.dreyka.deepcrate.config.io;
 
 import oas.dreyka.deepcrate.DeepCrate;
-import oas.dreyka.deepcrate.config.ConfigAccess;
+import oas.dreyka.deepcrate.config.access.ConfigAccess;
 import oas.dreyka.deepcrate.config.schema.ConfigSchema;
 import com.google.gson.JsonElement;
 import java.lang.reflect.Field;

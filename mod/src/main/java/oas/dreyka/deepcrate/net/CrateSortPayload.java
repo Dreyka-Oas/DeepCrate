@@ -1,7 +1,7 @@
 package oas.dreyka.deepcrate.net;
 
 import oas.dreyka.deepcrate.init.RegistryInit;
-import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.inventory.menu.DeepCrateMenu;
 import java.util.List;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

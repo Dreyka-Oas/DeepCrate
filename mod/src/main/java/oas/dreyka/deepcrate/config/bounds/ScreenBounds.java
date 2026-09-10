@@ -1,6 +1,6 @@
 package oas.dreyka.deepcrate.config.bounds;
 
-import oas.dreyka.deepcrate.config.BoundsRegistrar;
+import oas.dreyka.deepcrate.config.bounds.BoundsRegistrar;
 
 /** Clamp ranges for the screen options. */
 public final class ScreenBounds {

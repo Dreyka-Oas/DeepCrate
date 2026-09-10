@@ -2,7 +2,7 @@ package oas.dreyka.deepcrate.client.render;
 
 import oas.dreyka.deepcrate.api.CrateTier;
 import oas.dreyka.deepcrate.api.DeepCrateApi;
-import oas.dreyka.deepcrate.block.CratePairing;
+import oas.dreyka.deepcrate.block.placement.CratePairing;
 import oas.dreyka.deepcrate.block.DeepCrateBlock;
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;

@@ -1,7 +1,7 @@
 package oas.dreyka.deepcrate.client.sort;
 
 import oas.dreyka.deepcrate.client.screen.hook.PanelArea;
-import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.inventory.menu.DeepCrateMenu;
 import oas.dreyka.deepcrate.net.CrateSortPayload;
 import java.util.ArrayList;
 import java.util.HashMap;

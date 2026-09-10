@@ -1,8 +1,8 @@
 package oas.dreyka.deepcrate.init;
 
-import oas.dreyka.deepcrate.config.ConfigOption;
-import oas.dreyka.deepcrate.config.ConfigRange;
-import oas.dreyka.deepcrate.config.ConfigRuntime;
+import oas.dreyka.deepcrate.config.access.ConfigOption;
+import oas.dreyka.deepcrate.config.bounds.ConfigRange;
+import oas.dreyka.deepcrate.config.access.ConfigRuntime;
 import oas.dreyka.deepcrate.net.ConfigSyncPayload;
 import java.util.List;
 import com.mojang.brigadier.Command;

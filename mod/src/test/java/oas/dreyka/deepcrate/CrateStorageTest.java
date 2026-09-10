@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import oas.dreyka.deepcrate.api.module.CrateCapacityCallback;
-import oas.dreyka.deepcrate.inventory.CrateStorage;
+import oas.dreyka.deepcrate.inventory.container.CrateStorage;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import net.minecraft.SharedConstants;

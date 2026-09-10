@@ -2,7 +2,7 @@ package oas.dreyka.deepcrate.block.entity;
 
 import oas.dreyka.deepcrate.api.CrateTier;
 import oas.dreyka.deepcrate.api.DeepCrateApi;
-import oas.dreyka.deepcrate.block.CratePairing;
+import oas.dreyka.deepcrate.block.placement.CratePairing;
 import oas.dreyka.deepcrate.block.DeepCrateBlock;
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
 import net.minecraft.network.chat.Component;

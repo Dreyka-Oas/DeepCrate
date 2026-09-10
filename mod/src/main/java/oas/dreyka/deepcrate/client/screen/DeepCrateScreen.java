@@ -3,7 +3,7 @@ package oas.dreyka.deepcrate.client.screen;
 import oas.dreyka.deepcrate.client.screen.config.ConfigValues;
 import oas.dreyka.deepcrate.client.screen.hook.CrateTooltipCallback;
 import oas.dreyka.deepcrate.client.screen.hook.PanelArea;
-import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.inventory.menu.DeepCrateMenu;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,6 +14,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import oas.dreyka.deepcrate.client.screen.layout.CrateScreenBackground;
+import oas.dreyka.deepcrate.client.screen.layout.CrateScreenLayout;
+import oas.dreyka.deepcrate.client.screen.layout.CrateSlotCount;
 
 /**
  * The crate screen, built out of the chest texture of the base game.

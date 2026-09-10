@@ -1,7 +1,7 @@
 package oas.dreyka.deepcrate.client.screen.config;
 
-import oas.dreyka.deepcrate.config.ConfigOption;
-import oas.dreyka.deepcrate.config.ConfigRuntime;
+import oas.dreyka.deepcrate.config.access.ConfigOption;
+import oas.dreyka.deepcrate.config.access.ConfigRuntime;
 import oas.dreyka.deepcrate.config.schema.ConfigPrimitive;
 import java.util.function.Consumer;
 import net.minecraft.client.gui.Font;
