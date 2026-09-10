@@ -13,8 +13,8 @@ import oas.dreyka.deepcrate.net.ConfigSyncPayload;
 import java.util.Comparator;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 
@@ -25,7 +25,7 @@ public final class DeepCrateClient implements ClientModInitializer {
         registerShippedTooltipLine();
         registerConfigSync();
         MenuScreens.register(RegistryInit.MENU, DeepCrateScreen::new);
-        BlockEntityRendererRegistry.register(RegistryInit.BLOCK_ENTITY, DeepCrateRenderer::new);
+        BlockEntityRenderers.register(RegistryInit.BLOCK_ENTITY, DeepCrateRenderer::new);
     }
 
     /**
