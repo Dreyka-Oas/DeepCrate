@@ -82,10 +82,11 @@ DEFAUTS-CONNUS.md
 # ---- Local test world, never published ----
 mod/testworld/
 
-# ---- Dev/test tooling and test source, never published: only the player-facing mod ships ----
+# ---- Local tooling, never published ----
+# The test sources are tracked on purpose. Keeping them out of the player jar is Loom's job, and it
+# does it by omission: jar packages sourceSets.main.output alone. Keeping them out of the repository
+# is a different thing, and it leaves the only proof the mod works on one disk.
 mod/scripts/
-mod/src/test/
-mod/src/gametest/
 
 # ---- Shop description drafts, never published: not part of the mod repository ----
 store/
