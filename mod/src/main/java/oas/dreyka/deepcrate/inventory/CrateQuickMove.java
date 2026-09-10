@@ -1,6 +1,7 @@
 package oas.dreyka.deepcrate.inventory;
 
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -17,6 +18,20 @@ final class CrateQuickMove {
 
     CrateQuickMove(DeepCrateMenu menu) {
         this.menu = menu;
+    }
+
+    /**
+     * Whether a swap out of a crate slot has to be turned away: a number key or F would move a whole
+     * crate slot into one hotbar slot, where a count above the item's own limit cannot legally live.
+     */
+    boolean refusesSwap(int i, ClickType clickType) {
+        int crateStart = this.menu.crateSlotStart();
+        if (clickType != ClickType.SWAP || i < crateStart || i >= crateStart + this.menu.crateSlotCount()) {
+            return false;
+        }
+
+        ItemStack itemStack = this.menu.slots.get(i).getItem();
+        return itemStack.getCount() > itemStack.getMaxStackSize();
     }
 
     ItemStack quickMoveStack(Player player, int i) {

@@ -1,7 +1,6 @@
 package oas.dreyka.deepcrate.inventory;
 
 import oas.dreyka.deepcrate.api.CrateTier;
-import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
@@ -20,6 +19,8 @@ public final class CrateStorage {
 
     private NonNullList<ItemStack> slots;
     private final CrateSlotCapacity slotCapacity;
+    private final CrateSlotResize resize = new CrateSlotResize(this);
+    private final CrateStackFlow flow = new CrateStackFlow(this);
 
     public CrateStorage(int slotCount, int capacity) {
         if (slotCount < 1) {
@@ -62,62 +63,21 @@ public final class CrateStorage {
         return this.slots;
     }
 
-    public void replaceSlots(NonNullList<ItemStack> nonNullList) {
-        if (nonNullList.size() != this.slots.size()) {
-            throw new IllegalArgumentException("This crate takes " + this.slots.size() + " slots, got " + nonNullList.size());
-        }
-
+    /** Package-private on purpose: only {@link CrateSlotResize} decides that a crate changes length. */
+    void setSlots(NonNullList<ItemStack> nonNullList) {
         this.slots = nonNullList;
     }
 
-    /**
-     * Grows the crate to {@code slotCount}, keeping what is already there. Shrinking is refused: a
-     * tier that lost rows in an update would otherwise silently swallow the slots beyond the new
-     * end.
-     */
-    public void grow(int slotCount) {
-        if (slotCount < this.slots.size()) {
-            throw new IllegalArgumentException("A crate cannot shrink from " + this.slots.size() + " to " + slotCount);
-        }
-
-        if (slotCount == this.slots.size()) {
-            return;
-        }
-
-        NonNullList<ItemStack> grown = NonNullList.withSize(slotCount, ItemStack.EMPTY);
-        for (int i = 0; i < this.slots.size(); i++) {
-            grown.set(i, this.slots.get(i));
-        }
-
-        this.slots = grown;
+    public void replaceSlots(NonNullList<ItemStack> nonNullList) {
+        this.resize.replaceSlots(nonNullList);
     }
 
-    /**
-     * Cuts the crate back to {@code slotCount} and hands back everything that was past the new end,
-     * in stacks a hand or an item entity can hold. A crate already at or below that size is left
-     * alone.
-     */
+    public void grow(int slotCount) {
+        this.resize.grow(slotCount);
+    }
+
     public List<ItemStack> trimTo(int slotCount) {
-        if (slotCount < 1) {
-            throw new IllegalArgumentException("A crate needs at least one slot, got " + slotCount);
-        }
-
-        if (slotCount >= this.slots.size()) {
-            return List.of();
-        }
-
-        List<ItemStack> removed = new ArrayList<>();
-        NonNullList<ItemStack> kept = NonNullList.withSize(slotCount, ItemStack.EMPTY);
-        for (int i = 0; i < this.slots.size(); i++) {
-            if (i < slotCount) {
-                kept.set(i, this.slots.get(i));
-            } else {
-                removed.addAll(split(this.slots.get(i), this.slots.get(i).getCount()));
-            }
-        }
-
-        this.slots = kept;
-        return removed;
+        return this.resize.trimTo(slotCount);
     }
 
     public ItemStack get(int i) {
@@ -125,16 +85,7 @@ public final class CrateStorage {
     }
 
     public void set(int i, ItemStack itemStack) {
-        // A refused item written here is written whole: the caller is a command or another mod
-        // forcing it, and clamping it to the refusal would grind the stack down to one.
-        if (this.slotCapacity.accepts(itemStack)) {
-            int limit = this.slotCapacity.capacityFor(itemStack);
-            if (itemStack.getCount() > limit) {
-                itemStack.setCount(limit);
-            }
-        }
-
-        this.slots.set(i, itemStack);
+        this.slots.set(i, this.flow.clampedToCapacity(itemStack));
     }
 
     /**
@@ -161,98 +112,20 @@ public final class CrateStorage {
         this.slots.clear();
     }
 
-    /**
-     * Merges what fits and hands back the leftover. The incoming stack is consumed in place, so a
-     * caller holding it sees the same remainder.
-     */
     public ItemStack insert(ItemStack itemStack) {
-        if (itemStack.isEmpty() || !this.slotCapacity.accepts(itemStack)) {
-            return itemStack;
-        }
-
-        int limit = this.slotCapacity.capacityFor(itemStack);
-
-        for (int i = 0; i < this.slots.size() && !itemStack.isEmpty(); i++) {
-            ItemStack itemStack2 = this.slots.get(i);
-            if (!itemStack2.isEmpty() && ItemStack.isSameItemSameComponents(itemStack2, itemStack)) {
-                int j = Math.min(limit - itemStack2.getCount(), itemStack.getCount());
-                if (j > 0) {
-                    itemStack2.grow(j);
-                    itemStack.shrink(j);
-                }
-            }
-        }
-
-        for (int i = 0; i < this.slots.size() && !itemStack.isEmpty(); i++) {
-            if (this.slots.get(i).isEmpty()) {
-                this.slots.set(i, itemStack.split(Math.min(limit, itemStack.getCount())));
-            }
-        }
-
-        return itemStack;
+        return this.flow.insert(itemStack);
     }
 
-    /** Takes at most {@code wanted} out of a slot, never more than a hand can carry. */
     public ItemStack extract(int i, int wanted) {
-        if (wanted <= 0) {
-            throw new IllegalArgumentException("Extract count must be positive, got " + wanted);
-        }
-
-        ItemStack itemStack = this.slots.get(i);
-        if (itemStack.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-
-        // Never more than the game can put in a hand, and never more than the item itself stacks to.
-        return itemStack.split(Math.min(wanted, Math.min(VANILLA_LIMIT, itemStack.getMaxStackSize())));
+        return this.flow.extract(i, wanted);
     }
 
-    /**
-     * Cuts every slot back to the current capacity and hands back what no longer fits, in stacks a
-     * hand or an item entity can hold. Called when the screen closes.
-     */
     public List<ItemStack> overflow() {
-        List<ItemStack> spilled = new ArrayList<>();
-
-        for (ItemStack itemStack : this.slots) {
-            // A crate that has started refusing what it already holds keeps it: there is no capacity
-            // to cut back to, and the player takes it out by hand.
-            if (!this.slotCapacity.accepts(itemStack)) {
-                continue;
-            }
-
-            int limit = this.slotCapacity.capacityFor(itemStack);
-            int excess = itemStack.getCount() - limit;
-            if (excess > 0) {
-                itemStack.setCount(limit);
-                spilled.addAll(split(itemStack, excess));
-            }
-        }
-
-        return spilled;
+        return this.flow.overflow();
     }
 
     /** The whole content cut into stacks a hand, an item entity or a save file can hold. */
     public List<ItemStack> splitForVanilla() {
-        List<ItemStack> list = new ArrayList<>();
-
-        for (ItemStack itemStack : this.slots) {
-            list.addAll(split(itemStack, itemStack.getCount()));
-        }
-
-        return list;
-    }
-
-    private static List<ItemStack> split(ItemStack itemStack, int count) {
-        List<ItemStack> list = new ArrayList<>();
-        int piece = Math.min(VANILLA_LIMIT, Math.max(1, itemStack.getMaxStackSize()));
-        int left = count;
-        while (left > 0) {
-            int take = Math.min(left, piece);
-            list.add(itemStack.copyWithCount(take));
-            left -= take;
-        }
-
-        return list;
+        return CrateVanillaStacks.splitAll(this.slots);
     }
 }

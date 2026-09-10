@@ -1,8 +1,8 @@
 package oas.dreyka.deepcrate.block;
 
+import oas.dreyka.deepcrate.block.entity.CrateMenuOpening;
 import oas.dreyka.deepcrate.init.RegistryInit;
 import com.mojang.serialization.MapCodec;
-import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -10,11 +10,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -36,7 +34,6 @@ import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
@@ -44,18 +41,12 @@ import org.jspecify.annotations.Nullable;
  * Every crate tier is an instance of this class. Which tier a given block is stays out of the class:
  * it is read back from the registry, so the one-argument constructor {@code simpleCodec} needs stays
  * available and no field can drift from the registration.
- *
- * The pairing rules are the chest's, reimplemented against the same two properties rather than
- * inherited: AbstractChestBlock hard-codes ChestBlockEntity in its combine method.
  */
 public class DeepCrateBlock extends BaseEntityBlock {
     public static final MapCodec<DeepCrateBlock> CODEC = simpleCodec(DeepCrateBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<ChestType> TYPE = BlockStateProperties.CHEST_TYPE;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-
-    private static final VoxelShape SHAPE = Block.column(14.0, 0.0, 14.0);
-    private static final Map<Direction, VoxelShape> HALF_SHAPES = Shapes.rotateHorizontal(Block.boxZ(14.0, 0.0, 14.0, 0.0, 15.0));
 
     public DeepCrateBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -82,83 +73,31 @@ public class DeepCrateBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
-        return switch (blockState.getValue(TYPE)) {
-            case SINGLE -> SHAPE;
-            case LEFT, RIGHT -> HALF_SHAPES.get(CratePairing.connectedDirection(blockState));
-        };
+        return CrateShape.of(blockState);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
-        if (level instanceof ServerLevel && level.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity deepCrateBlockEntity) {
-            player.openMenu(deepCrateBlockEntity);
-        }
-
-        return InteractionResult.SUCCESS;
+        return CrateMenuOpening.open(level, blockPos, player);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
-        Direction facing = blockPlaceContext.getHorizontalDirection().getOpposite();
-        Direction clicked = blockPlaceContext.getClickedFace();
-        ChestType chestType = ChestType.SINGLE;
-
-        // Same split as the chest: crouching against a crate's side pairs with THAT crate and nothing
-        // else. Chaining the two cases with else-if let a crouched placement fall through and pair
-        // with a neighbour the player never pointed at.
-        if (clicked.getAxis().isHorizontal() && blockPlaceContext.isSecondaryUseActive()) {
-            Direction partner = this.partnerFacing(blockPlaceContext.getLevel(), blockPlaceContext.getClickedPos(), clicked.getOpposite());
-            if (partner != null && partner.getAxis() != clicked.getAxis()) {
-                facing = partner;
-                chestType = partner.getCounterClockWise() == clicked.getOpposite() ? ChestType.RIGHT : ChestType.LEFT;
-            }
-        } else {
-            if (facing == this.partnerFacing(blockPlaceContext.getLevel(), blockPlaceContext.getClickedPos(), facing.getClockWise())) {
-                chestType = ChestType.LEFT;
-            } else if (facing == this.partnerFacing(blockPlaceContext.getLevel(), blockPlaceContext.getClickedPos(), facing.getCounterClockWise())) {
-                chestType = ChestType.RIGHT;
-            }
-        }
-
-        FluidState fluidState = blockPlaceContext.getLevel().getFluidState(blockPlaceContext.getClickedPos());
-        return this.defaultBlockState()
-            .setValue(FACING, facing)
-            .setValue(TYPE, chestType)
-            .setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
+        return CratePlacement.forPlacement(this, blockPlaceContext);
     }
 
-    /**
-     * The only hook that keeps a pair consistent: it marries a crate to the one just placed beside it,
-     * and it sets the survivor back to single when its partner is broken.
-     */
+    /** The only hook that keeps a pair consistent, and the one that keeps a waterlogged crate wet. */
     @Override
     protected BlockState updateShape(
-        BlockState blockState,
-        LevelReader levelReader,
-        ScheduledTickAccess scheduledTickAccess,
-        BlockPos blockPos,
-        Direction direction,
-        BlockPos blockPos2,
-        BlockState blockState2,
-        RandomSource randomSource
+        BlockState blockState, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos blockPos, Direction direction,
+        BlockPos blockPos2, BlockState blockState2, RandomSource randomSource
     ) {
-        if (blockState.getValue(WATERLOGGED)) {
-            scheduledTickAccess.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
-        }
+        CrateWaterlog.keepFlowing(blockState, levelReader, scheduledTickAccess, blockPos);
 
-        if (blockState2.is(this) && direction.getAxis().isHorizontal()) {
-            ChestType chestType = blockState2.getValue(TYPE);
-            if (blockState.getValue(TYPE) == ChestType.SINGLE
-                && chestType != ChestType.SINGLE
-                && blockState.getValue(FACING) == blockState2.getValue(FACING)
-                && CratePairing.connectedDirection(blockState2) == direction.getOpposite()) {
-                return blockState.setValue(TYPE, chestType.getOpposite());
-            }
-        } else if (blockState.getValue(TYPE) != ChestType.SINGLE && CratePairing.connectedDirection(blockState) == direction) {
-            return blockState.setValue(TYPE, ChestType.SINGLE);
-        }
-
-        return super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, blockPos2, blockState2, randomSource);
+        BlockState repaired = CratePlacement.repaired(this, blockState, blockState2, direction);
+        return repaired != null
+            ? repaired
+            : super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, blockPos2, blockState2, randomSource);
     }
 
     @Override
@@ -179,9 +118,7 @@ public class DeepCrateBlock extends BaseEntityBlock {
 
     @Override
     protected void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
-        if (serverLevel.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity deepCrateBlockEntity) {
-            deepCrateBlockEntity.recheckOpen();
-        }
+        CrateLid.recheckAt(serverLevel, blockPos);
     }
 
     @Override
@@ -191,14 +128,7 @@ public class DeepCrateBlock extends BaseEntityBlock {
 
     @Override
     protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
-        // Both halves, as a double chest does: a comparator on one half of a pair reads the pair.
-        if (level.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity deepCrateBlockEntity) {
-            // Bounded on purpose: a slot left above the capacity, right after a module is pulled out,
-            // makes the vanilla ratio climb past one and the signal past fifteen.
-            return Math.min(15, AbstractContainerMenu.getRedstoneSignalFromContainer(CratePairing.containerFor(CratePairing.cratesFor(deepCrateBlockEntity))));
-        }
-
-        return 0;
+        return CratePairing.redstoneSignal(level, blockPos);
     }
 
     @Override
@@ -214,11 +144,5 @@ public class DeepCrateBlock extends BaseEntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, TYPE, WATERLOGGED);
-    }
-
-    /** The facing of a neighbouring crate of the same tier that is still on its own. */
-    private @Nullable Direction partnerFacing(LevelAccessor levelAccessor, BlockPos blockPos, Direction direction) {
-        BlockState blockState = levelAccessor.getBlockState(blockPos.relative(direction));
-        return blockState.is(this) && blockState.getValue(TYPE) == ChestType.SINGLE ? blockState.getValue(FACING) : null;
     }
 }

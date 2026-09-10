@@ -1,7 +1,6 @@
 package oas.dreyka.deepcrate.block;
 
 import oas.dreyka.deepcrate.api.CrateTier;
-import oas.dreyka.deepcrate.api.DeepCrateApi;
 import oas.dreyka.deepcrate.api.module.CrateModules;
 import oas.dreyka.deepcrate.block.entity.CrateMenuOpening;
 import oas.dreyka.deepcrate.block.entity.CrateNaming;
@@ -40,17 +39,8 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
         super(RegistryInit.BLOCK_ENTITY, blockPos, blockState);
     }
 
-    /**
-     * The tier this crate belongs to, read from its block rather than held in a field, so the block
-     * keeps the one-argument constructor {@code simpleCodec} needs.
-     */
     public CrateTier tier() {
-        CrateTier crateTier = DeepCrateApi.tierOf(this.getBlockState().getBlock());
-        if (crateTier == null) {
-            throw new IllegalStateException("No crate tier registered for " + this.getBlockState().getBlock());
-        }
-
-        return crateTier;
+        return CrateTierBinding.required(this);
     }
 
     public CrateStorage storage() {
@@ -233,6 +223,15 @@ public class DeepCrateBlockEntity extends BaseContainerBlockEntity implements Li
 
     public void recheckOpen() {
         this.crateLid.recheckOpen();
+    }
+
+    /** Runs an action without this crate's lid making a sound. See {@code CrateLid.silently}. */
+    public void lidSilently(Runnable action) {
+        this.crateLid.silently(action);
+    }
+
+    public int lidSoundsPlayed() {
+        return this.crateLid.soundsPlayed();
     }
 
     public static void lidAnimateTick(Level level, BlockPos blockPos, BlockState blockState, DeepCrateBlockEntity deepCrateBlockEntity) {

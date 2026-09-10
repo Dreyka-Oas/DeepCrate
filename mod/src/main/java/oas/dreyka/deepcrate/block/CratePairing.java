@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -47,5 +48,16 @@ public final class CratePairing {
     /** The single crate, or both halves seen as one. */
     public static Container containerFor(List<DeepCrateBlockEntity> list) {
         return list.size() == 1 ? list.get(0) : new CratePairContainer(list.get(0), list.get(1));
+    }
+
+    /** What a comparator reads: both halves, as a double chest does. */
+    public static int redstoneSignal(Level level, BlockPos blockPos) {
+        if (!(level.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity deepCrateBlockEntity)) {
+            return 0;
+        }
+
+        // Bounded on purpose: a slot left above the capacity, right after a module is pulled out,
+        // makes the vanilla ratio climb past one and the signal past fifteen.
+        return Math.min(15, AbstractContainerMenu.getRedstoneSignalFromContainer(containerFor(cratesFor(deepCrateBlockEntity))));
     }
 }

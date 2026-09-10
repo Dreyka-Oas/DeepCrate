@@ -2,7 +2,7 @@ package oas.dreyka.deepcrate.client.screen;
 
 import oas.dreyka.deepcrate.api.DeepCrateApi;
 import oas.dreyka.deepcrate.init.RegistryInit;
-import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
+import oas.dreyka.deepcrate.inventory.CratePanelGeometry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -25,9 +25,9 @@ final class CratePanel {
      * The eighteen-pixel band at u = 7 repeats exactly across all nine cells, on every row of the
      * file, which is what lets a panel of any width be built out of it without a seam.
      */
-    private static final int PANEL_BORDER = DeepCrateMenu.PANEL_BORDER;
-    private static final int PANEL_WIDTH = DeepCrateMenu.MIN_PANEL_WIDTH;
-    private static final int CELL = DeepCrateMenu.CELL;
+    private static final int PANEL_BORDER = CratePanelGeometry.PANEL_BORDER;
+    private static final int PANEL_WIDTH = CratePanelGeometry.MIN_PANEL_WIDTH;
+    private static final int CELL = CratePanelGeometry.CELL;
     /** The only band of the texture that is bare panel, measured on generic_54: rows 125 to 138. */
     private static final int BARE_PANEL_V = 125;
     private static final int BARE_PANEL_HEIGHT = 14;
@@ -99,8 +99,8 @@ final class CratePanel {
      * A slot itself has no texture in Minecraft: it is the background that carries the 18 by 18 cell.
      */
     static void renderModuleTab(GuiGraphics guiGraphics, int x, int y) {
-        int tabX = x + DeepCrateMenu.MODULE_X - MODULE_TAB_MARGIN;
-        int tabY = y + DeepCrateMenu.MODULE_Y - MODULE_TAB_MARGIN;
+        int tabX = x + CratePanelGeometry.MODULE_X - MODULE_TAB_MARGIN;
+        int tabY = y + CratePanelGeometry.MODULE_Y - MODULE_TAB_MARGIN;
         int cells = DeepCrateApi.moduleSlots().size();
 
         blitTab(guiGraphics, tabX, tabY, 0, MODULE_TAB_CAP);

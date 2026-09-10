@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 
 /**
  * The crate screen's own cells: the module row, the crate grid and the player's inventory, built
@@ -60,6 +61,11 @@ final class CrateMenuSlots {
 
     int page() {
         return this.page;
+    }
+
+    /** Anything that is not a crate cell counts as on every page: the module row and the player's own. */
+    boolean isOnCurrentPage(Slot slot) {
+        return !(slot instanceof DeepCrateSlot deepCrateSlot) || deepCrateSlot.page() == this.page;
     }
 
     /** Re-marks which crate cells are active for the given page: the "reconstruction" that follows the initial build. */
