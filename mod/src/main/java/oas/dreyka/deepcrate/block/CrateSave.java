@@ -5,8 +5,8 @@ import oas.dreyka.deepcrate.api.DeepCrateApi;
 import oas.dreyka.deepcrate.api.module.CrateModules;
 import oas.dreyka.deepcrate.init.RegistryInit;
 import oas.dreyka.deepcrate.inventory.CrateStorage;
-import oas.dreyka.deepcrate.inventory.module.StoredModule;
-import oas.dreyka.deepcrate.inventory.slot.StoredSlot;
+import oas.dreyka.deepcrate.inventory.slot.StoredEntry;
+import com.mojang.serialization.Codec;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.component.DataComponentMap;
@@ -19,31 +19,36 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 /** What a crate writes to and reads from its save tag, kept apart from the block entity it saves. */
 final class CrateSave {
+    // Was an unsigned byte while a crate had 27 slots; a double netherite crate has 234, and NbtOps
+    // reads any numeric tag, so worlds written by the first version still load.
+    private static final Codec<StoredEntry<Integer>> SLOT_CODEC = StoredEntry.codec("Slot", Codec.INT);
+    private static final Codec<StoredEntry<Identifier>> MODULE_CODEC = StoredEntry.codec("Id", Identifier.CODEC);
+
     private CrateSave() {}
 
     static void save(ValueOutput valueOutput, CrateStorage storage, CrateModules modules) {
-        ValueOutput.TypedOutputList<StoredSlot> typedOutputList = valueOutput.list("Slots", StoredSlot.CODEC);
+        ValueOutput.TypedOutputList<StoredEntry<Integer>> typedOutputList = valueOutput.list("Slots", SLOT_CODEC);
 
         for (int i = 0; i < storage.size(); i++) {
             ItemStack itemStack = storage.get(i);
             if (!itemStack.isEmpty()) {
-                typedOutputList.add(StoredSlot.of(i, itemStack));
+                typedOutputList.add(StoredEntry.of(i, itemStack));
             }
         }
 
         valueOutput.putInt("Size", storage.size());
         if (!modules.isEmpty()) {
-            ValueOutput.TypedOutputList<StoredModule> savedModules = valueOutput.list("Modules", StoredModule.CODEC);
+            ValueOutput.TypedOutputList<StoredEntry<Identifier>> savedModules = valueOutput.list("Modules", MODULE_CODEC);
             for (Identifier identifier : modules.ids()) {
-                savedModules.add(StoredModule.of(identifier, modules.get(identifier)));
+                savedModules.add(StoredEntry.of(identifier, modules.get(identifier)));
             }
         }
     }
 
     static CrateStorage load(ValueInput valueInput, CrateModules modules) {
         modules.clear();
-        for (StoredModule storedModule : valueInput.listOrEmpty("Modules", StoredModule.CODEC)) {
-            modules.set(storedModule.id(), storedModule.toStack());
+        for (StoredEntry<Identifier> storedModule : valueInput.listOrEmpty("Modules", MODULE_CODEC)) {
+            modules.set(storedModule.key(), storedModule.toStack());
         }
 
         // A crate saved before the cells were a registry kept its two stacks under their own keys.
@@ -56,19 +61,19 @@ final class CrateSave {
         // Read the slots first: the crate has to be at least large enough to hold every one of them,
         // whatever Size says and whatever the tier says. A missing or shrunken Size must never be a
         // reason to drop stored items on the floor of the save file.
-        List<StoredSlot> storedSlots = new ArrayList<>();
+        List<StoredEntry<Integer>> storedSlots = new ArrayList<>();
         int highest = 0;
-        for (StoredSlot storedSlot : valueInput.listOrEmpty("Slots", StoredSlot.CODEC)) {
-            if (storedSlot.slot() >= 0) {
+        for (StoredEntry<Integer> storedSlot : valueInput.listOrEmpty("Slots", SLOT_CODEC)) {
+            if (storedSlot.key() >= 0) {
                 storedSlots.add(storedSlot);
-                highest = Math.max(highest, storedSlot.slot() + 1);
+                highest = Math.max(highest, storedSlot.key() + 1);
             }
         }
 
         int size = Math.max(Math.max(CrateTier.DEFAULT_COLUMNS, highest), valueInput.getIntOr("Size", CrateTier.DEFAULT_COLUMNS));
         CrateStorage storage = new CrateStorage(size, DeepCrateApi.capacityAmong(modules));
-        for (StoredSlot storedSlot : storedSlots) {
-            storage.restore(storedSlot.slot(), storedSlot.toStack());
+        for (StoredEntry<Integer> storedSlot : storedSlots) {
+            storage.restore(storedSlot.key(), storedSlot.toStack());
         }
 
         return storage;

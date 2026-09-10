@@ -3,7 +3,8 @@ package oas.dreyka.deepcrate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import oas.dreyka.deepcrate.inventory.slot.StoredSlot;
+import oas.dreyka.deepcrate.inventory.slot.StoredEntry;
+import com.mojang.serialization.Codec;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.registries.VanillaRegistries;
@@ -24,6 +25,8 @@ import org.junit.jupiter.api.Test;
  * survive a full write and read.
  */
 class StoredSlotTest {
+    private static final Codec<StoredEntry<Integer>> CODEC = StoredEntry.codec("Slot", Codec.INT);
+
     private static HolderLookup.Provider registries;
 
     @BeforeAll
@@ -36,15 +39,15 @@ class StoredSlotTest {
     @Test
     void aSlotOf128SurvivesSaveAndReload() {
         ValueOutput valueOutput = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, registries);
-        ValueOutput.TypedOutputList<StoredSlot> typedOutputList = valueOutput.list("Slots", StoredSlot.CODEC);
-        typedOutputList.add(StoredSlot.of(3, new ItemStack(Items.COBBLESTONE, 128)));
+        ValueOutput.TypedOutputList<StoredEntry<Integer>> typedOutputList = valueOutput.list("Slots", CODEC);
+        typedOutputList.add(StoredEntry.of(3, new ItemStack(Items.COBBLESTONE, 128)));
 
         CompoundTag compoundTag = ((TagValueOutput) valueOutput).buildResult();
         ValueInput valueInput = TagValueInput.create(ProblemReporter.DISCARDING, registries, compoundTag);
 
-        StoredSlot storedSlot = valueInput.listOrEmpty("Slots", StoredSlot.CODEC).iterator().next();
+        StoredEntry<Integer> storedSlot = valueInput.listOrEmpty("Slots", CODEC).iterator().next();
 
-        assertEquals(3, storedSlot.slot());
+        assertEquals(3, storedSlot.key());
         assertEquals(128, storedSlot.count());
         assertEquals(Items.COBBLESTONE, storedSlot.toStack().getItem());
         assertEquals(128, storedSlot.toStack().getCount());
@@ -53,11 +56,11 @@ class StoredSlotTest {
     @Test
     void anEmptyCrateWritesAnEmptyList() {
         ValueOutput valueOutput = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, registries);
-        valueOutput.list("Slots", StoredSlot.CODEC);
+        valueOutput.list("Slots", CODEC);
 
         CompoundTag compoundTag = ((TagValueOutput) valueOutput).buildResult();
         ValueInput valueInput = TagValueInput.create(ProblemReporter.DISCARDING, registries, compoundTag);
 
-        assertTrue(!valueInput.listOrEmpty("Slots", StoredSlot.CODEC).iterator().hasNext());
+        assertTrue(!valueInput.listOrEmpty("Slots", CODEC).iterator().hasNext());
     }
 }
