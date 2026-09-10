@@ -72,11 +72,27 @@ public final class CrateModuleReaction {
             return;
         }
 
-        DeepCrateBlockEntity deepCrateBlockEntity = this.menu.crates().get(0);
+        List<DeepCrateBlockEntity> crates = List.copyOf(this.menu.crates());
+        DeepCrateBlockEntity deepCrateBlockEntity = crates.get(0);
         serverLevel.getServer().execute(() -> {
             if (serverPlayer.containerMenu == this.menu) {
-                serverPlayer.openMenu(deepCrateBlockEntity);
+                silently(crates, 0, () -> serverPlayer.openMenu(deepCrateBlockEntity));
             }
         });
+    }
+
+    /**
+     * Runs the reopen with every crate's lid held quiet. {@code openMenu} closes the old screen before
+     * it opens the new one, so without this the crate slams shut and swings open again in the player's
+     * ear, for a rebuild they never asked for. Both halves of a pair count their own openers, hence
+     * the walk down the list.
+     */
+    private static void silently(List<DeepCrateBlockEntity> crates, int index, Runnable action) {
+        if (index == crates.size()) {
+            action.run();
+            return;
+        }
+
+        crates.get(index).lidSilently(() -> silently(crates, index + 1, action));
     }
 }

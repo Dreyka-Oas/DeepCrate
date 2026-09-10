@@ -23,15 +23,17 @@ final class CrateLid {
 
     private final DeepCrateBlockEntity crate;
     private final ChestLidController lidController = new ChestLidController();
+    private boolean silent;
+    private int soundsPlayed;
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
         protected void onOpen(Level level, BlockPos blockPos, BlockState blockState) {
-            CrateLid.playSound(level, blockPos, blockState, SoundEvents.CHEST_OPEN);
+            CrateLid.this.playSound(level, blockPos, blockState, SoundEvents.CHEST_OPEN);
         }
 
         @Override
         protected void onClose(Level level, BlockPos blockPos, BlockState blockState) {
-            CrateLid.playSound(level, blockPos, blockState, SoundEvents.CHEST_CLOSE);
+            CrateLid.this.playSound(level, blockPos, blockState, SoundEvents.CHEST_CLOSE);
         }
 
         @Override
@@ -80,6 +82,13 @@ final class CrateLid {
         }
     }
 
+    /** The scheduled tick vanilla uses to notice a player left without closing the screen. */
+    static void recheckAt(Level level, BlockPos blockPos) {
+        if (level.getBlockEntity(blockPos) instanceof DeepCrateBlockEntity deepCrateBlockEntity) {
+            deepCrateBlockEntity.recheckOpen();
+        }
+    }
+
     void tickLid() {
         this.lidController.tickLid();
     }
@@ -98,7 +107,32 @@ final class CrateLid {
         return this.lidController.getOpenness(f);
     }
 
-    private static void playSound(Level level, BlockPos blockPos, BlockState blockState, SoundEvent soundEvent) {
+    /**
+     * Runs an action without the lid speaking. A row module changing rebuilds the screen through
+     * {@code ServerPlayer.openMenu}, which closes the old menu before it opens the new one, so the
+     * opener count falls to zero and back inside one call. The player asked for neither, and hearing
+     * a crate slam shut in their face is the part they notice.
+     */
+    void silently(Runnable action) {
+        boolean wasSilent = this.silent;
+        this.silent = true;
+        try {
+            action.run();
+        } finally {
+            this.silent = wasSilent;
+        }
+    }
+
+    /** How many lid sounds this crate has spoken, which is what a test can watch. */
+    int soundsPlayed() {
+        return this.soundsPlayed;
+    }
+
+    private void playSound(Level level, BlockPos blockPos, BlockState blockState, SoundEvent soundEvent) {
+        if (this.silent) {
+            return;
+        }
+
         ChestType chestType = blockState.getValue(DeepCrateBlock.TYPE);
         // Only one half speaks, otherwise a pair opens twice as loud as a single crate, and it speaks
         // from the middle of the pair rather than from its own block.
@@ -114,6 +148,7 @@ final class CrateLid {
             z += direction.getStepZ() * 0.5;
         }
 
+        this.soundsPlayed++;
         level.playSound(null, x, blockPos.getY() + 0.5, z, soundEvent, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
     }
 }
