@@ -1,11 +1,8 @@
 package oas.dreyka.deepcrate.registry;
 
 import oas.dreyka.deepcrate.DeepCrate;
-import oas.dreyka.deepcrate.api.Registrations;
 import oas.dreyka.deepcrate.api.module.CrateModule;
 import oas.dreyka.deepcrate.config.domain.CrateConfig;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
@@ -20,7 +17,7 @@ public final class ModuleRegistry {
      */
     public static final int MAX_CAPACITY = Short.MAX_VALUE;
 
-    private static final List<CrateModule> MODULES = new ArrayList<>();
+    private static final ModuleList<CrateModule> MODULES = new ModuleList<>(CrateModule::id, CrateModule::matches, "Crate module");
 
     private ModuleRegistry() {}
 
@@ -31,25 +28,18 @@ public final class ModuleRegistry {
             );
         }
 
-        Registrations.addUnique(MODULES, crateModule, CrateModule::id, "Crate module");
         // Highest capacity first, so a stack matching two tags gets the better of the two.
-        MODULES.sort((a, b) -> Integer.compare(b.capacity(), a.capacity()));
+        CrateModule registered = MODULES.register(crateModule, (a, b) -> Integer.compare(b.capacity(), a.capacity()));
         DeepCrate.LOGGER.info("[DeepCrate] module {}: {} per slot", crateModule.id(), crateModule.capacity());
-        return crateModule;
+        return registered;
     }
 
     public static List<CrateModule> modules() {
-        return Collections.unmodifiableList(MODULES);
+        return MODULES.all();
     }
 
     public static @Nullable CrateModule moduleFor(ItemStack itemStack) {
-        for (CrateModule crateModule : MODULES) {
-            if (crateModule.matches(itemStack)) {
-                return crateModule;
-            }
-        }
-
-        return null;
+        return MODULES.find(itemStack);
     }
 
     /** What one slot holds, given whatever sits in the module slot. */
@@ -64,11 +54,6 @@ public final class ModuleRegistry {
      * followed between two tags.
      */
     public static int capacityAmong(Iterable<ItemStack> stacks) {
-        int capacity = CrateConfig.baseCapacity;
-        for (ItemStack itemStack : stacks) {
-            capacity = Math.max(capacity, capacityOf(itemStack));
-        }
-
-        return capacity;
+        return MODULES.among(stacks, CrateConfig.baseCapacity, ModuleRegistry::capacityOf, Math::max);
     }
 }

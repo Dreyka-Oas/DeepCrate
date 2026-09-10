@@ -1,38 +1,29 @@
 package oas.dreyka.deepcrate.registry;
 
 import oas.dreyka.deepcrate.DeepCrate;
-import oas.dreyka.deepcrate.api.Registrations;
 import oas.dreyka.deepcrate.api.module.RowModule;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 /** Row modules: registration and how many rows a stack of them adds to a crate. */
 public final class RowModuleRegistry {
-    private static final List<RowModule> ROW_MODULES = new ArrayList<>();
+    private static final ModuleList<RowModule> ROW_MODULES = new ModuleList<>(RowModule::id, RowModule::matches, "Row module");
 
     private RowModuleRegistry() {}
 
     public static RowModule registerRowModule(RowModule rowModule) {
-        Registrations.addUnique(ROW_MODULES, rowModule, RowModule::id, "Row module");
+        RowModule registered = ROW_MODULES.register(rowModule, null);
         DeepCrate.LOGGER.info("[DeepCrate] row module {}: {} rows each", rowModule.id(), rowModule.rows());
-        return rowModule;
+        return registered;
     }
 
     public static List<RowModule> rowModules() {
-        return Collections.unmodifiableList(ROW_MODULES);
+        return ROW_MODULES.all();
     }
 
     public static @Nullable RowModule rowModuleFor(ItemStack itemStack) {
-        for (RowModule rowModule : ROW_MODULES) {
-            if (rowModule.matches(itemStack)) {
-                return rowModule;
-            }
-        }
-
-        return null;
+        return ROW_MODULES.find(itemStack);
     }
 
     /** How many rows a stack sitting in the row slot adds, which is why the stack counts. */
@@ -43,11 +34,6 @@ public final class RowModuleRegistry {
 
     /** Rows add up, because each row module is a row and two of them are two rows. */
     public static int rowsAmong(Iterable<ItemStack> stacks) {
-        int rows = 0;
-        for (ItemStack itemStack : stacks) {
-            rows += rowsOf(itemStack);
-        }
-
-        return rows;
+        return ROW_MODULES.among(stacks, 0, RowModuleRegistry::rowsOf, Integer::sum);
     }
 }
