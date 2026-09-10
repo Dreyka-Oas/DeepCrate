@@ -36,6 +36,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
+import oas.dreyka.deepcrate.block.placement.CratePlacement;
+import oas.dreyka.deepcrate.block.placement.CrateShape;
+import oas.dreyka.deepcrate.block.placement.CratePairing;
+import oas.dreyka.deepcrate.block.placement.CrateWaterlog;
 
 /**
  * Every crate tier is an instance of this class. Which tier a given block is stays out of the class:
@@ -89,8 +93,8 @@ public class DeepCrateBlock extends BaseEntityBlock {
     /** The only hook that keeps a pair consistent, and the one that keeps a waterlogged crate wet. */
     @Override
     protected BlockState updateShape(
-        BlockState blockState, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos blockPos, Direction direction,
-        BlockPos blockPos2, BlockState blockState2, RandomSource randomSource
+        BlockState blockState, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos blockPos,
+        Direction direction, BlockPos blockPos2, BlockState blockState2, RandomSource randomSource
     ) {
         CrateWaterlog.keepFlowing(blockState, levelReader, scheduledTickAccess, blockPos);
 
@@ -125,7 +129,6 @@ public class DeepCrateBlock extends BaseEntityBlock {
     protected boolean hasAnalogOutputSignal(BlockState blockState) {
         return true;
     }
-
     @Override
     protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
         return CratePairing.redstoneSignal(level, blockPos);
@@ -133,12 +136,11 @@ public class DeepCrateBlock extends BaseEntityBlock {
 
     @Override
     protected BlockState rotate(BlockState blockState, Rotation rotation) {
-        return blockState.setValue(FACING, rotation.rotate(blockState.getValue(FACING)));
+        return CrateShape.rotate(blockState, rotation);
     }
-
     @Override
     protected BlockState mirror(BlockState blockState, Mirror mirror) {
-        return blockState.rotate(mirror.getRotation(blockState.getValue(FACING)));
+        return CrateShape.mirror(blockState, mirror);
     }
 
     @Override

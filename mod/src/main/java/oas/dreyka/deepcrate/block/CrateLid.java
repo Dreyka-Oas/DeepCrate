@@ -1,57 +1,27 @@
 package oas.dreyka.deepcrate.block;
 
-import oas.dreyka.deepcrate.inventory.CratePairContainer;
-import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.ContainerUser;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
+import oas.dreyka.deepcrate.block.placement.CratePairing;
 
 /** How many players have a crate open, and the lid animation and sound that follow from it. */
 final class CrateLid {
-    private static final int EVENT_SET_OPEN_COUNT = 1;
+    static final int EVENT_SET_OPEN_COUNT = 1;
 
-    private final DeepCrateBlockEntity crate;
+    final DeepCrateBlockEntity crate;
     private final ChestLidController lidController = new ChestLidController();
     private boolean silent;
     private int soundsPlayed;
-    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
-        @Override
-        protected void onOpen(Level level, BlockPos blockPos, BlockState blockState) {
-            CrateLid.this.playSound(level, blockPos, blockState, SoundEvents.CHEST_OPEN);
-        }
-
-        @Override
-        protected void onClose(Level level, BlockPos blockPos, BlockState blockState) {
-            CrateLid.this.playSound(level, blockPos, blockState, SoundEvents.CHEST_CLOSE);
-        }
-
-        @Override
-        protected void openerCountChanged(Level level, BlockPos blockPos, BlockState blockState, int i, int j) {
-            level.blockEvent(blockPos, blockState.getBlock(), EVENT_SET_OPEN_COUNT, j);
-        }
-
-        @Override
-        public boolean isOwnContainer(Player player) {
-            if (!(player.containerMenu instanceof DeepCrateMenu deepCrateMenu)) {
-                return false;
-            }
-
-            Container container = deepCrateMenu.getContainer();
-            return container == CrateLid.this.crate
-                || container instanceof CratePairContainer cratePairContainer && cratePairContainer.contains(CrateLid.this.crate);
-        }
-    };
+    private final ContainerOpenersCounter openersCounter = new CrateLidOpeners(this);
 
     CrateLid(DeepCrateBlockEntity crate) {
         this.crate = crate;
@@ -128,7 +98,7 @@ final class CrateLid {
         return this.soundsPlayed;
     }
 
-    private void playSound(Level level, BlockPos blockPos, BlockState blockState, SoundEvent soundEvent) {
+    void playSound(Level level, BlockPos blockPos, BlockState blockState, SoundEvent soundEvent) {
         if (this.silent) {
             return;
         }
