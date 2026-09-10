@@ -1,5 +1,6 @@
 package oas.dreyka.deepcrate.client.screen;
 
+import oas.dreyka.deepcrate.client.screen.config.ConfigValues;
 import oas.dreyka.deepcrate.client.screen.hook.CrateTooltipCallback;
 import oas.dreyka.deepcrate.client.screen.hook.PanelArea;
 import oas.dreyka.deepcrate.inventory.DeepCrateMenu;
@@ -121,9 +122,7 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
         // A crate named on an anvil can be longer than the panel; the name stops before the number
         // rather than running under it.
         int room = pageX - this.titleLabelX - 4;
-        Component title = this.font.width(this.title) <= room
-            ? this.title
-            : Component.literal(this.font.plainSubstrByWidth(this.title.getString(), room - this.font.width("...")) + "...");
+        Component title = ConfigValues.clip(this.font, this.title, room);
         guiGraphics.drawString(this.font, title, this.titleLabelX, this.titleLabelY, 0xFF404040, false);
         guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF404040, false);
     }

@@ -1,9 +1,8 @@
 package oas.dreyka.deepcrate.client.screen.config;
 
 import java.util.function.Consumer;
+import oas.dreyka.deepcrate.client.widget.NarratingButton;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractButton;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.CommonComponents;
 
@@ -15,7 +14,7 @@ import net.minecraft.network.chat.CommonComponents;
  * drawn at once and says so; {@link #showValue} is the other door, taken when the server answers,
  * and it deliberately says nothing back.
  */
-final class ConfigToggle extends AbstractButton {
+final class ConfigToggle extends NarratingButton {
     private final Consumer<Boolean> onToggle;
 
     private boolean on;
@@ -41,10 +40,5 @@ final class ConfigToggle extends AbstractButton {
     protected void renderContents(GuiGraphics guiGraphics, int i, int j, float f) {
         this.renderDefaultSprite(guiGraphics);
         this.renderDefaultLabel(guiGraphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE));
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-        this.defaultButtonNarrationText(narrationElementOutput);
     }
 }

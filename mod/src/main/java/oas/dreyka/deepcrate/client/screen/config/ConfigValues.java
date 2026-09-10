@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
  * here instead because none of it needs a row: it reads an option and gives back a piece of text or
  * an answer about one.
  */
-final class ConfigValues {
+public final class ConfigValues {
     private ConfigValues() {}
 
     private static final String ELLIPSIS = "...";
@@ -66,7 +66,7 @@ final class ConfigValues {
     }
 
     /** A label longer than the room left by the controls stops with a mark rather than running under them. */
-    static Component clip(Font font, Component component, int room) {
+    public static Component clip(Font font, Component component, int room) {
         if (room <= 0 || font.width(component) <= room) {
             return component;
         }

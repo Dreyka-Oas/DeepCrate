@@ -1,8 +1,7 @@
 package oas.dreyka.deepcrate.client.screen.config;
 
+import oas.dreyka.deepcrate.client.widget.NarratingButton;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractButton;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
 
@@ -15,7 +14,7 @@ import net.minecraft.network.chat.Component;
  * its button inactive, which greys the label and stops it answering a second click, the way a tab
  * already open reads.
  */
-final class ConfigButton extends AbstractButton {
+final class ConfigButton extends NarratingButton {
     static final int HEIGHT = 20;
 
     private final Runnable onChosen;
@@ -34,10 +33,5 @@ final class ConfigButton extends AbstractButton {
     protected void renderContents(GuiGraphics guiGraphics, int i, int j, float f) {
         this.renderDefaultSprite(guiGraphics);
         this.renderDefaultLabel(guiGraphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE));
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-        this.defaultButtonNarrationText(narrationElementOutput);
     }
 }

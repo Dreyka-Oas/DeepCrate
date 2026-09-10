@@ -1,10 +1,9 @@
 package oas.dreyka.deepcrate.client.sort;
 
 import java.util.function.BiConsumer;
+import oas.dreyka.deepcrate.client.widget.NarratingButton;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -17,7 +16,7 @@ import net.minecraft.network.chat.Component;
  * The icon shows what the next press will do, not what the last one did: another button may have been
  * pressed since, so there is no "current order" to show.
  */
-public class SortButton extends AbstractButton {
+public class SortButton extends NarratingButton {
     /** Each order brings its own drawing: sixteen wide, thirty-two tall, plain over reversed. */
     private static final int SHEET_HEIGHT = 32;
     public static final int SIZE = 16;
@@ -66,11 +65,6 @@ public class SortButton extends AbstractButton {
             SIZE,
             SHEET_HEIGHT
         );
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-        this.defaultButtonNarrationText(narrationElementOutput);
     }
 
     private void tellWhatIsNext() {

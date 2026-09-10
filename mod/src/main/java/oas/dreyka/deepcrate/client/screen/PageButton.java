@@ -1,9 +1,8 @@
 package oas.dreyka.deepcrate.client.screen;
 
 import java.util.function.BooleanSupplier;
+import oas.dreyka.deepcrate.client.widget.NarratingButton;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractButton;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
 
@@ -13,7 +12,7 @@ import net.minecraft.network.chat.Component;
  * A crate shows one page at a time, so a page holding a single stack looks exactly like an empty one
  * from the outside. The dot in the corner is what separates them without opening all twelve in turn.
  */
-public class PageButton extends AbstractButton {
+public class PageButton extends NarratingButton {
     public static final int SIZE = 16;
     /** Small enough that the number stays readable, and in the corner the label never reaches. */
     private static final int DOT_SIZE = 4;
@@ -55,10 +54,5 @@ public class PageButton extends AbstractButton {
             top + DOT_SIZE - DOT_CORE_INSET,
             DOT_CORE
         );
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-        this.defaultButtonNarrationText(narrationElementOutput);
     }
 }
