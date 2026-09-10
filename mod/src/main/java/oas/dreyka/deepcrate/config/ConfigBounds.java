@@ -29,21 +29,36 @@ public final class ConfigBounds {
             return value;
         }
         if (value instanceof Integer whole) {
-            return (int) Math.max(range.min(), Math.min((double) whole, range.max()));
+            return (int) clampToRange(whole, range);
         }
         if (value instanceof Long whole) {
-            return (long) Math.max(range.min(), Math.min((double) whole, range.max()));
+            return (long) clampToRange(whole, range);
         }
         if (value instanceof Float fraction) {
-            return Float.isFinite(fraction)
-                ? (float) Math.max(range.min(), Math.min((double) fraction, range.max()))
-                : (float) range.min();
+            return isFinite(value) ? (float) clampToRange(fraction, range) : (float) range.min();
         }
         if (value instanceof Double fraction) {
-            return Double.isFinite(fraction) ? Math.max(range.min(), Math.min(fraction, range.max())) : range.min();
+            return isFinite(value) ? clampToRange(fraction, range) : range.min();
         }
 
         return value;
+    }
+
+    /** The one bound applied to every numeric kind, each caller only differing in how it casts back. */
+    private static double clampToRange(double value, Range range) {
+        return Math.max(range.min(), Math.min(value, range.max()));
+    }
+
+    /** True for anything that is not a non-finite float or double, which is every other value here. */
+    private static boolean isFinite(Object value) {
+        if (value instanceof Double fraction) {
+            return Double.isFinite(fraction);
+        }
+        if (value instanceof Float fraction) {
+            return Float.isFinite(fraction);
+        }
+
+        return true;
     }
 
     /**
@@ -67,11 +82,8 @@ public final class ConfigBounds {
     }
 
     private static void rejectNonFinite(String name, Object value) {
-        if (value instanceof Double fraction && !Double.isFinite(fraction)) {
-            throw new IllegalArgumentException("non-finite value for unbounded option " + name + ": " + fraction);
-        }
-        if (value instanceof Float fraction && !Float.isFinite(fraction)) {
-            throw new IllegalArgumentException("non-finite value for unbounded option " + name + ": " + fraction);
+        if (!isFinite(value)) {
+            throw new IllegalArgumentException("non-finite value for unbounded option " + name + ": " + value);
         }
     }
 }
