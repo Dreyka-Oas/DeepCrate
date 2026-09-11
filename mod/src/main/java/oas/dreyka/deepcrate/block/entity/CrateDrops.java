@@ -11,9 +11,9 @@ import net.minecraft.world.level.Level;
 /**
  * Puts a stack on the ground whole.
  *
- * Containers.dropItemStack cuts each stack into ten to thirty pieces. A full double netherite crate
- * losing its module spills 594 stacks, which through that helper is ten to eighteen thousand
- * entities in one tick.
+ * Containers.dropItemStack cuts each stack into ten to thirty pieces. A double netherite crate at the
+ * twenty row modules the settings allow holds 594 slots, so losing its 512 module spills 4158 stacks
+ * of 64, and through that helper that is forty to a hundred and twenty thousand entities in one tick.
  */
 public final class CrateDrops {
     private CrateDrops() {}
