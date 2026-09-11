@@ -525,8 +525,9 @@ functional and doing nothing.
 ## Layout
 
 `mod/` holds the mod. `web/` holds the site, static with no build step, two hand-written language
-trees and its own checks under `web/tools/`; its pictures come out of `runClientGameTest`. The
-design notes are in `docs/superpowers/`.
+trees and its own checks under `web/tools/`; its pictures come out of `runClientGameTest`. Why the
+code is shaped the way it is lives in the commit messages and in the comments, not in a folder of
+design notes.
 
 ## Licence
 
