@@ -109,6 +109,9 @@ public class CraftRecipesClientGameTest implements FabricClientGameTest {
 
         context.waitForScreen(CraftingScreen.class);
         context.waitTicks(20);
+        // Off any slot, or the hotbar item a previous case left the cursor on keeps its tooltip in the frame.
+        context.getInput().setCursorPos(40.0, 40.0);
+        context.waitTicks(2);
         context.takeScreenshot(recipe.shot());
     }
 }
