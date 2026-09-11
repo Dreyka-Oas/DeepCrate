@@ -29,7 +29,7 @@ final class CratePageBar {
     /** Rebuilds the buttons for the current layout: called from init(), again on every window resize. */
     void init(PanelArea panelArea, int leftPos, int topPos, int imageWidth) {
         this.pageButtons.clear();
-        this.pagesHoldingItems = new boolean[this.menu.layout().pageCount()];
+        this.pagesHoldingItems = new boolean[this.menu.wiring().layout().pageCount()];
         this.readPagesHoldingItems();
         this.addPageButtons(panelArea, leftPos, topPos, imageWidth);
     }
@@ -45,14 +45,14 @@ final class CratePageBar {
     }
 
     private void addPageButtons(PanelArea panelArea, int leftPos, int topPos, int imageWidth) {
-        if (this.menu.layout().pageCount() < 2) {
+        if (this.menu.wiring().layout().pageCount() < 2) {
             return;
         }
 
         // Stacked down the right edge, outside the panel: the crate grid already fills the width.
         // Four to a column, then a second column further right, so a crate with many pages does not
         // grow a strip taller than the screen.
-        for (int page = 0; page < this.menu.layout().pageCount(); page++) {
+        for (int page = 0; page < this.menu.wiring().layout().pageCount(); page++) {
             int target = page;
             this.pageButtons.add(
                 panelArea.addClickableWidget(

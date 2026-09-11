@@ -42,9 +42,8 @@ import oas.dreyka.deepcrate.block.placement.CratePairing;
 import oas.dreyka.deepcrate.block.placement.CrateWaterlog;
 
 /**
- * Every crate tier is an instance of this class. Which tier a given block is stays out of the class:
- * it is read back from the registry, so the one-argument constructor {@code simpleCodec} needs stays
- * available and no field can drift from the registration.
+ * Every crate tier is an instance of this class, its own tier read back from the registry rather than
+ * held in a field, so the one-argument constructor {@code simpleCodec} needs stays available.
  */
 public class DeepCrateBlock extends BaseEntityBlock {
     public static final MapCodec<DeepCrateBlock> CODEC = simpleCodec(DeepCrateBlock::new);
@@ -90,7 +89,6 @@ public class DeepCrateBlock extends BaseEntityBlock {
         return CratePlacement.forPlacement(this, blockPlaceContext);
     }
 
-    /** The only hook that keeps a pair consistent, and the one that keeps a waterlogged crate wet. */
     @Override
     protected BlockState updateShape(
         BlockState blockState, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos blockPos,
@@ -129,6 +127,7 @@ public class DeepCrateBlock extends BaseEntityBlock {
     protected boolean hasAnalogOutputSignal(BlockState blockState) {
         return true;
     }
+
     @Override
     protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
         return CratePairing.redstoneSignal(level, blockPos);
@@ -138,6 +137,7 @@ public class DeepCrateBlock extends BaseEntityBlock {
     protected BlockState rotate(BlockState blockState, Rotation rotation) {
         return CrateShape.rotate(blockState, rotation);
     }
+
     @Override
     protected BlockState mirror(BlockState blockState, Mirror mirror) {
         return CrateShape.mirror(blockState, mirror);

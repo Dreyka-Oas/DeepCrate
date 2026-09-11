@@ -42,7 +42,7 @@ final class CrateSearch {
      */
     private void onQueryChanged(String text) {
         this.query = text.toLowerCase(Locale.ROOT).trim();
-        if (this.query.isEmpty() || this.menu.layout().pageCount() < 2) {
+        if (this.query.isEmpty() || this.menu.wiring().layout().pageCount() < 2) {
             return;
         }
 

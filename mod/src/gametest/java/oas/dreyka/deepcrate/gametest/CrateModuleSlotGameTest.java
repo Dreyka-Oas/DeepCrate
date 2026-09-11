@@ -26,9 +26,9 @@ public class CrateModuleSlotGameTest {
         DeepCrateMenu deepCrateMenu = (DeepCrateMenu) deepCrateBlockEntity.createMenu(1, serverPlayer.getInventory(), serverPlayer);
 
         int kinds = DeepCrateApi.moduleSlots().size();
-        if (deepCrateMenu.crateSlotStart() != kinds) {
+        if (deepCrateMenu.wiring().crateSlotStart() != kinds) {
             gameTestHelper.fail(
-                "the crate slots should start after the " + kinds + " module cells, they start at " + deepCrateMenu.crateSlotStart()
+                "the crate slots should start after the " + kinds + " module cells, they start at " + deepCrateMenu.wiring().crateSlotStart()
             );
         }
 

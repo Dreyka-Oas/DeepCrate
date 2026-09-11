@@ -1,4 +1,4 @@
-package oas.dreyka.deepcrate.inventory.menu;
+package oas.dreyka.deepcrate.inventory.menu.reaction;
 
 import oas.dreyka.deepcrate.api.DeepCrateApi;
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
@@ -28,8 +28,8 @@ public final class CrateModuleReaction {
         this.menu.setCapacity(DeepCrateApi.capacityAmong(this.moduleStacks()));
         this.reopenIfRowCountChanged();
 
-        if (this.menu.crates().isEmpty()) {
-            if (this.menu.getContainer() instanceof CrateContainer crateContainer) {
+        if (this.menu.wiring().crates().isEmpty()) {
+            if (this.menu.wiring().crate() instanceof CrateContainer crateContainer) {
                 crateContainer.setCapacity(this.menu.capacity());
             }
 
@@ -37,14 +37,14 @@ public final class CrateModuleReaction {
         }
 
         // Both halves follow the one module, so a hopper reaching the far half sees the same limit.
-        for (DeepCrateBlockEntity deepCrateBlockEntity : this.menu.crates()) {
+        for (DeepCrateBlockEntity deepCrateBlockEntity : this.menu.wiring().crates()) {
             deepCrateBlockEntity.storage().setCapacity(this.menu.capacity());
         }
     }
 
     /** The cells as a plain list, which is what the two api helpers walk. */
     public List<ItemStack> moduleStacks() {
-        Container moduleContainer = this.menu.moduleContainer();
+        Container moduleContainer = this.menu.wiring().moduleContainer();
         List<ItemStack> stacks = new ArrayList<>(moduleContainer.getContainerSize());
         for (int i = 0; i < moduleContainer.getContainerSize(); i++) {
             stacks.add(moduleContainer.getItem(i));
@@ -66,13 +66,13 @@ public final class CrateModuleReaction {
         }
 
         this.menu.setRowModuleCount(rows);
-        if (this.menu.crates().isEmpty()
-            || !(this.menu.player() instanceof ServerPlayer serverPlayer)
-            || !(this.menu.player().level() instanceof ServerLevel serverLevel)) {
+        if (this.menu.wiring().crates().isEmpty()
+            || !(this.menu.wiring().player() instanceof ServerPlayer serverPlayer)
+            || !(this.menu.wiring().player().level() instanceof ServerLevel serverLevel)) {
             return;
         }
 
-        List<DeepCrateBlockEntity> crates = List.copyOf(this.menu.crates());
+        List<DeepCrateBlockEntity> crates = List.copyOf(this.menu.wiring().crates());
         DeepCrateBlockEntity deepCrateBlockEntity = crates.get(0);
         serverLevel.getServer().execute(() -> {
             if (serverPlayer.containerMenu == this.menu) {

@@ -27,8 +27,8 @@ public final class CrateQuickMove {
      * crate slot into one hotbar slot, where a count above the item's own limit cannot legally live.
      */
     public boolean refusesSwap(int i, ClickType clickType) {
-        int crateStart = this.menu.crateSlotStart();
-        if (clickType != ClickType.SWAP || i < crateStart || i >= crateStart + this.menu.crateSlotCount()) {
+        int crateStart = this.menu.wiring().crateSlotStart();
+        if (clickType != ClickType.SWAP || i < crateStart || i >= crateStart + this.menu.wiring().crateSlotCount()) {
             return false;
         }
 
@@ -45,7 +45,7 @@ public final class CrateQuickMove {
 
         ItemStack itemStack2 = slot.getItem();
         itemStack = itemStack2.copy();
-        int crateEnd = this.menu.crateSlotStart() + this.menu.crateSlotCount();
+        int crateEnd = this.menu.wiring().crateSlotStart() + this.menu.wiring().crateSlotCount();
 
         if (i < crateEnd) {
             // Out of the crate, one hand-sized stack per click; doClick loops for the rest.
@@ -57,7 +57,7 @@ public final class CrateQuickMove {
             }
         } else if (this.moveModuleToItsSlot(itemStack2)) {
             // Nothing else to do: the module found its own slot.
-        } else if (!this.menu.moveOne(itemStack2, this.menu.crateSlotStart(), crateEnd, false)) {
+        } else if (!this.menu.moveOne(itemStack2, this.menu.wiring().crateSlotStart(), crateEnd, false)) {
             // Deliberately every crate slot, not only the visible page: a player shift-clicking a
             // stack expects it stored, not refused because the right page is not open.
             return ItemStack.EMPTY;
@@ -78,7 +78,7 @@ public final class CrateQuickMove {
      * item rather than refused.
      */
     private boolean moveModuleToItsSlot(ItemStack itemStack) {
-        for (int i = 0; i < this.menu.crateSlotStart(); i++) {
+        for (int i = 0; i < this.menu.wiring().crateSlotStart(); i++) {
             Slot slot = this.menu.getSlot(i);
             if (!slot.mayPlace(itemStack) || slot.getItem().getCount() >= slot.getMaxStackSize()) {
                 continue;

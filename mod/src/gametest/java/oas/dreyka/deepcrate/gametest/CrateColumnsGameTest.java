@@ -33,8 +33,8 @@ public class CrateColumnsGameTest {
 
         DeepCrateMenu deepCrateMenu = (DeepCrateMenu) deepCrateBlockEntity.createMenu(1, serverPlayer.getInventory(), serverPlayer);
 
-        if (deepCrateMenu.columns() != CrateTier.DEFAULT_COLUMNS) {
-            gameTestHelper.fail("the menu should say nine columns, it says " + deepCrateMenu.columns());
+        if (deepCrateMenu.wiring().columns() != CrateTier.DEFAULT_COLUMNS) {
+            gameTestHelper.fail("the menu should say nine columns, it says " + deepCrateMenu.wiring().columns());
         }
 
         if (deepCrateBlockEntity.getScreenOpeningData(serverPlayer).columns() != CrateTier.DEFAULT_COLUMNS) {

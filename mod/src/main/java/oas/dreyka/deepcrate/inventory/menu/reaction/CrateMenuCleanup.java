@@ -1,4 +1,4 @@
-package oas.dreyka.deepcrate.inventory.menu;
+package oas.dreyka.deepcrate.inventory.menu.reaction;
 
 import oas.dreyka.deepcrate.block.entity.CrateDrops;
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
@@ -24,7 +24,7 @@ public final class CrateMenuCleanup {
     }
 
     public void afterRemoved(Player player) {
-        this.menu.getContainer().stopOpen(player);
+        this.menu.wiring().crate().stopOpen(player);
 
         // A module pulled out leaves slots above the new capacity; the excess goes to the ground, as
         // asked. Server side only: the client copy would drop a second set of ghosts.
@@ -32,7 +32,7 @@ public final class CrateMenuCleanup {
             return;
         }
 
-        for (DeepCrateBlockEntity deepCrateBlockEntity : this.menu.crates()) {
+        for (DeepCrateBlockEntity deepCrateBlockEntity : this.menu.wiring().crates()) {
             if (anotherScreenIsOpen(deepCrateBlockEntity, player)) {
                 continue;
             }

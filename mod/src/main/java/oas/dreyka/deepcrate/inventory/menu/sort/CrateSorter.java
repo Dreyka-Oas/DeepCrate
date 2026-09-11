@@ -1,4 +1,4 @@
-package oas.dreyka.deepcrate.inventory.menu;
+package oas.dreyka.deepcrate.inventory.menu.sort;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -39,7 +39,7 @@ final class CrateLidOpeners extends ContainerOpenersCounter {
             return false;
         }
 
-        Container container = deepCrateMenu.getContainer();
+        Container container = deepCrateMenu.wiring().crate();
         return container == this.lid.crate || container instanceof CratePairContainer cratePairContainer && cratePairContainer.contains(this.lid.crate);
     }
 }

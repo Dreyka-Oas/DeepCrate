@@ -133,8 +133,8 @@ public class CrateShowcaseClientGameTest implements FabricClientGameTest {
             context.takeScreenshot("11-eight-pages-in-two-columns");
 
             looseScreen(context, new CrateOpenData(27, 3, 1, 2_000_000, 9), "big counts", "12-counts-cut-to-k-and-m", deepCrateMenu -> {
-                deepCrateMenu.getContainer().setItem(4, new ItemStack(Items.REDSTONE, 5_000));
-                deepCrateMenu.getContainer().setItem(13, new ItemStack(Items.LAPIS_LAZULI, 2_400_000));
+                deepCrateMenu.wiring().crate().setItem(4, new ItemStack(Items.REDSTONE, 5_000));
+                deepCrateMenu.wiring().crate().setItem(13, new ItemStack(Items.LAPIS_LAZULI, 2_400_000));
             });
 
             // The abbreviation hides the real count, so the tooltip has to carry it. That line is a

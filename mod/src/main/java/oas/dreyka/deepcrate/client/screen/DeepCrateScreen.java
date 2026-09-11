@@ -32,12 +32,12 @@ public class DeepCrateScreen extends AbstractContainerScreen<DeepCrateMenu> {
 
     public DeepCrateScreen(DeepCrateMenu deepCrateMenu, Inventory inventory, Component component) {
         super(deepCrateMenu, inventory, component);
-        this.rows = deepCrateMenu.layout().rowsPerPage();
-        this.columns = deepCrateMenu.columns();
+        this.rows = deepCrateMenu.wiring().layout().rowsPerPage();
+        this.columns = deepCrateMenu.wiring().columns();
         this.screenLayout = new CrateScreenLayout(deepCrateMenu);
         // Exactly a chest of this many rows: the module hangs off the left edge rather than taking a
         // band inside the panel.
-        this.imageWidth = deepCrateMenu.panelWidth();
+        this.imageWidth = deepCrateMenu.wiring().panelWidth();
         this.imageHeight = 114 + this.rows * 18;
         this.inventoryLabelY = this.imageHeight - 94;
     }

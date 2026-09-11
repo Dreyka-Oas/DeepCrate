@@ -29,7 +29,7 @@ public class CrateMenuGameTest {
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState());
 
         assertEquals(gameTestHelper, CrateConfig.baseCapacity, deepCrateMenu.capacity(), "capacity with no module");
-        assertEquals(gameTestHelper, 27, deepCrateMenu.getContainer().getContainerSize(), "copper crate size");
+        assertEquals(gameTestHelper, 27, deepCrateMenu.wiring().crate().getContainerSize(), "copper crate size");
         gameTestHelper.succeed();
     }
 
@@ -41,7 +41,7 @@ public class CrateMenuGameTest {
         deepCrateMenu.getSlot(0).setChanged();
 
         assertEquals(gameTestHelper, 512, deepCrateMenu.capacity(), "capacity with the 512 module");
-        assertEquals(gameTestHelper, 512, deepCrateMenu.getContainer().getMaxStackSize(), "container limit");
+        assertEquals(gameTestHelper, 512, deepCrateMenu.wiring().crate().getMaxStackSize(), "container limit");
         assertEquals(gameTestHelper, 512, deepCrateMenu.getSlot(2).getMaxStackSize(), "crate slot limit");
         gameTestHelper.succeed();
     }
@@ -75,7 +75,7 @@ public class CrateMenuGameTest {
         ServerPlayer serverPlayer = gameTestHelper.makeMockServerPlayerInLevel();
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState(), serverPlayer);
 
-        int firstPlayerSlot = deepCrateMenu.crateSlotStart() + deepCrateMenu.getContainer().getContainerSize();
+        int firstPlayerSlot = deepCrateMenu.wiring().crateSlotStart() + deepCrateMenu.wiring().crate().getContainerSize();
         deepCrateMenu.getSlot(firstPlayerSlot).set(new ItemStack(Items.DIRT, 64));
 
         deepCrateMenu.quickMoveStack(serverPlayer, firstPlayerSlot);
@@ -139,7 +139,7 @@ public class CrateMenuGameTest {
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.getLast().block().defaultBlockState());
         deepCrateMenu.getSlot(2).set(new ItemStack(Items.DIRT, 40));
 
-        if (deepCrateMenu.layout().pageCount() < 2) {
+        if (deepCrateMenu.wiring().layout().pageCount() < 2) {
             gameTestHelper.fail("a netherite crate should need more than one page");
         }
 
@@ -152,7 +152,7 @@ public class CrateMenuGameTest {
         }
 
         assertEquals(gameTestHelper, 40, deepCrateMenu.getSlot(2).getItem().getCount(), "content after paging");
-        assertEquals(gameTestHelper, 117, deepCrateMenu.getContainer().getContainerSize(), "netherite crate size");
+        assertEquals(gameTestHelper, 117, deepCrateMenu.wiring().crate().getContainerSize(), "netherite crate size");
         gameTestHelper.succeed();
     }
 
@@ -165,7 +165,7 @@ public class CrateMenuGameTest {
         DeepCrateBlockEntity deepCrateBlockEntity = gameTestHelper.getBlockEntity(CRATE, DeepCrateBlockEntity.class);
         DeepCrateMenu deepCrateMenu = (DeepCrateMenu) deepCrateBlockEntity.createMenu(1, serverPlayer.getInventory(), serverPlayer);
 
-        assertEquals(gameTestHelper, 54, deepCrateMenu.getContainer().getContainerSize(), "double copper crate size");
+        assertEquals(gameTestHelper, 54, deepCrateMenu.wiring().crate().getContainerSize(), "double copper crate size");
 
         deepCrateMenu.getSlot(0).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(0)));
         deepCrateMenu.getSlot(0).setChanged();
@@ -269,7 +269,7 @@ public class CrateMenuGameTest {
         ServerPlayer serverPlayer = gameTestHelper.makeMockServerPlayerInLevel();
         DeepCrateMenu deepCrateMenu = openCrate(gameTestHelper, RegistryInit.TIERS.get(0).block().defaultBlockState(), serverPlayer);
 
-        int firstPlayerSlot = deepCrateMenu.crateSlotStart() + deepCrateMenu.getContainer().getContainerSize();
+        int firstPlayerSlot = deepCrateMenu.wiring().crateSlotStart() + deepCrateMenu.wiring().crate().getContainerSize();
         deepCrateMenu.getSlot(firstPlayerSlot).set(new ItemStack(RegistryInit.MODULE_ITEMS.get(0)));
         deepCrateMenu.quickMoveStack(serverPlayer, firstPlayerSlot);
         assertEquals(gameTestHelper, 1, deepCrateMenu.getSlot(0).getItem().getCount(), "the first module went to its slot");

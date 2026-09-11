@@ -65,7 +65,7 @@ public final class CrateSortBar {
      */
     private void sort(CrateSortOrder crateSortOrder, boolean reversed) {
         ClientPlayNetworking.send(
-            new CrateSortPayload(this.menu.containerId, DeepCrateClientApi.order(crateSortOrder, this.menu.getContainer(), reversed))
+            new CrateSortPayload(this.menu.containerId, DeepCrateClientApi.order(crateSortOrder, this.menu.wiring().crate(), reversed))
         );
     }
 }

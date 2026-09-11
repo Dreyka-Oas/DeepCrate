@@ -32,7 +32,7 @@ public class CrateSortGameTest {
         DeepCrateMenu deepCrateMenu = (DeepCrateMenu) deepCrateBlockEntity.createMenu(1, serverPlayer.getInventory(), serverPlayer);
         deepCrateMenu.sort(List.of(Items.STONE, Items.DIRT));
 
-        Container container = deepCrateMenu.getContainer();
+        Container container = deepCrateMenu.wiring().crate();
         assertStack(gameTestHelper, container, 0, Items.STONE, 9);
         assertStack(gameTestHelper, container, 1, Items.DIRT, 350);
         if (!container.getItem(2).isEmpty()) {
@@ -57,7 +57,7 @@ public class CrateSortGameTest {
         DeepCrateMenu deepCrateMenu = (DeepCrateMenu) first.createMenu(1, serverPlayer.getInventory(), serverPlayer);
         deepCrateMenu.sort(List.of(Items.STONE, Items.DIRT));
 
-        Container container = deepCrateMenu.getContainer();
+        Container container = deepCrateMenu.wiring().crate();
         assertStack(gameTestHelper, container, 0, Items.STONE, 5);
         // One pile of sixty, not two of thirty on either side of the seam.
         assertStack(gameTestHelper, container, 1, Items.DIRT, 60);
@@ -79,8 +79,8 @@ public class CrateSortGameTest {
             gameTestHelper.fail("a module was swept into the crate");
         }
 
-        if (deepCrateMenu.getContainer().getContainerSize() != 45) {
-            gameTestHelper.fail("the crate lost its rows: " + deepCrateMenu.getContainer().getContainerSize());
+        if (deepCrateMenu.wiring().crate().getContainerSize() != 45) {
+            gameTestHelper.fail("the crate lost its rows: " + deepCrateMenu.wiring().crate().getContainerSize());
         }
 
         gameTestHelper.succeed();

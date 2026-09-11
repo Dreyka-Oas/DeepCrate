@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import oas.dreyka.deepcrate.api.CrateTier;
-import oas.dreyka.deepcrate.inventory.menu.CrateSorter;
+import oas.dreyka.deepcrate.inventory.menu.sort.CrateSorter;
 import oas.dreyka.deepcrate.inventory.container.CrateStorage;
 import java.util.List;
 import net.minecraft.SharedConstants;

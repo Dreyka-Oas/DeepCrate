@@ -1,15 +1,14 @@
-package oas.dreyka.deepcrate.inventory.menu;
+package oas.dreyka.deepcrate.inventory.menu.sort;
 
 import oas.dreyka.deepcrate.block.DeepCrateBlockEntity;
-import oas.dreyka.deepcrate.inventory.menu.CrateSorter;
 import oas.dreyka.deepcrate.inventory.menu.DeepCrateMenu;
 import java.util.List;
 import net.minecraft.world.item.Item;
 
 /**
  * Putting the crates a menu opened onto back in order, and telling every screen on them about it.
- * Reached only through the accessors DeepCrateMenu exposes, because this class sits in the
- * inventory.menu subpackage rather than in inventory.
+ * Reached only through the accessors DeepCrateMenu exposes, because this class sits in a subpackage
+ * of inventory.menu rather than in it.
  */
 public final class CrateSorting {
     private CrateSorting() {}
@@ -19,12 +18,12 @@ public final class CrateSorting {
      * that follow.
      */
     public static void sort(DeepCrateMenu menu, List<Item> order) {
-        if (menu.crates().isEmpty()) {
+        if (menu.wiring().crates().isEmpty()) {
             return;
         }
 
-        CrateSorter.arrange(menu.crates().stream().map(DeepCrateBlockEntity::storage).toList(), order);
-        for (DeepCrateBlockEntity deepCrateBlockEntity : menu.crates()) {
+        CrateSorter.arrange(menu.wiring().crates().stream().map(DeepCrateBlockEntity::storage).toList(), order);
+        for (DeepCrateBlockEntity deepCrateBlockEntity : menu.wiring().crates()) {
             deepCrateBlockEntity.setChanged();
         }
 

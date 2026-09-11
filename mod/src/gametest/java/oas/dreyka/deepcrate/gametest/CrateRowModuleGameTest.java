@@ -35,7 +35,7 @@ public class CrateRowModuleGameTest {
 
         DeepCrateMenu deepCrateMenu = (DeepCrateMenu) deepCrateBlockEntity.createMenu(1, serverPlayer.getInventory(), serverPlayer);
 
-        assertEquals(gameTestHelper, COPPER_SLOTS + 18, deepCrateMenu.getContainer().getContainerSize(), "slots in the menu");
+        assertEquals(gameTestHelper, COPPER_SLOTS + 18, deepCrateMenu.wiring().crate().getContainerSize(), "slots in the menu");
         gameTestHelper.succeed();
     }
 

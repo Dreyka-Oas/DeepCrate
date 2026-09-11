@@ -24,7 +24,7 @@ public final class CrateScreenBackground {
     public static void render(GuiGraphics guiGraphics, DeepCrateMenu menu, int x, int y, int imageWidth, int rows, int columns) {
         // Only the rows this page holds get slot cells; the last page of a crate whose rows do not
         // divide evenly would otherwise show a row of cells no slot lives in.
-        int rowsOnPage = Math.min(rows, Math.max(0, menu.getContainer().getContainerSize() / columns - menu.page() * rows));
+        int rowsOnPage = Math.min(rows, Math.max(0, menu.wiring().crate().getContainerSize() / columns - menu.page() * rows));
 
         CratePanel.blitBand(guiGraphics, x, y, 0, CratePanel.HEADER_HEIGHT + rowsOnPage * 18, columns, imageWidth);
         if (rowsOnPage < rows) {

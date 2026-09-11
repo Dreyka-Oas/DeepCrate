@@ -13,7 +13,9 @@ import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import oas.dreyka.deepcrate.inventory.slot.CratePanelGeometry;
+import oas.dreyka.deepcrate.inventory.menu.reaction.CrateMenuCleanup;
+import oas.dreyka.deepcrate.inventory.menu.reaction.CrateModuleReaction;
+import oas.dreyka.deepcrate.inventory.menu.sort.CrateSorting;
 import oas.dreyka.deepcrate.inventory.transfer.CrateQuickMove;
 
 /**
@@ -48,47 +50,35 @@ public class DeepCrateMenu extends AbstractContainerMenu {
         this.wiring.open(inventory, this.menuSlots, this.moduleReaction);
     }
 
-    public CrateLayout layout() {
-        return this.wiring.layout();
+    /**
+     * The crate this menu opened onto and the wiring done once when it did. Public: the classes
+     * reading a crate's layout, columns, module cells or player sit in other packages, and reach for
+     * this object rather than duplicate its accessors here.
+     */
+    public CrateMenuWiring wiring() {
+        return this.wiring;
     }
-    public int crateSlotStart() {
-        return this.wiring.crateSlotStart();
-    }
-    public int columns() {
-        return this.wiring.columns();
-    }
-    public int panelWidth() {
-        return CratePanelGeometry.panelWidth(this.wiring.columns());
-    }
-    public Container getContainer() {
-        return this.wiring.crate();
-    }
+
     public int page() {
         return this.menuSlots.page();
     }
+
     public int capacity() {
         return this.capacity;
     }
 
-    // Public because the classes under inventory.menu sit in a subpackage rather than in this class's own package.
-    public List<DeepCrateBlockEntity> crates() {
-        return this.wiring.crates();
-    }
-    public Container moduleContainer() {
-        return this.wiring.moduleContainer();
-    }
-    public Player player() {
-        return this.wiring.player();
-    }
     public int rowModuleCount() {
         return this.rowModuleCount;
     }
+
     public void setRowModuleCount(int rowModuleCount) {
         this.rowModuleCount = rowModuleCount;
     }
+
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
+
     public void setPage(int page) {
         this.menuSlots.setPage(page, this.wiring.layout().pageCount());
     }
@@ -111,14 +101,17 @@ public class DeepCrateMenu extends AbstractContainerMenu {
 
         super.clicked(i, j, clickType, player);
     }
+
     @Override
     public boolean stillValid(Player player) {
         return this.wiring.crate().stillValid(player);
     }
+
     @Override
     public ItemStack quickMoveStack(Player player, int i) {
         return this.quickMove.quickMoveStack(player, i);
     }
+
     @Override
     public void removed(Player player) {
         super.removed(player);
@@ -134,16 +127,16 @@ public class DeepCrateMenu extends AbstractContainerMenu {
     void addOne(Slot slot) {
         this.addSlot(slot);
     }
+
     void addPlayerSlots(Inventory inventory, int x, int y) {
         this.addStandardInventorySlots(inventory, x, y);
     }
+
     void addOneDataSlot(DataSlot dataSlot) {
         this.addDataSlot(dataSlot);
     }
+
     public boolean moveOne(ItemStack itemStack, int start, int end, boolean reverse) {
         return this.moveItemStackTo(itemStack, start, end, reverse);
-    }
-    public int crateSlotCount() {
-        return this.wiring.crateSlotCount();
     }
 }
